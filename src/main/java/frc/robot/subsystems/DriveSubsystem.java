@@ -194,7 +194,7 @@ public class DriveSubsystem extends SubsystemBase {
 				// gyro.getRotation2d().unaryMinus(),
 				gyro.getRotation2d(),
 				swervePosition,
-				new Pose2d(3,3, new Rotation2d()),
+				new Pose2d(),
 				stateStdDevs,
 				visionMeasurementStdDevs);
 
