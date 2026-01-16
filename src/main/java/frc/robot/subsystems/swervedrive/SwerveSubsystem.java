@@ -180,6 +180,8 @@ public class SwerveSubsystem extends SubsystemBase {
         vision2.periodic();
       }
 
+      //swerveDrive.getGyro().getAccel()
+
       /*
        * if(!gyro.isMoving() && vision1.getCamera1Enabled() &&
        * Constants.kResetOdometryFromPhotonVision && !isSim &&
@@ -196,6 +198,17 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+
+    if(PhotonVisionConstants.kEnablePhotonVision) {
+      if(PhotonVisionConstants.kEnablePhotonVisionCamera1) {
+        vision1.simulationPeriodic(getPose());
+      }
+
+      if(PhotonVisionConstants.kEnablePhotonVisionCamera1) {
+        vision2.simulationPeriodic(getPose());
+      }
+
+    }
   }
 
   /**

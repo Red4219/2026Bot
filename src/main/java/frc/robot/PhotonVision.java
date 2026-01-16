@@ -211,7 +211,7 @@ import org.photonvision.EstimatedRobotPose;
  
      public void periodic() {
 
-        if(Constants.PhotonVisionConstants.debugPhotonVision) {
+        /*if(Constants.PhotonVisionConstants.debugPhotonVision) {
 
             // Check for changes
             if(
@@ -236,16 +236,16 @@ import org.photonvision.EstimatedRobotPose;
                 );
 
             }
-        }
+        }*/
 
         allTagPoses.clear();
 
         // Check if we need to enable/disable a camera
-        if(cameraEnum == CameraEnum.Camera1) {
+        /*if(cameraEnum == CameraEnum.Camera1) {
             cam1Enabled = photonVisionEnableCam1.getBoolean(true);
         } else if(cameraEnum == CameraEnum.Camera2) {
             cam2Enabled = photonVisionEnableCam2.getBoolean(true);
-        }
+        }*/
 
          Optional<EstimatedRobotPose> visionEst = Optional.empty();
          for (var change : camera.getAllUnreadResults()) {
