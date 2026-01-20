@@ -34,28 +34,21 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import frc.robot.Constants;
 import frc.robot.Constants.PhotonVisionConstants;
-import frc.robot.Robot;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -71,8 +64,8 @@ public class Vision {
     private final PhotonPoseEstimator photonEstimator;
     private Matrix<N3, N1> curStdDevs;
     private final EstimateConsumer estConsumer;
-    private GenericEntry photonVisionEnableCam1;
-    private GenericEntry photonVisionEnableCam2;
+    //private GenericEntry photonVisionEnableCam1;
+    //private GenericEntry photonVisionEnableCam2;
     private boolean cam1Enabled = false;
     private Transform3d cameraToRobot = null;
     GenericEntry entryCameraXOffset = null;
@@ -103,6 +96,41 @@ public class Vision {
 
     private CameraEnum cameraEnum;
     List<Pose3d> allTagPoses = new ArrayList<>();
+
+    NetworkTableInstance inst = null;
+	NetworkTable table = null;
+
+    // Cam 1
+    DoubleTopic topicCam1X = null;
+	DoubleSubscriber subCam1X = null;
+	DoublePublisher pubCam1X = null;
+    double cam1X = 0.0;
+
+    DoubleTopic topicCam1Y = null;
+	DoubleSubscriber subCam1Y = null;
+	DoublePublisher pubCam1Y = null;
+    double cam1Y = 0.0;
+
+    DoubleTopic topicCam1Rotation = null;
+	DoubleSubscriber subCam1Rotation = null;
+	DoublePublisher pubCam1Rotation = null;
+    double cam1Rotation = 0.0;
+
+    // Cam 2
+    DoubleTopic topicCam2X = null;
+	DoubleSubscriber subCam2X = null;
+	DoublePublisher pubCam2X = null;
+    double cam2X = 0.0;
+
+    DoubleTopic topicCam2Y = null;
+	DoubleSubscriber subCam2Y = null;
+	DoublePublisher pubCam2Y = null;
+    double cam2Y = 0.0;
+
+    DoubleTopic topicCam2Rotation = null;
+	DoubleSubscriber subCam2Rotation = null;
+	DoublePublisher pubCam2Rotation = null;
+    double cam2Rotation = 0.0;
 
     /**
      * @param estConsumer Lamba that will accept a pose estimate and pass it to your
@@ -198,6 +226,53 @@ public class Vision {
                 cameraToRobot = Constants.PhotonVisionConstants.camera2ToRobot;
             }
 
+            inst = NetworkTableInstance.getDefault();
+            table = inst.getTable("Vision");
+
+            // Cam 1
+            topicCam1X = table.getDoubleTopic("cam1X");
+            subCam1X = topicCam1X.subscribe(0.0);
+            pubCam1X = topicCam1X.publish();
+
+            pubCam1X.set(Constants.PhotonVisionConstants.camX);
+            cam1X = Constants.PhotonVisionConstants.camX;
+
+            topicCam1Y = table.getDoubleTopic("cam1Y");
+            subCam1Y = topicCam1Y.subscribe(0.0);
+            pubCam1Y = topicCam1Y.publish();
+
+            pubCam1Y.set(Constants.PhotonVisionConstants.camY);
+            cam1Y = Constants.PhotonVisionConstants.camY;
+
+            topicCam1Rotation = table.getDoubleTopic("cam1Rotation");
+            subCam1Rotation = topicCam1Rotation.subscribe(0.0);
+            pubCam1Rotation = topicCam1Rotation.publish();
+
+            pubCam1Rotation.set(Constants.PhotonVisionConstants.camRotation);
+            cam1Rotation = Constants.PhotonVisionConstants.camRotation;
+
+            // Cam2
+            topicCam2X = table.getDoubleTopic("cam2X");
+            subCam2X = topicCam2X.subscribe(0.0);
+            pubCam2X = topicCam2X.publish();
+
+            pubCam2X.set(Constants.PhotonVisionConstants.cam2X);
+            cam2X = Constants.PhotonVisionConstants.cam2X;
+
+            topicCam2Y = table.getDoubleTopic("cam2Y");
+            subCam2Y = topicCam2Y.subscribe(0.0);
+            pubCam2Y = topicCam2Y.publish();
+
+            pubCam2Y.set(Constants.PhotonVisionConstants.cam2Y);
+            cam2Y = Constants.PhotonVisionConstants.cam2Y;
+
+            topicCam2Rotation = table.getDoubleTopic("cam2Rotation");
+            subCam2Rotation = topicCam2Rotation.subscribe(0.0);
+            pubCam2Rotation = topicCam2Rotation.publish();
+
+            pubCam2Rotation.set(Constants.PhotonVisionConstants.cam2Rotation);
+            cam2Rotation = Constants.PhotonVisionConstants.cam2Rotation;
+
             /*
              * entryCameraXOffset = photonVisionTab.add(cameraOffsetName + "XOffset",
              * cameraToRobot.getX())
@@ -223,6 +298,34 @@ public class Vision {
     }
 
     public void periodic() {
+
+        if(Constants.PhotonVisionConstants.debugPhotonVision) {
+            // Cam 1
+            if (subCam1X.get() != cam1X) {
+				cam1X = subCam1X.get();
+			}
+
+            if (subCam1Y.get() != cam1Y) {
+				cam1Y = subCam1Y.get();
+			}
+
+            if (subCam1Rotation.get() != cam1Rotation) {
+				cam1Rotation = subCam1Rotation.get();
+			}
+
+            // Cam 2
+            if (subCam2X.get() != cam2X) {
+				cam2X = subCam2X.get();
+			}
+
+            if (subCam2Y.get() != cam2Y) {
+				cam2Y = subCam2Y.get();
+			}
+
+            if (subCam2Rotation.get() != cam2Rotation) {
+				cam2Rotation = subCam2Rotation.get();
+			}
+        }
 
         /*
          * if(Constants.PhotonVisionConstants.debugPhotonVision) {

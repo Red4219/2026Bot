@@ -15,6 +15,12 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -43,11 +49,11 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveDriveOdometry odometry;
 	private SwerveDrivePoseEstimator poseEstimator = null;
 
-	private EstimatedRobotPose phoneEstimatedRobotPose1;
-	private EstimatedRobotPose phoneEstimatedRobotPose2;
+	//private EstimatedRobotPose phoneEstimatedRobotPose1;
+	//private EstimatedRobotPose phoneEstimatedRobotPose2;
 
-	private boolean gyroTurning = false;
-	private double targetRotationDegrees;
+	//private boolean gyroTurning = false;
+	//private double targetRotationDegrees;
 	private final SwerveModule frontLeft;
 	private final SwerveModule frontRight;
 	private final SwerveModule rearLeft;
@@ -93,9 +99,34 @@ public class DriveSubsystem extends SubsystemBase {
 			Constants.PhotonVisionConstants.visionMeasurementStdDevsY,
 			Constants.PhotonVisionConstants.visionMeasurementStdDevsTheta);
 
-	public DriveSubsystem() {
+	NetworkTableInstance inst = null;
+	NetworkTable table = null;
 
-		System.out.println("DriveSubsystem() was called");
+	DoubleTopic topicDriveP = null;
+	DoubleSubscriber subDriveP = null;
+	DoublePublisher pubDriveP = null;
+
+	DoubleTopic topicDriveI = null;
+	DoubleSubscriber subDriveI = null;
+	DoublePublisher pubDriveI = null;
+
+	DoubleTopic topicDriveD = null;
+	DoubleSubscriber subDriveD = null;
+	DoublePublisher pubDriveD = null;
+
+	DoubleTopic topicTurnP = null;
+	DoubleSubscriber subTurnP = null;
+	DoublePublisher pubTurnP = null;
+
+	DoubleTopic topicTurnI = null;
+	DoubleSubscriber subTurnI = null;
+	DoublePublisher pubTurnI = null;
+
+	DoubleTopic topicTurnD = null;
+	DoubleSubscriber subTurnD = null;
+	DoublePublisher pubTurnD = null;
+
+	public DriveSubsystem() {
 
 		if (Constants.kEnablePhotonVision) {
 
@@ -199,11 +230,79 @@ public class DriveSubsystem extends SubsystemBase {
 				visionMeasurementStdDevs);
 
 		gyro.resetYaw();
+
+		if (Constants.kDebugDriveTrain) {
+
+			inst = NetworkTableInstance.getDefault();
+			table = inst.getTable("DriveSubsystem");
+
+			topicDriveP = table.getDoubleTopic("driveP");
+			subDriveP = topicDriveP.subscribe(0.0);
+			pubDriveP = topicDriveP.publish();
+
+			topicDriveI = table.getDoubleTopic("driveI");
+			subDriveI = topicDriveI.subscribe(0.0);
+			pubDriveI = topicDriveI.publish();
+
+			topicDriveD = table.getDoubleTopic("driveD");
+			subDriveD = topicDriveD.subscribe(0.0);
+			pubDriveD = topicDriveD.publish();
+
+			topicTurnP = table.getDoubleTopic("turnP");
+			subTurnP = topicTurnP.subscribe(0.0);
+			pubTurnP = topicTurnP.publish();
+
+			topicTurnI = table.getDoubleTopic("turnI");
+			subTurnI = topicTurnI.subscribe(0.0);
+			pubTurnI = topicTurnI.publish();
+
+			topicTurnD = table.getDoubleTopic("turnD");
+			subTurnD = topicTurnD.subscribe(0.0);
+			pubTurnD = topicTurnD.publish();
+
+			
+			pubDriveP.set(driveP);
+			pubDriveI.set(driveI);
+			pubDriveD.set(driveD);
+
+			pubTurnP.set(turnP);
+			pubTurnI.set(turnI);
+			pubTurnD.set(turnD);
+		}
 	}
 
 	@Override
 	public void periodic() {
 		updateOdometry();
+
+		if (Constants.kDebugDriveTrain) {
+
+			if (subDriveP.get() != driveP) {
+				driveP = subDriveP.get();
+			}
+
+			if (subDriveI.get() != driveI) {
+				driveI = subDriveI.get();
+			}
+
+			if (subDriveD.get() != driveD) {
+				driveD = subDriveD.get();
+			}
+
+			if (subTurnP.get() != turnP) {
+				turnP = subTurnP.get();
+			}
+
+			if (subTurnI.get() != turnI) {
+				turnI = subTurnI.get();
+			}
+
+			if (subDriveD.get() != driveD) {
+				turnD = subTurnD.get();
+			}
+		}
+
+		//System.out.println("The value is: " + subDriveP.get());
 	}
 
 	@Override

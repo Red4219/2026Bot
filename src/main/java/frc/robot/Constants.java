@@ -244,6 +244,9 @@ public final class Constants {
 		public static double camY = Units.inchesToMeters(-7.5);
 		public static double cam2Y = Units.inchesToMeters(-7.5);
 
+		public static double camRotation = Math.toRadians(0.0);
+		public static double cam2Rotation = Math.toRadians(180.0);
+
 		public static Transform3d cameraToRobot = new Transform3d(
                     new Translation3d(
 						camX,
@@ -265,7 +268,7 @@ public final class Constants {
 					new Rotation3d(
 						0,
 						PhotonVisionConstants.cam2Pitch,
-						Math.toRadians(180)
+						cam2Rotation
 					)
 				);
 
