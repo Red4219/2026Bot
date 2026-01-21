@@ -37,6 +37,7 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.studica.frc.Navx;
 
@@ -78,7 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
 			new ChassisSpeeds(0, 0, 0));
 
-	private final Navx gyro = new Navx(0);
+	//private final Navx gyro = new Navx(0);
+	private Pigeon2 gyro = new Pigeon2(1, "canivore");
 
 	/**
 	 * Standard deviations of model states. Increase these numbers to trust your
@@ -229,7 +231,7 @@ public class DriveSubsystem extends SubsystemBase {
 				stateStdDevs,
 				visionMeasurementStdDevs);
 
-		gyro.resetYaw();
+		gyro.reset();
 
 		if (Constants.kDebugDriveTrain) {
 
@@ -352,7 +354,7 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
-	public Navx getGyro() {
+	public Pigeon2 getGyro() {
 		return gyro;
 	}
 
