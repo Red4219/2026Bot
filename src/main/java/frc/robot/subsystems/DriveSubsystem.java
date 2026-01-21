@@ -31,15 +31,15 @@ import frc.robot.Vision;
 import frc.robot.Vision.CameraEnum;
 import frc.robot.mechanisms.SwerveModule;
 
+import static frc.robot.Constants.kCanivoreCANBusName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.studica.frc.Navx;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -80,7 +80,7 @@ public class DriveSubsystem extends SubsystemBase {
 			new ChassisSpeeds(0, 0, 0));
 
 	//private final Navx gyro = new Navx(0);
-	private Pigeon2 gyro = new Pigeon2(1, "canivore");
+	private Pigeon2 gyro = new Pigeon2(9, kCanivoreCANBusName);
 
 	/**
 	 * Standard deviations of model states. Increase these numbers to trust your
