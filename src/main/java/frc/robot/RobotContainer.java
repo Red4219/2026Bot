@@ -8,6 +8,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -55,16 +56,30 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
+
+    if(RobotBase.isReal()) {
     
-    driveSubsystem.setDefaultCommand(
-			new RunCommand(() -> driveSubsystem.drive(
-				JoystickUtils.processJoystickInput(driverController.getLeftY()),
-				JoystickUtils.processJoystickInput(driverController.getLeftX()),
-				JoystickUtils.processJoystickInput(-driverController.getRightX())
-			),
-			driveSubsystem
-			)
-		);
+      driveSubsystem.setDefaultCommand(
+			  new RunCommand(() -> driveSubsystem.drive(
+				  JoystickUtils.processJoystickInput(driverController.getLeftY()),
+				  JoystickUtils.processJoystickInput(driverController.getLeftX()),
+				  JoystickUtils.processJoystickInput(-driverController.getRightX())
+			  ),
+			  driveSubsystem
+			  )
+		  );
+    } else {
+      driveSubsystem.setDefaultCommand(
+
+					new RunCommand(() -> driveSubsystem.drive(
+							JoystickUtils.processJoystickInput(driverController.getLeftY()),
+							JoystickUtils.processJoystickInput(driverController.getLeftX()),
+							JoystickUtils.processJoystickInput(-driverController.getRawAxis(2))
+						),
+						driveSubsystem
+					)
+				);
+    }
   }
 
   /**

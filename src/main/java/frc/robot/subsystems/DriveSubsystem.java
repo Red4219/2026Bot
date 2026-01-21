@@ -20,7 +20,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -40,6 +40,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.sim.Pigeon2SimState;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -79,8 +80,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
 			new ChassisSpeeds(0, 0, 0));
 
-	//private final Navx gyro = new Navx(0);
 	private Pigeon2 gyro = new Pigeon2(9, kCanivoreCANBusName);
+	private Pigeon2SimState pigeon2SimState = null;
 
 	/**
 	 * Standard deviations of model states. Increase these numbers to trust your
@@ -128,7 +129,15 @@ public class DriveSubsystem extends SubsystemBase {
 	DoubleSubscriber subTurnD = null;
 	DoublePublisher pubTurnD = null;
 
+	SwerveModuleState[] desiredStates = new SwerveModuleState[4];
+
 	public DriveSubsystem() {
+
+		if(!RobotBase.isReal()) {
+			pigeon2SimState = gyro.getSimState();
+
+			pigeon2SimState.setRawYaw(0.0);
+		}
 
 		if (Constants.kEnablePhotonVision) {
 
@@ -320,6 +329,17 @@ public class DriveSubsystem extends SubsystemBase {
 		if (vision2.getCamera1Enabled()) {
 				vision2.simulationPeriodic(RobotContainer.driveSubsystem.poseEstimator.getEstimatedPosition());
 		}
+
+		try {
+			ChassisSpeeds chassisSpeeds = DriveConstants.kDriveKinematics.toChassisSpeeds(
+				desiredStates[0], desiredStates[1], desiredStates[2], desiredStates[3]
+			);
+
+			pigeon2SimState.setRawYaw(gyro.getRotation2d().getDegrees() + chassisSpeeds.omegaRadiansPerSecond);
+		} catch (Exception e) {
+			//System.out.println(e.toString());
+			// This will throw an error until in teleop/auto
+		}
 	}
 
 	public void drive(double xSpeed, double ySpeed, double rot) {
@@ -343,6 +363,8 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void setModuleStates(SwerveModuleState[] desiredStates) {
+
+		this.desiredStates = desiredStates;
 
 		frontLeft.setDesiredState(desiredStates[0]);
 		frontRight.setDesiredState(desiredStates[1]);
