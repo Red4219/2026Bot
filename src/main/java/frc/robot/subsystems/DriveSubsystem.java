@@ -8,6 +8,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -319,9 +320,7 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void simulationPeriodic() {
 		// This method will be called once per scheduler run during simulation
-
 		
-
 		if (vision1.getCamera1Enabled()) {
 				vision1.simulationPeriodic(RobotContainer.driveSubsystem.poseEstimator.getEstimatedPosition());
 		}
@@ -340,6 +339,11 @@ public class DriveSubsystem extends SubsystemBase {
 			//System.out.println(e.toString());
 			// This will throw an error until in teleop/auto
 		}
+
+		//frontLeft.simulationPeriodic();
+		//frontRight.simulationPeriodic();
+		//rearLeft.simulationPeriodic();
+		//rearRight.simulationPeriodic();
 	}
 
 	public void drive(double xSpeed, double ySpeed, double rot) {
@@ -396,6 +400,8 @@ public class DriveSubsystem extends SubsystemBase {
 		poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
 	}
 
+	
+
 	public void updateOdometry() {
 		swervePosition[0] = frontLeft.getPosition();
 		swervePosition[1] = frontRight.getPosition();
@@ -420,10 +426,6 @@ public class DriveSubsystem extends SubsystemBase {
 				swervePosition
 			);
 
-			/*estimatedPose = poseEstimator.update(
-				gyro.getRotation2d().unaryMinus(),
-				swervePosition
-			);*/
 			poseEstimator.update(
 				//gyro.getRotation2d().unaryMinus(),
 				gyro.getRotation2d(),
