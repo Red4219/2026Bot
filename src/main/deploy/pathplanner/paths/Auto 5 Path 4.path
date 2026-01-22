@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.6307534141240154,
+        "y": 2.881000399852362
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.138293245570866,
+        "y": 2.107627952755905
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.283484098179134,
+        "y": 1.033802442175197
+      },
+      "prevControl": {
+        "x": 1.8873591289370057,
+        "y": 1.8318977608267701
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeNoWait",
+      "waypointRelativePos": 0.05470861486486484,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeNoWait"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 15.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -125.85243419342491
+  },
+  "reversed": false,
+  "folder": "Auto 5 Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -121.31415298322882
+  },
+  "useDefaultConstraints": true
+}

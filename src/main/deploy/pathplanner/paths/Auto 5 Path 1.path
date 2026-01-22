@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.5847394808070865,
+        "y": 0.7924035740649618
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.584739480807085,
+        "y": 0.7924035740649619
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.920518423966535,
+        "y": 2.734390532726378
+      },
+      "prevControl": {
+        "x": 4.397648252952759,
+        "y": 1.1893730007381897
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Coral4Command",
+      "waypointRelativePos": 0.9640730574324323,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Coral4Command"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 15.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -121.10087105642722
+  },
+  "reversed": false,
+  "folder": "Auto 5 Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

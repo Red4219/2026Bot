@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.303999999999999,
+        "y": 2.6307499999999995
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.507362143208661,
+        "y": 1.6735214382381876
+      },
+      "isLocked": false,
+      "linkedName": "Auto 2 Path 1"
+    },
+    {
+      "anchor": {
+        "x": 1.1813538078248031,
+        "y": 1.1243809977854335
+      },
+      "prevControl": {
+        "x": 1.7383201587106298,
+        "y": 1.8675785863681098
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Auto 2 Path 2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 15.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 52.96250683326607
+  },
+  "reversed": false,
+  "folder": "Auto 2 Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 120.2454601345606
+  },
+  "useDefaultConstraints": true
+}

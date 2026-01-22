@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 1 Path 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 1 Path 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoralWait"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 1 Path 3"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

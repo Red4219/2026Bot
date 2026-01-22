@@ -8,8 +8,15 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,8 +39,16 @@ public class RobotContainer {
 
   private final CommandXboxController driverController = new CommandXboxController(0);
 
+  private SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  public SendableChooser<Command> getAutoChooser() {
+		return autoChooser;
+	}
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    RobotContainer.driveSubsystem.CreateAutoBuilder();
+    
     // Configure the trigger bindings
     configureBindings();
   }
@@ -55,6 +70,16 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+    //autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    SmartDashboard.putData("Auto", autoChooser);
+
+    // Add the chooser to the Shuffleboard to select which Auo to run
+		Shuffleboard.getTab("Autonomous").add("Auto", autoChooser)
+			.withWidget(BuiltInWidgets.kComboBoxChooser);
+	
 
 
     if(RobotBase.isReal()) {
@@ -87,8 +112,12 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  // public Command getAutonomousCommand() {
+  //   // An example command will be run in autonomous
+  //   return Autos.exampleAuto(m_exampleSubsystem);
+  // }
+
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+		return autoChooser.getSelected();
+	}
 }

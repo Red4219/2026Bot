@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectCoral500"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeWait"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectCoral500"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoWait"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectCoral500"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoWait"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 5 Path 7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectCoral500"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -21,10 +23,13 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.RobotContainer;
@@ -42,6 +47,10 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -51,6 +60,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveModulePosition[] swervePosition;
 	private SwerveDriveOdometry odometry;
 	private SwerveDrivePoseEstimator poseEstimator = null;
+
+	private SwerveModuleState[] swerveModuleStatesRobotRelative;
 
 	//private EstimatedRobotPose phoneEstimatedRobotPose1;
 	//private EstimatedRobotPose phoneEstimatedRobotPose2;
@@ -489,5 +500,88 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 		//return gyro.getRotation2d().unaryMinus().getDegrees();
 		return gyro.getRotation2d().getDegrees();
+	}
+
+	public Pose2d getPoseEstimatorPose2d() {
+		return poseEstimator.getEstimatedPosition();
+	}
+
+	public ChassisSpeeds getChassisSpeedsRobotRelative() {
+
+		/*if(Robot.isReal()) {
+			return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+		} 
+		
+		return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, poseEstimator.getEstimatedPosition().getRotation());*/
+
+		return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+	}
+
+	public DriveFeedforwards setChassisSpeedsRobotRelative(ChassisSpeeds chassisSpeeds, DriveFeedforwards feedForwards ) {
+	
+		swerveModuleStatesRobotRelative = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+		// In simulation, the actual navx does not work, so set the value from the chassisSpeeds
+		// if(isSim) {
+		// 	int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
+		// 	SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
+		// 	angle.set(angle.get() + -chassisSpeeds.omegaRadiansPerSecond);
+		// }
+
+		frontLeft.setDesiredState(swerveModuleStatesRobotRelative[0]);
+		frontRight.setDesiredState(swerveModuleStatesRobotRelative[1]);
+		rearLeft.setDesiredState(swerveModuleStatesRobotRelative[2]);
+		rearRight.setDesiredState(swerveModuleStatesRobotRelative[3]);
+
+		if(Constants.kEnableDriveSubSystemLogger) {
+			Logger.recordOutput("SwerveModuleStates/Setpoints", swerveModuleStatesRobotRelative);
+		}
+
+		return feedForwards;
+	}
+
+	public void CreateAutoBuilder() {
+
+		try {
+
+			RobotConfig config = RobotConfig.fromGUISettings();
+
+			AutoBuilder.configure(
+				this::getPoseEstimatorPose2d,
+				this::resetOdometry,
+				this::getChassisSpeedsRobotRelative,
+				this::setChassisSpeedsRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
+				new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+					AutoConstants.PathPLannerConstants.kPPDriveConstants, // Translation PID constants
+					AutoConstants.PathPLannerConstants.kPPTurnConstants // Rotation PID constants
+            	),
+				config, 
+				this::getAllianceAuto,
+				this
+			);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private boolean getAllianceAuto() {
+		var alliance = DriverStation.getAlliance();
+		if (alliance.isPresent()) {
+			return alliance.get() == DriverStation.Alliance.Red;
+		}
+		return false;
+	}
+
+	public String getAlliance() {
+		String alliance = "";
+		if(DriverStation.getAlliance().isPresent()) {
+			if (DriverStation.getAlliance().get() == Alliance.Blue) {
+				alliance = "Blue";
+			} else {
+				alliance = "Red";
+			}
+		}
+
+		return alliance;
 	}
 }

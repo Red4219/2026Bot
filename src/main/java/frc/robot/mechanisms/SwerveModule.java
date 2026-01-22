@@ -298,7 +298,8 @@ public class SwerveModule {
     // }
 
 	public void resetEncoders() {
-		driveMotor.resetSignalFrequencies();
+		//driveMotor.resetSignalFrequencies();
+		driveMotor.setPosition(0.0);
 	}
 
 	public void stopMotors() {
