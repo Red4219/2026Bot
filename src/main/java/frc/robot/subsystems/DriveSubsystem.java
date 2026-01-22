@@ -370,9 +370,10 @@ public class DriveSubsystem extends SubsystemBase {
 		this.rot = rot;
 
 		swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-				// ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
-				// gyro.getRotation2d().unaryMinus())
-				ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d()));
+			// ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
+			// gyro.getRotation2d().unaryMinus())
+			ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+		);
 
 		setModuleStates(swerveModuleStates);
 	}
@@ -583,5 +584,9 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		return alliance;
+	}
+
+	public void zeroHeading() {
+		gyro.reset();
 	}
 }
