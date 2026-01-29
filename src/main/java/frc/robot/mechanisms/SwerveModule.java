@@ -114,7 +114,7 @@ public class SwerveModule {
 		}
 
 		// Initialize the motors
-		driveMotor = new TalonFX(driveMotorChannel);
+		driveMotor = new TalonFX(driveMotorChannel, Constants.kCanivoreCANBusName);
 		
 		if(isSim) {
 			talonFXSimState = driveMotor.getSimState();

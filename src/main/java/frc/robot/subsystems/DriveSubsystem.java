@@ -92,7 +92,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
 			new ChassisSpeeds(0, 0, 0));
 
-	private Pigeon2 gyro = new Pigeon2(9, kCanivoreCANBusName);
+	private Pigeon2 gyro = new Pigeon2(5, kCanivoreCANBusName);
 	private Pigeon2SimState pigeon2SimState = null;
 
 	/**
