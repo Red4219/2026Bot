@@ -7,11 +7,14 @@ package frc.robot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ResetPositionCommand;
+import frc.robot.commands.autonomous.AutoClimbCommand;
+import frc.robot.commands.autonomous.AutoNoClimbCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -55,6 +58,9 @@ public class RobotContainer {
     
     // Configure the trigger bindings
     configureBindings();
+
+    // Register the auto commands
+    registerAutoCommands();
   }
 
   /**
@@ -127,4 +133,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
 	}
+
+  private void registerAutoCommands() {
+    NamedCommands.registerCommand("Climb", new AutoClimbCommand());
+    NamedCommands.registerCommand("NoClimb", new AutoNoClimbCommand());
+  }
 }

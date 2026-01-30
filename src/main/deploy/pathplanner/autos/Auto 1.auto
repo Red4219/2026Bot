@@ -13,7 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 5.0
           }
         },
         {
@@ -25,13 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeCoralWait"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Auto 1 Path 3"
+            "name": "Climb"
           }
         }
       ]

@@ -109,10 +109,20 @@ public class ClimberSubsystem extends SubsystemBase {
         // Publish the position to Network tables
         pubPosition.set(motorPosition);
 
+        // Publish the state string of the climber
         pubStateString.set(stringState);
     }
 
     public String getStateString() {
         return stringState;
+    }
+
+    public boolean atTargetPosition() {
+
+        if(motorPosition - targetPosition < 0.5) {
+            return true;
+        }
+
+        return false;
     }
 }
