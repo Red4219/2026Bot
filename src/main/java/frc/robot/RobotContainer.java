@@ -8,6 +8,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ResetPositionCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -37,6 +38,8 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
+
+  public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
 
