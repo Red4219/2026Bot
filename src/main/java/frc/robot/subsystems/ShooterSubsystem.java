@@ -15,6 +15,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Limelight;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -37,6 +38,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private double targetTurretPosition = 0.0;
     private double actualTurretPosition = 0.0;
 
+    private double distanceFromTarget = 0.0;
+
     private ShooterState shooterState = ShooterState.Stopped;
 
     private NetworkTableInstance inst = null;
@@ -51,8 +54,13 @@ public class ShooterSubsystem extends SubsystemBase {
     private DoubleTopic topicTurretPosition = null;
 	private DoublePublisher pubTurretPosition = null;
 
+    private DoubleTopic topicDistanceFromTarget = null;
+	private DoublePublisher pubDistanceFromTarget = null;
+
     private StringTopic topicStateString = null;
 	private StringPublisher pubStateString = null;
+
+    private Limelight limelight = null;
 
     public ShooterSubsystem() {
 
@@ -122,9 +130,15 @@ public class ShooterSubsystem extends SubsystemBase {
             pubTurretPosition = topicTurretPosition.publish();
             pubTurretPosition.set(actualTurretPosition);
 
+            topicDistanceFromTarget = table.getDoubleTopic("Distance from Target");
+            pubDistanceFromTarget = topicDistanceFromTarget.publish();
+            pubDistanceFromTarget.set(distanceFromTarget);
+
             topicStateString = table.getStringTopic("StateString");
             pubStateString = topicStateString.publish();
             pubStateString.set(stateText);
+
+            limelight = new Limelight("limelight");
         }
     }
 
@@ -171,6 +185,8 @@ public class ShooterSubsystem extends SubsystemBase {
             pubFlywheelVelocity.set(actualFlyWheelSpeed);
             pubHoodPosition.set(actualHoodValue);
             pubTurretPosition.set(actualTurretPosition);
+            pubDistanceFromTarget.set(distanceFromTarget);
+            pubStateString.set(stateText);
 
         }
     }
@@ -180,6 +196,14 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     private double calculateFlywheelSpeed() {
+
+        if(limelight.lookForTarget(9)) {
+            // limelight can see the target we are looking for
+            distanceFromTarget = limelight.getDistancToTargetFromRobot(9);
+        } else {
+            distanceFromTarget = 0.0;
+        }
+
         // This needs to be filled in with a function to calculate the flywheel speed
         return 0.0;
     }
