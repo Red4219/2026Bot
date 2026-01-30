@@ -1,4 +1,4 @@
-package frc.robot.commands.autonomous;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,17 +9,15 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 
-public class AutoClimbCommand extends Command {
+public class ClimbCommand extends Command {
 
-    private static DriveSubsystem _driveSubsystem;
     private static ClimberSubsystem _climberSubsystem;
     private boolean _finished = false;
 
-    public AutoClimbCommand() {
-         _driveSubsystem = RobotContainer.driveSubsystem;
+    public ClimbCommand() {
          _climberSubsystem = RobotContainer.climberSubsystem;
 
-         addRequirements(_driveSubsystem, _climberSubsystem);
+         addRequirements(_climberSubsystem);
     }
 
     @Override

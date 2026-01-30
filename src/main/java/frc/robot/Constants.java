@@ -307,6 +307,7 @@ public final class Constants {
 	}
 
 	public static class ClimberConstants {
+		public static boolean enabled = false;
 		public static int climberMotorId = 20;
 		public static boolean invertMotor = false;
 		public static double kP = 0.2;
@@ -315,6 +316,18 @@ public final class Constants {
 
 		public static double targetPositionClimb = 15.0;
 		public static double targetPositionNoClimb = 0.0;
+	}
+
+	public static class IntakeConstants {
+		public static boolean enabled = false;
+		public static int intakeMotorId = 21;
+		public static boolean invertMotor = false;
+		public static double kP = 0.2;
+		public static double kI = 0.0;
+		public static double kD = 0.0;
+
+		public static double intakePower = 1.0;
+		public static double ejectPower = 1.0;
 	}
 
 	public static class PoseDefinitions {
@@ -337,22 +350,25 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static final boolean enabled = true;
+		public static final boolean enabled = false;
 		public static final boolean debug = true;
 
 		public static final boolean invertShooterMotor = false;
-		public static final int shooterMotorId = 20;
-		public static final double shooterP = 0.1;
-		public static final double shooterI = 0.2;
-		public static final double shooterD = 0.3;
+		public static final int flywheelMotorId = 30;
+		public static final double flywheelP = 0.1;
+		public static final double flywheelI = 0.2;
+		public static final double flywheelD = 0.3;
+		public static final boolean invertFlywheelMotor = false;
 
-		public static final int turretMotorId = 21;
+		public static final int turretMotorId = 31;
 		public static final boolean invertTurretMotor = false;
 		public static final double turretP = 0.1;
 		public static final double turretI = 0.2;
 		public static final double turretD = 0.3;
+		public static final double minTurretPosition = 0.0;
+		public static final double maxTurretPosition = 100.0;
 
-		public static final int hoodMotorId = 22;
+		public static final int hoodMotorId = 32;
 		public static final boolean invertHoodMotor = false;
 		public static final double hoodP = 0.1;
 		public static final double hoodI = 0.2;

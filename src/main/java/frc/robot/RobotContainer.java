@@ -6,12 +6,17 @@ package frc.robot;
 
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetPositionCommand;
-import frc.robot.commands.autonomous.AutoClimbCommand;
-import frc.robot.commands.autonomous.AutoNoClimbCommand;
+import frc.robot.commands.StopIntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.commands.ClimbCommand;
+import frc.robot.commands.EjectCommand;
+import frc.robot.commands.NoClimbCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -26,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,6 +49,10 @@ public class RobotContainer {
   public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
   public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+
+  public static final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+
+  public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -135,7 +145,10 @@ public class RobotContainer {
 	}
 
   private void registerAutoCommands() {
-    NamedCommands.registerCommand("Climb", new AutoClimbCommand());
-    NamedCommands.registerCommand("NoClimb", new AutoNoClimbCommand());
+    NamedCommands.registerCommand("Climb", new ClimbCommand());
+    NamedCommands.registerCommand("NoClimb", new NoClimbCommand());
+    NamedCommands.registerCommand("Intake", new IntakeCommand());
+    NamedCommands.registerCommand("Eject", new EjectCommand());
+    NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
   }
 }
