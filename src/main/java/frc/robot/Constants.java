@@ -155,7 +155,8 @@ public final class Constants {
 				new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // FR
 				new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // RL
 				new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // RR
-
+		
+		public static final double kGyroYawOffset = 180;
 		public static final PIDGains kGyroTurningGains = new PIDGains(.025, 0, 0);
 		public static final double kMaxTurningVelocityDegrees = 20;
 		public static final double kMaxTurningAcceleratonDegrees = 10;

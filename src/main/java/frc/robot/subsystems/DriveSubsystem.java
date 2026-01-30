@@ -252,7 +252,8 @@ public class DriveSubsystem extends SubsystemBase {
 				stateStdDevs,
 				visionMeasurementStdDevs);
 
-		gyro.reset();
+		zeroHeading();
+		
 
 		if (Constants.kDebugDriveTrain) {
 
@@ -587,6 +588,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void zeroHeading() {
-		gyro.reset();
+		gyro.setYaw(DriveConstants.kGyroYawOffset);
 	}
 }
