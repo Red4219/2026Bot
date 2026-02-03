@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.PIDGains;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -37,6 +38,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -157,6 +159,11 @@ public class SwerveModule {
 		
 		driveMotor.getConfigurator().apply(driveConfig);
 
+		CurrentLimitsConfigs currentConfig = new CurrentLimitsConfigs();
+		currentConfig.StatorCurrentLimitEnable = true;
+		currentConfig.StatorCurrentLimit = DriveConstants.kDriveMotorCurrentLimit;
+		driveMotor.getConfigurator().apply(currentConfig);
+
 		var slot0Configs = new Slot0Configs();
 		slot0Configs.kS = 0.1;
 		slot0Configs.kV = 0.12;
@@ -169,6 +176,7 @@ public class SwerveModule {
 
 		turnConfig
             .inverted(invertTurningMotor)
+			.smartCurrentLimit(DriveConstants.kTurnMotorCurrentLimit)
             .idleMode(IdleMode.kCoast);
         turnConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -178,7 +186,7 @@ public class SwerveModule {
 				Constants.ModuleConstants.kModuleDriveGains.kD
 			);
         turnConfig.signals.primaryEncoderPositionPeriodMs(5);
-
+		
         turningMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		m_turningPIDController = new ProfiledPIDController(

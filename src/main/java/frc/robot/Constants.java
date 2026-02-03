@@ -178,6 +178,9 @@ public final class Constants {
 		public static double kAutoAlignLeftYOffset = 25.0;
 		public static double kAutoAlignLeftYTolerance = 4.0;
 
+		public static int kTurnMotorCurrentLimit = 20;
+		public static double kDriveMotorCurrentLimit = 40;
+
 	}
 
 
