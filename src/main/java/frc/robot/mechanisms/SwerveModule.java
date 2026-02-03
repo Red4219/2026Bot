@@ -23,6 +23,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.PIDGains;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -44,6 +45,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import static edu.wpi.first.units.Units.*;
 
@@ -119,24 +121,7 @@ public class SwerveModule {
 		driveMotor = new TalonFX(driveMotorChannel, Constants.kCanivoreCANBusName);
 		
 		if(isSim) {
-			talonFXSimState = driveMotor.getSimState();
-
-			// This is for the siumulator to simulate the movement of the motors
-			m_motorSimModel = new DCMotorSim(
-				LinearSystemId.createDCMotorSystem(
-					DCMotor.getKrakenX60Foc(1),
-					0.001, 
-					Constants.ModuleConstants.kdriveGearRatioL3
-				), 
-				DCMotor.getKrakenX60Foc(1)
-				,0.00, 0.00 // not sure about these
-			);
-
-			talonFXSimState.setSupplyVoltage(12.0);
-
-			// FeedbackConfigs feedbackConfig = new FeedbackConfigs()
-			// .withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference);
-			// driveMotor.getConfigurator().apply(feedbackConfig);
+			
 		}
 		
 		turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
@@ -208,6 +193,69 @@ public class SwerveModule {
 		}
 	}
 
+	public void simulationInit() {
+		talonFXSimState = driveMotor.getSimState();
+		talonFXSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+		//talonFXSimState.Orientation = ChassisReference.CounterClockwise_Positive;
+
+		// This is for the siumulator to simulate the movement of the motors
+		/*
+		 * m_motorSimModel = new DCMotorSim(
+		 * LinearSystemId.createDCMotorSystem(
+		 * DCMotor.getKrakenX60Foc(1),
+		 * 0.001,
+		 * //Constants.ModuleConstants.kdriveGearRatioL3
+		 * 1.0
+		 * ),
+		 * DCMotor.getKrakenX60Foc(1)
+		 * ,0.00, 0.00 // not sure about these
+		 * );
+		 */
+
+		m_motorSimModel = new DCMotorSim(
+				LinearSystemId.createDCMotorSystem(
+						DCMotor.getKrakenX60Foc(1), 0.001, 10.0),
+				DCMotor.getKrakenX60Foc(1));
+
+		talonFXSimState.setSupplyVoltage(12.0);
+
+		// FeedbackConfigs feedbackConfig = new FeedbackConfigs()
+		// .withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 *
+		// ModuleConstants.kwheelCircumference);
+		// driveMotor.getConfigurator().apply(feedbackConfig);
+	}
+
+	public void simulationPeriodic(SwerveModuleState swerveModuleState) {
+
+		m_moduleAngleRadians = swerveModuleState.angle.getRadians();
+		_simulatedAbsoluteEncoderRotation2d = swerveModuleState.angle;
+
+		targetVelo.Velocity = swerveModuleState.speedMetersPerSecond;
+		//driveMotor.setControl(targetVelo);
+
+		talonFXSimState = driveMotor.getSimState();
+
+		talonFXSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+		// get the motor voltage of the TalonFX
+		var motorVoltage = talonFXSimState.getMotorVoltageMeasure();
+
+		m_motorSimModel.setInputVoltage(motorVoltage.in(Volts));
+
+		// m_motorSimModel.setAngularVelocity(desiredState.speedMetersPerSecond);
+		m_motorSimModel.setAngularVelocity(swerveModuleState.speedMetersPerSecond);
+		m_motorSimModel.update(0.020); // assumeds 20 ms loop time
+
+		// talonFXSimState.setRawRotorPosition(m_motorSimModel.getAngularPosition());
+		// talonFXSimState.setRotorVelocity(m_motorSimModel.getAngularVelocity());
+
+		talonFXSimState.setRawRotorPosition(m_motorSimModel.getAngularPosition());
+		//talonFXSimState.setRawRotorPosition(targetVelo.);
+		//talonFXSimState.setRotorVelocity(m_motorSimModel.getAngularVelocity().times(1.0));
+		//talonFXSimState.setRotorVelocity(driveMotor.getVelocity().getValueAsDouble());
+		talonFXSimState.setRotorVelocity(targetVelo.Velocity);
+	}
+
 	// TODO: cleanup methods make sure they are compatible with new krakens
 
 	// Returns headings of the module
@@ -218,7 +266,10 @@ public class SwerveModule {
 	public double getDistanceMeters() {
 
 		// return (driveMotor.getPosition(true).getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		return rotationsToMeters(driveMotor.getPosition(true).getValue()).baseUnitMagnitude();
+		//return (driveMotor.getPosition(true).getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
+		return rotationsToMeters(driveMotor.getPosition(true).getValue()).magnitude();
+
+		//
 	}
 
 	// Returns current position of the modules
@@ -239,11 +290,6 @@ public class SwerveModule {
 	// Sets the position of the swerve module
 	public void setDesiredState(SwerveModuleState desiredState) {	
 
-		if(isSim) {
-			m_moduleAngleRadians = Math.toRadians(desiredState.angle.getDegrees());
-			_simulatedAbsoluteEncoderRotation2d = desiredState.angle;
-		}
-
 		// Optimize the reference state to avoid spinning further than 90 degrees to
 		// desired state
 		desiredState.optimize(m_moduleAngleRotation2d);
@@ -257,14 +303,7 @@ public class SwerveModule {
 
 		turningMotor.setVoltage(turnOutput);
 		
-		if(isSim) {
-			
-			m_motorSimModel.setAngularVelocity(desiredState.speedMetersPerSecond);
-			m_motorSimModel.update(0.020); // assumeds 20 ms loop time
-			talonFXSimState.setRawRotorPosition(m_motorSimModel.getAngularPosition());
-			talonFXSimState.setRotorVelocity(m_motorSimModel.getAngularVelocity());
-
-		} else {
+		if(!isSim) {
 			targetVelo.Velocity = desiredState.speedMetersPerSecond;
 			driveMotor.setControl(targetVelo);
 		}

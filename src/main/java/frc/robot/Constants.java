@@ -36,17 +36,15 @@ public final class Constants {
 	public static boolean enableLogger = true;
 
 	// Photonvision
-	public static boolean kEnablePhotonVision = true;
-	public static boolean kDebugPhotonVision = true;
-	public static boolean kResetOdometryFromPhotonVision = true;
-	public static boolean kEnablePhotonVisionCamera1 = true;
-	public static boolean kEnablePhotonVisionCamera2 = true;
-	public static boolean kUseNewPhotonVisionSystem = true;
+	public static boolean kEnablePhotonVision = false;
+	public static boolean kDebugPhotonVision = false;
+	public static boolean kResetOdometryFromPhotonVision = false;
+	public static boolean kEnablePhotonVisionCamera1 = false;
+	public static boolean kEnablePhotonVisionCamera2 = false;
 
 	// Limelight
 	public static boolean kEnableLimelight = true;
 	public static boolean kDebugLimelight = false;
-	public static boolean kResetOdometryFromLimeLight = false;
 
 	// Arm
 	public static boolean kEnableArm = false;
@@ -196,7 +194,7 @@ public final class Constants {
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(8.5, 0, 0);
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(5.0, 0, 0);
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(6.5, 0, 0); // best one
-			public static final PIDConstants kPPDriveConstants = new PIDConstants(50.0, 0.0, 0);
+			public static final PIDConstants kPPDriveConstants = new PIDConstants(6.01, 0.0, 0);
 			//public static final PIDConstants kPPTurnConstants = new PIDConstants(3.5, 0, 0);
 			//public static final PIDConstants kPPTurnConstants = new PIDConstants(5.0, 0, 0);
 			public static final PIDConstants kPPTurnConstants = new PIDConstants(3.5, 0, 0);

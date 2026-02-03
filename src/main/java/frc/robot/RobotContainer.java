@@ -71,6 +71,8 @@ public class RobotContainer {
 
     // Register the auto commands
     registerAutoCommands();
+
+    SmartDashboard.putData("Field", field);
   }
 
   /**
@@ -91,8 +93,8 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    //autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
-    autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
+    //autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto", autoChooser);
 
@@ -150,5 +152,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", new IntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
+  }
+
+  public void simulationInit() {
+    driveSubsystem.simulationInit();
   }
 }
