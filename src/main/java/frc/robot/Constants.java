@@ -36,27 +36,15 @@ public final class Constants {
 	public static boolean enableLogger = true;
 
 	// Photonvision
-	public static boolean kEnablePhotonVision = false;
-	public static boolean kDebugPhotonVision = false;
-	public static boolean kResetOdometryFromPhotonVision = false;
-	public static boolean kEnablePhotonVisionCamera1 = false;
-	public static boolean kEnablePhotonVisionCamera2 = false;
+	public static boolean kEnablePhotonVision = true;
+	public static boolean kDebugPhotonVision = true;
+	public static boolean kResetOdometryFromPhotonVision = true;
+	public static boolean kEnablePhotonVisionCamera1 = true;
+	public static boolean kEnablePhotonVisionCamera2 = true;
 
 	// Limelight
-	public static boolean kEnableLimelight = true;
+	public static boolean kEnableLimelight = false;
 	public static boolean kDebugLimelight = false;
-
-	// Arm
-	public static boolean kEnableArm = false;
-	public static boolean kEnableDebugArm = false;
-
-	// Elevator
-	public static boolean kEnableElevator = false;
-	public static boolean kEnableDebugElevator = false;
-
-	// End Effector
-	public static boolean kEnableEndEffector = false;
-	public static boolean kEnableDebugEndEffector = false;
 
 	public static final String kRioCANBusName = "rio";
 	public static final String kCanivoreCANBusName = "canivore";

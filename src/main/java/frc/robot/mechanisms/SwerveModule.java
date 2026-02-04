@@ -266,8 +266,8 @@ public class SwerveModule {
 	public double getDistanceMeters() {
 
 		// return (driveMotor.getPosition(true).getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		//return (driveMotor.getPosition(true).getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		return rotationsToMeters(driveMotor.getPosition(true).getValue()).magnitude();
+		return (driveMotor.getPosition(true).getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
+		// return rotationsToMeters(driveMotor.getPosition(true).getValue()).magnitude();
 
 		//
 	}
@@ -412,4 +412,8 @@ public class SwerveModule {
         /* Then multiply by gear ratio to get rotor rotations */
         return RadiansPerSecond.of(wheelRadians * Constants.ModuleConstants.kdriveGearRatioL3);
     }
+
+	public boolean isMoving(){
+		return driveMotor.getVelocity().getValueAsDouble() < 0.1 && driveMotor.getVelocity().getValueAsDouble() > -0.1;
+	}
 }

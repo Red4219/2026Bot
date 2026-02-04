@@ -145,6 +145,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	SwerveModuleState[] desiredStates = new SwerveModuleState[4];
 
+	private boolean isSim = Robot.isSimulation();
+
 	public DriveSubsystem() {
 
 		if(!RobotBase.isReal()) {
@@ -458,13 +460,13 @@ public class DriveSubsystem extends SubsystemBase {
 				vision2.periodic();
 			}
 
-			/*if (!gyro.isMoving() && vision1.getCamera1Enabled() && Constants.kResetOdometryFromPhotonVision && !isSim
+			if (!this.isMoving() && vision1.getCamera1Enabled() && Constants.kResetOdometryFromPhotonVision && !isSim
 					&& vision1.isVisionEstAvailable()) {
 				resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
-			} else if (!gyro.isMoving() && vision2.getCamera2Enabled() && Constants.kResetOdometryFromPhotonVision
+			} else if (!this.isMoving() && vision2.getCamera2Enabled() && Constants.kResetOdometryFromPhotonVision
 					&& !isSim && vision2.isVisionEstAvailable()) {
 				resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
-			}*/
+			}
 
 		}
 
@@ -604,5 +606,9 @@ public class DriveSubsystem extends SubsystemBase {
 		//gyro.setYaw(DriveConstants.kGyroYawOffset);
 		//gyro.setYaw(0);
 		gyro.reset();
+	}
+
+	public boolean isMoving() {
+		return frontLeft.isMoving() && frontRight.isMoving() && rearLeft.isMoving() && rearRight.isMoving();
 	}
 }
