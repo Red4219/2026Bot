@@ -273,33 +273,34 @@ public class Vision {
             pubCam2Rotation.set(Constants.PhotonVisionConstants.cam2Rotation);
             cam2Rotation = Constants.PhotonVisionConstants.cam2Rotation;
 
-            /*
-             * entryCameraXOffset = photonVisionTab.add(cameraOffsetName + "XOffset",
-             * cameraToRobot.getX())
-             * .withWidget(BuiltInWidgets.kTextView)
-             * .getEntry();
-             * 
-             * entryCameraYOffset = photonVisionTab.add(cameraOffsetName + "YOffset",
-             * cameraToRobot.getY())
-             * .withWidget(BuiltInWidgets.kTextView)
-             * .getEntry();
-             * 
-             * entryCameraHeight = photonVisionTab.add(cameraOffsetName + "Height",
-             * cameraToRobot.getZ())
-             * .withWidget(BuiltInWidgets.kTextView)
-             * .getEntry();
-             * 
-             * entryCameraRotation = photonVisionTab.add(cameraOffsetName + "Rotation",
-             * cameraToRobot.getRotation().getAngle())
-             * .withWidget(BuiltInWidgets.kTextView)
-             * .getEntry();
-             */
+            
+            //   entryCameraXOffset = photonVisionTab.add(cameraOffsetName + "XOffset",
+            //   cameraToRobot.getX())
+            //   .withWidget(BuiltInWidgets.kTextView)
+            //   .getEntry();
+              
+            //   entryCameraYOffset = photonVisionTab.add(cameraOffsetName + "YOffset",
+            //   cameraToRobot.getY())
+            //   .withWidget(BuiltInWidgets.kTextView)
+            //   .getEntry();
+              
+            //   entryCameraHeight = photonVisionTab.add(cameraOffsetName + "Height",
+            //   cameraToRobot.getZ())
+            //   .withWidget(BuiltInWidgets.kTextView)
+            //   .getEntry();
+            
+            //   entryCameraRotation = photonVisionTab.add(cameraOffsetName + "Rotation",
+            //   cameraToRobot.getRotation().getAngle())
+            //   .withWidget(BuiltInWidgets.kTextView)
+            //   .getEntry();
+             
         }
     }
 
     public void periodic() {
 
         if(Constants.PhotonVisionConstants.debugPhotonVision) {
+            //System.out.println("debug photon vis ran");
             // Cam 1
             if (subCam1X.get() != cam1X) {
 				cam1X = subCam1X.get();
@@ -370,7 +371,9 @@ public class Vision {
 
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : camera.getAllUnreadResults()) {
-            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            //visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+            //System.out.println("VisionEst is empty: " + visionEst.equals(Optional.empty()));
 
             updateEstimationStdDevs(visionEst, result.getTargets());
 
@@ -392,6 +395,7 @@ public class Vision {
                         estConsumer.accept(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
 
                         if (cameraEnum == CameraEnum.Camera1) {
+                            // System.out.println("PV Estimator 1 ran");
                             Logger.recordOutput(
                                     "PhotonVisionEstimator1/Robot",
                                     est.estimatedPose.toPose2d());
@@ -424,6 +428,7 @@ public class Vision {
                     });
 
             if (visionEst.isEmpty()) {
+                // System.out.println("Vision estimator is empty");
                 visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
                 canSeeTag = false;
                 if (Constants.kDebugPhotonVision) {

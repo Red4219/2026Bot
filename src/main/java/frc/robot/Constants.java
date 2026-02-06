@@ -36,7 +36,7 @@ public final class Constants {
 	public static boolean enableLogger = true;
 
 	// Photonvision
-	public static boolean kEnablePhotonVision = true;
+	public static boolean kEnablePhotonVision = false;
 	public static boolean kDebugPhotonVision = true;
 	public static boolean kResetOdometryFromPhotonVision = true;
 	public static boolean kEnablePhotonVisionCamera1 = true;
