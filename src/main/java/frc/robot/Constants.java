@@ -36,7 +36,7 @@ public final class Constants {
 	public static boolean enableLogger = true;
 
 	// Photonvision
-	public static boolean kEnablePhotonVision = false;
+	public static boolean kEnablePhotonVision = true;
 	public static boolean kDebugPhotonVision = true;
 	public static boolean kResetOdometryFromPhotonVision = true;
 	public static boolean kEnablePhotonVisionCamera1 = true;
@@ -232,8 +232,8 @@ public final class Constants {
 		public static double camX = Units.inchesToMeters(0);
 		public static double cam2X = Units.inchesToMeters(0);
 		// the front to back position of the camera relative to the robot center
-		public static double camY = Units.inchesToMeters(-7.5);
-		public static double cam2Y = Units.inchesToMeters(-7.5);
+		public static double camY = Units.inchesToMeters(0.0);
+		public static double cam2Y = Units.inchesToMeters(0.0);
 
 		public static double camRotation = Math.toRadians(0.0);
 		public static double cam2Rotation = Math.toRadians(180.0);
@@ -296,15 +296,16 @@ public final class Constants {
 	}
 
 	public static class ClimberConstants {
-		public static boolean enabled = false;
+		public static boolean enabled = true;
 		public static int climberMotorId = 20;
 		public static boolean invertMotor = false;
-		public static double kP = 0.2;
+		public static double kP = 5.2;
 		public static double kI = 0.0;
 		public static double kD = 0.0;
 
-		public static double targetPositionClimb = 15.0;
-		public static double targetPositionNoClimb = 0.0;
+		public static double targetPositionUp = 15.0;
+		public static double targetPositionDown = 10.0;
+		public static double targetPositionStored = 0.0;
 	}
 
 	public static class IntakeConstants {

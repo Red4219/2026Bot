@@ -232,24 +232,11 @@ public class DriveSubsystem extends SubsystemBase {
 
 		odometry = new SwerveDriveOdometry(
 				DriveConstants.kDriveKinematics,
-				// gyro.getRotation2d().unaryMinus(),
 				gyro.getRotation2d(),
 				swervePosition);
 
-		/*gyroTurnPidController = new ProfiledPIDController(
-				DriveConstants.kGyroTurningGains.kP,
-				DriveConstants.kGyroTurningGains.kI,
-				DriveConstants.kGyroTurningGains.kD,
-				new TrapezoidProfile.Constraints(
-						DriveConstants.kMaxTurningVelocityDegrees,
-						DriveConstants.kMaxTurningAcceleratonDegrees));
-
-		gyroTurnPidController.enableContinuousInput(-180, 180);
-		gyroTurnPidController.setTolerance(DriveConstants.kGyroTurnTolerance);*/
-
 		poseEstimator = new SwerveDrivePoseEstimator(
 				DriveConstants.kDriveKinematics,
-				// gyro.getRotation2d().unaryMinus(),
 				gyro.getRotation2d(),
 				swervePosition,
 				new Pose2d(),
@@ -257,7 +244,6 @@ public class DriveSubsystem extends SubsystemBase {
 				visionMeasurementStdDevs);
 
 		zeroHeading();
-		
 
 		if (Constants.kDebugDriveTrain) {
 
@@ -329,8 +315,6 @@ public class DriveSubsystem extends SubsystemBase {
 				turnD = subTurnD.get();
 			}
 		}
-
-		//System.out.println("The value is: " + subDriveP.get());
 	}
 
 	public void simulationInit() {
@@ -357,10 +341,6 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		try {
-			/*ChassisSpeeds chassisSpeeds = DriveConstants.kDriveKinematics.toChassisSpeeds(
-				desiredStates[0], desiredStates[1], desiredStates[2], desiredStates[3]
-			);*/
-
 			pigeon2SimState.addYaw(rot);
 
 		} catch (Exception e) {
@@ -389,9 +369,6 @@ public class DriveSubsystem extends SubsystemBase {
 		currentChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
 
 		swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-			// ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
-			// gyro.getRotation2d().unaryMinus())
-			//ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
 			currentChassisSpeeds
 		);
 
@@ -432,13 +409,24 @@ public class DriveSubsystem extends SubsystemBase {
 		poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
 	}
 
-	
-
 	public void updateOdometry() {
+
 		swervePosition[0] = frontLeft.getPosition();
 		swervePosition[1] = frontRight.getPosition();
 		swervePosition[2] = rearLeft.getPosition();
 		swervePosition[3] = rearRight.getPosition();
+
+		// if(isSim) {
+		// 	SwerveModuleState[] swerveModuleStatesTemp = new SwerveModuleState[4];
+		// 	swerveModuleStatesTemp[0] = frontLeft.getState();
+		// 	swerveModuleStatesTemp[1] = frontRight.getState();
+		// 	swerveModuleStatesTemp[2] = rearLeft.getState();
+		// 	swerveModuleStatesTemp[3] = rearRight.getState();
+
+		// 	if (Constants.kEnableDriveSubSystemLogger) {
+		// 		Logger.recordOutput("SwerveModuleStates/DebugSwerveStates", swerveModuleStatesTemp);
+		// 	}
+		// }
 
 		odometry.update(
 			gyro.getRotation2d(),
@@ -529,9 +517,10 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public DriveFeedforwards setChassisSpeedsRobotRelative(ChassisSpeeds chassisSpeeds, DriveFeedforwards feedForwards ) {
 
-		this.currentChassisSpeeds = chassisSpeeds.unaryMinus();
+		//this.currentChassisSpeeds = chassisSpeeds.unaryMinus();
 	
-		swerveModuleStatesRobotRelative = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds.unaryMinus());
+		//swerveModuleStatesRobotRelative = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds.unaryMinus());
+		swerveModuleStatesRobotRelative = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
 		// In simulation, the actual navx does not work, so set the value from the chassisSpeeds
 		// if(isSim) {

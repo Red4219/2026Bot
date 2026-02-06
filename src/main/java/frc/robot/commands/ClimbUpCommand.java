@@ -9,12 +9,11 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 
-public class ClimbCommand extends Command {
+public class ClimbUpCommand extends Command {
 
     private static ClimberSubsystem _climberSubsystem;
-    private boolean _finished = false;
 
-    public ClimbCommand() {
+    public ClimbUpCommand() {
          _climberSubsystem = RobotContainer.climberSubsystem;
 
          addRequirements(_climberSubsystem);
@@ -22,32 +21,31 @@ public class ClimbCommand extends Command {
 
     @Override
     public void initialize() {
-        
+        // Tell the Climber to go up
+        _climberSubsystem.climbState = ClimbState.Up;
     }
 
     @Override
     public void execute() {
-
-        // Tell the climber subsystem that we need to climb
-        _climberSubsystem.climbState = ClimbState.Climb;
         
     }
 
     @Override
     public void end(boolean interrupted) {
-
+        
     }
 
     @Override
     public boolean isFinished() {
 
-        // Only return true when we have successfully climbed
-        if(_climberSubsystem.atTargetPosition()){
+        // Only return true when we have successfully gone up
+        /*if(_climberSubsystem.atTargetPosition()){
             return true;
-        }
+        }*/
 
         // Target position has not been met so return false
-        return false;
+        //return false;
+        return true;
     }
     
 }
