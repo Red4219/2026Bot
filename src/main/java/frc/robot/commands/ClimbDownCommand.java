@@ -9,29 +9,27 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 
-public class NoClimbCommand extends Command {
+public class ClimbDownCommand extends Command {
 
-    private static DriveSubsystem _driveSubsystem;
     private static ClimberSubsystem _climberSubsystem;
-    private boolean _finished = false;
 
-    public NoClimbCommand() {
-         _driveSubsystem = RobotContainer.driveSubsystem;
+    public ClimbDownCommand() {
          _climberSubsystem = RobotContainer.climberSubsystem;
 
-         addRequirements(_driveSubsystem, _climberSubsystem);
+         addRequirements(_climberSubsystem);
     }
 
     @Override
     public void initialize() {
-        
+        // Tell the Climber to go down
+        _climberSubsystem.climbState = ClimbState.Down;
     }
 
     @Override
     public void execute() {
 
         // Tell the climber subsystem that we need to no climb
-        _climberSubsystem.climbState = ClimbState.NoClimb;
+        _climberSubsystem.climbState = ClimbState.Down;
     }
 
     @Override
@@ -42,13 +40,15 @@ public class NoClimbCommand extends Command {
     @Override
     public boolean isFinished() {
 
-        // Only return true when we have successfully climbed
-        if(_climberSubsystem.atTargetPosition()){
+        // Only return true when we have successfully gone down
+        /*if(_climberSubsystem.atTargetPosition()){
             return true;
         }
 
         // Target position has not been met so return false
-        return false;
+        return false;*/
+
+        return true;
     }
     
 }

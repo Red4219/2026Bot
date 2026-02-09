@@ -14,9 +14,9 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.commands.ClimbCommand;
+import frc.robot.commands.ClimbUpCommand;
 import frc.robot.commands.EjectCommand;
-import frc.robot.commands.NoClimbCommand;
+import frc.robot.commands.ClimbDownCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -72,6 +72,14 @@ public class RobotContainer {
     // Register the auto commands
     registerAutoCommands();
 
+    autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
+
+    SmartDashboard.putData("Auto", autoChooser);
+
+    // Add the chooser to the Shuffleboard to select which Auo to run
+		Shuffleboard.getTab("Autonomous").add("Auto", autoChooser)
+			.withWidget(BuiltInWidgets.kComboBoxChooser);
+
     SmartDashboard.putData("Field", field);
   }
 
@@ -93,14 +101,14 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
+    //autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
     //autoChooser = AutoBuilder.buildAutoChooser();
 
-    SmartDashboard.putData("Auto", autoChooser);
+    // SmartDashboard.putData("Auto", autoChooser);
 
-    // Add the chooser to the Shuffleboard to select which Auo to run
-		Shuffleboard.getTab("Autonomous").add("Auto", autoChooser)
-			.withWidget(BuiltInWidgets.kComboBoxChooser);
+    // // Add the chooser to the Shuffleboard to select which Auo to run
+		// Shuffleboard.getTab("Autonomous").add("Auto", autoChooser)
+		// 	.withWidget(BuiltInWidgets.kComboBoxChooser);
 	
 
 
@@ -122,8 +130,8 @@ public class RobotContainer {
       driveSubsystem.setDefaultCommand(
 
 					new RunCommand(() -> driveSubsystem.drive(
-							JoystickUtils.processJoystickInput(driverController.getLeftY()),
-							JoystickUtils.processJoystickInput(driverController.getLeftX()),
+							JoystickUtils.processJoystickInput(-driverController.getLeftY()),
+							JoystickUtils.processJoystickInput(-driverController.getLeftX()),
 							JoystickUtils.processJoystickInput(-driverController.getRawAxis(2))
 						),
 						driveSubsystem
@@ -147,8 +155,8 @@ public class RobotContainer {
 	}
 
   private void registerAutoCommands() {
-    NamedCommands.registerCommand("Climb", new ClimbCommand());
-    NamedCommands.registerCommand("NoClimb", new NoClimbCommand());
+    NamedCommands.registerCommand("ClimbUp", new ClimbUpCommand());
+    NamedCommands.registerCommand("ClimbDown", new ClimbDownCommand());
     NamedCommands.registerCommand("Intake", new IntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());

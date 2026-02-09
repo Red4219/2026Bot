@@ -44,6 +44,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.PhotonVisionConstants;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -177,7 +178,6 @@ public class Vision {
                     PhotonVisionConstants.camera2ToRobot);
         }
 
-        // camera = new PhotonCamera(PhotonVisionConstants.CameraName);
         if (cameraEnum == CameraEnum.Camera1) {
             camera = new PhotonCamera("cam1");
         } else {
@@ -215,6 +215,8 @@ public class Vision {
             }
 
             cameraSim.enableDrawWireframe(true);
+
+            SmartDashboard.putData("PhotonVisionField", visionSim.getDebugField());
         }
 
         if (Constants.PhotonVisionConstants.debugPhotonVision) {
@@ -293,6 +295,8 @@ public class Vision {
             //   cameraToRobot.getRotation().getAngle())
             //   .withWidget(BuiltInWidgets.kTextView)
             //   .getEntry();
+
+            
              
         }
     }
@@ -300,7 +304,6 @@ public class Vision {
     public void periodic() {
 
         if(Constants.PhotonVisionConstants.debugPhotonVision) {
-            //System.out.println("debug photon vis ran");
             // Cam 1
             if (subCam1X.get() != cam1X) {
 				cam1X = subCam1X.get();
@@ -371,8 +374,8 @@ public class Vision {
 
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : camera.getAllUnreadResults()) {
-            //visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
-            visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            //visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
             //System.out.println("VisionEst is empty: " + visionEst.equals(Optional.empty()));
 
             updateEstimationStdDevs(visionEst, result.getTargets());
