@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -378,7 +379,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Apply deadbands to inputs
 		xSpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
-		ySpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
+		ySpeed *=  ModuleConstants.kMaxModuleSpeedMetersPerSecond;
 
 		rot *= DriveConstants.kMaxRPM;
 
@@ -605,7 +606,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public void zeroHeading() {
 		//gyro.setYaw(DriveConstants.kGyroYawOffset);
 		//gyro.setYaw(0);
-		gyro.reset();
+		gyro.setYaw(180);
 	}
 
 	public boolean isMoving() {
