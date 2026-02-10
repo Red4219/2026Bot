@@ -378,6 +378,13 @@ public class Vision {
             //visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
             //System.out.println("VisionEst is empty: " + visionEst.equals(Optional.empty()));
 
+            // case to cover when only one tag is visible:
+            if (!visionEst.isPresent()){
+                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+            } 
+                
+            
+
             updateEstimationStdDevs(visionEst, result.getTargets());
 
             if (Robot.isSimulation()) {
@@ -389,7 +396,8 @@ public class Vision {
                             getSimDebugField().getObject("VisionEstimation").setPoses();
                         });
             }
-
+            Logger.recordOutput("Odometry/VisionEstIsPresent", visionEst.isPresent());
+            Logger.recordOutput("Odometry/ValueOfVisionEst", visionEst.toString());
             visionEst.ifPresent(
                     est -> {
                         // Change our trust in the measurement based on the tags we can see
@@ -446,6 +454,8 @@ public class Vision {
                     }
                 }
             }
+
+            Logger.recordOutput("Odometry/VisionEstIsEmpty", visionEst.isEmpty());
         }
 
     }

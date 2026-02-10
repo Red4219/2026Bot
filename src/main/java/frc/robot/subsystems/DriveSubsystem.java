@@ -449,6 +449,9 @@ public class DriveSubsystem extends SubsystemBase {
 				vision2.periodic();
 			}
 
+			Logger.recordOutput("Odometry/VisionEst1Available", vision1.isVisionEstAvailable());
+			Logger.recordOutput("Odometry/VisionEst2Available", vision2.isVisionEstAvailable());
+
 			if (!this.isMoving() && vision1.getCamera1Enabled() && Constants.kResetOdometryFromPhotonVision && !isSim
 					&& vision1.isVisionEstAvailable()) {
 				resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
@@ -462,6 +465,7 @@ public class DriveSubsystem extends SubsystemBase {
 		// Show the estimated position
 		Logger.recordOutput("Estimator/Robot", poseEstimator.getEstimatedPosition());
 		Logger.recordOutput("Odometry/Robot", odometry.getPoseMeters());
+		Logger.recordOutput("Odometry/isMoving", this.isMoving());
 
 		//System.out.println("estimator: x:" + poseEstimator.getEstimatedPosition().getX() + ", y: " + poseEstimator.getEstimatedPosition().getY() + ", rotation: " + poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
