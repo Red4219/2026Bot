@@ -68,6 +68,7 @@ public class RobotContainer {
     
     // Configure the trigger bindings
     configureBindings();
+    new ResetPositionCommand();
 
     // Register the auto commands
     registerAutoCommands();
@@ -119,8 +120,8 @@ public class RobotContainer {
     
       driveSubsystem.setDefaultCommand(
 			  new RunCommand(() -> driveSubsystem.drive(
-				  JoystickUtils.processJoystickInput(-driverController.getLeftY()),
-				  JoystickUtils.processJoystickInput(-driverController.getLeftX()),
+				  JoystickUtils.processJoystickInput(driverController.getLeftY()),
+				  JoystickUtils.processJoystickInput(driverController.getLeftX()),
 				  JoystickUtils.processJoystickInput(-driverController.getRightX())
 			  ),
 			  driveSubsystem
