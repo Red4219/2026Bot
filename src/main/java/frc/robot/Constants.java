@@ -226,14 +226,14 @@ public final class Constants {
 		public static double camDiagFOV = 170.0;
 		public static double camPitch = 0.0;
 		public static double cam2Pitch = 0.0;
-		public static double camHeightOffGround = Units.inchesToMeters(40.0);
-		public static double cam2HeightOffGround = Units.inchesToMeters(40.0);
+		public static double camHeightOffGround = Units.inchesToMeters(10.25);
+		public static double cam2HeightOffGround = Units.inchesToMeters(10.25);
 		// the side to side position of the camera relative to the robot center
-		public static double camX = Units.inchesToMeters(0);
-		public static double cam2X = Units.inchesToMeters(0);
+		public static double camX = Units.inchesToMeters(-6.5);
+		public static double cam2X = Units.inchesToMeters(-6.5);
 		// the front to back position of the camera relative to the robot center
-		public static double camY = Units.inchesToMeters(0.0);
-		public static double cam2Y = Units.inchesToMeters(0.0);
+		public static double camY = Units.inchesToMeters(11.5);
+		public static double cam2Y = Units.inchesToMeters(14.5);
 
 		public static double camRotation = Math.toRadians(0.0);
 		public static double cam2Rotation = Math.toRadians(180.0);
