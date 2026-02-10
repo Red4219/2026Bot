@@ -603,6 +603,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public boolean isMoving() {
-		return frontLeft.isMoving() && frontRight.isMoving() && rearLeft.isMoving() && rearRight.isMoving();
+		return !(frontLeft.isMoving() && frontRight.isMoving() && rearLeft.isMoving() && rearRight.isMoving());
 	}
 }
