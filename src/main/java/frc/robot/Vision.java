@@ -34,7 +34,9 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -329,39 +331,32 @@ public class Vision {
             if (subCam2Rotation.get() != cam2Rotation) {
 				cam2Rotation = subCam2Rotation.get();
 			}
+
+
+
+            if (cameraEnum == cameraEnum.Camera1) {
+                // Check for changes
+                if (cam1X != cameraToRobot.getX()
+                        || cam1Y != cameraToRobot.getY()
+                        || cam1Rotation != cameraToRobot.getRotation().getAngle()) {
+                    cameraToRobot = new Transform3d(
+                            new Translation3d(
+                                    cam1X,
+                                    cam1Y,
+                                    entryCameraHeight.getDouble(0.0)),
+                            new Rotation3d(
+                                    0.0,
+                                    0.0,
+                                    cam1Rotation));
+
+                    photonEstimator.setRobotToCameraTransform(cameraToRobot);
+                }
+            }
+
+            
+
+            
         }
-
-        
-
-        /*
-         * if(Constants.PhotonVisionConstants.debugPhotonVision) {
-         * 
-         * // Check for changes
-         * if(
-         * entryCameraXOffset.getDouble(0.0) != cameraToRobot.getX()
-         * || entryCameraYOffset.getDouble(0.0) != cameraToRobot.getY()
-         * || entryCameraHeight.getDouble(0.0) != cameraToRobot.getZ()
-         * || entryCameraRotation.getDouble(0.0) !=
-         * cameraToRobot.getRotation().getAngle()
-         * ) {
-         * 
-         * 
-         * cameraToRobot = new Transform3d(
-         * new Translation3d(
-         * entryCameraXOffset.getDouble(0.0),
-         * entryCameraYOffset.getDouble(0.0),
-         * entryCameraHeight.getDouble(0.0)
-         * ),
-         * new Rotation3d(
-         * 0,
-         * entryCameraRotation.getDouble(0.0),
-         * 0
-         * )
-         * );
-         * 
-         * }
-         * }
-         */
 
         allTagPoses.clear();
 
