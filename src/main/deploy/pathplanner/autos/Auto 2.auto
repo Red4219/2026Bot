@@ -13,13 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "EjectCoral"
+            "waitTime": 3.0
           }
         },
         {
@@ -35,12 +29,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "IntakeCoralWait"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Auto 2 Path 3"
@@ -50,12 +38,6 @@
           "type": "wait",
           "data": {
             "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "EjectCoral"
           }
         }
       ]
