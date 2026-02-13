@@ -331,6 +331,8 @@ public class Vision {
 			}
         }
 
+        
+
         /*
          * if(Constants.PhotonVisionConstants.debugPhotonVision) {
          * 
