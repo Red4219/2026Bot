@@ -343,7 +343,7 @@ public class Vision {
                             new Translation3d(
                                     cam1X,
                                     cam1Y,
-                                    entryCameraHeight.getDouble(0.0)),
+                                    Constants.PhotonVisionConstants.camHeightOffGround),
                             new Rotation3d(
                                     0.0,
                                     0.0,
