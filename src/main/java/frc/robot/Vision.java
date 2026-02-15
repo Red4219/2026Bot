@@ -332,28 +332,51 @@ public class Vision {
 				cam2Rotation = subCam2Rotation.get();
 			}
 
-
-
             if (cameraEnum == cameraEnum.Camera1) {
                 // Check for changes
                 if (cam1X != cameraToRobot.getX()
                         || cam1Y != cameraToRobot.getY()
                         || cam1Rotation != cameraToRobot.getRotation().getAngle()) {
+
+                            System.out.println("cam1Rotation: " + cam1Rotation + " angle: " + cameraToRobot.getRotation().getAngle());
                     cameraToRobot = new Transform3d(
                             new Translation3d(
-                                    cam1X,
-                                    cam1Y,
-                                    Constants.PhotonVisionConstants.camHeightOffGround),
+                                cam1X,
+                                cam1Y,
+                                Constants.PhotonVisionConstants.camHeightOffGround
+                            ),
                             new Rotation3d(
-                                    0.0,
-                                    0.0,
-                                    cam1Rotation));
+                                0.0,
+                                0.0,
+                                cam1Rotation)
+                            );
 
                     photonEstimator.setRobotToCameraTransform(cameraToRobot);
                 }
             }
 
-            
+            if (cameraEnum == cameraEnum.Camera2) {
+                // Check for changes
+                if (cam2X != cameraToRobot.getX()
+                        || cam2Y != cameraToRobot.getY()
+                        || cam2Rotation != cameraToRobot.getRotation().getAngle()) {
+
+                            System.out.println("cam2Rotation: " + cam2Rotation + " angle: " + cameraToRobot.getRotation().getAngle());
+                    cameraToRobot = new Transform3d(
+                            new Translation3d(
+                                cam2X,
+                                cam2Y,
+                                Constants.PhotonVisionConstants.cam2HeightOffGround
+                            ),
+                            new Rotation3d(
+                                0.0,
+                                0.0,
+                                cam2Rotation)
+                            );
+
+                    photonEstimator.setRobotToCameraTransform(cameraToRobot);
+                }
+            }
 
             
         }
