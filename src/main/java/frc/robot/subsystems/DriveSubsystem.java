@@ -289,7 +289,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public void ChassisAimAtTarget() {
 		if(Constants.ShooterConstants.enabled) {
 
-			double temp = RobotContainer.shooterSubsystem.findAngleToTarget(getPoseEstimatorPose2d());
+			/*double temp = RobotContainer.shooterSubsystem.findAngleToTarget(getPoseEstimatorPose2d());
 
 			double diff = (temp - getPoseEstimatorPose2d().getRotation().getDegrees());
 
@@ -304,7 +304,7 @@ public class DriveSubsystem extends SubsystemBase {
 				drive(0.0, 0.0, -0.2);
 			} else if(diff > 0.5) {
 				drive(0.0, 0.0, 0.2);
-			}
+			}*/
 
 			// Rotate to the target
 			//drive(0.0, 0.0, 0.05);

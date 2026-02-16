@@ -51,12 +51,12 @@ public class ShooterSubsystem extends SubsystemBase {
     //public Map<Integer, Translation2d> targets = new HashMap<Integer, Translation2d>();
 
     public Translation2d[] targets = {
-        new Translation2d(0,0), // Blue tower
+        new Translation2d(4.5,4.0), // Blue tower
         new Translation2d(12.0, 4.0), // Red tower
-        new Translation2d(0.0, 0.0), // Blue Human Element
-        new Translation2d(0.0, 0.0), // Red Human Element
-        new Translation2d(0.0, 0.0), // Blue Wall
-        new Translation2d(0.0, 0.0) // Red Wall 
+        new Translation2d(0.0, 1.0), // Blue Human Element
+        new Translation2d(16.6, 7.0), // Red Human Element
+        new Translation2d(0.0, 7.0), // Blue Wall
+        new Translation2d(16.5, 1.0) // Red Wall 
     };
 
     private String stateText = "Stopped";
@@ -292,18 +292,19 @@ public class ShooterSubsystem extends SubsystemBase {
                 }
             }
 
+            double angle = findAngleToTarget(target, currentPosition);
+
+            currentPosition = new Pose2d(
+                currentPosition.getX(), 
+                currentPosition.getY(), 
+                new Rotation2d(Math.toRadians(angle))
+            );
+
             field = RobotContainer.field.getObject("My Objects");
 
             field.setPoses(List.of(
                 currentPosition
             ));
-
-            // List.of(
-            //     new Pose2d(1.0, 1.0, new Rotation2d()),
-            //     new Pose2d(2.0, 2.0, new Rotation2d()),
-            //     new Pose2d(3.0, 3.0, new Rotation2d())
-            // )
-
         }
     }
 
@@ -333,11 +334,11 @@ public class ShooterSubsystem extends SubsystemBase {
         return 0.0;
     }
 
-    public double findAngleToTarget(Pose2d currentPose) {
+    public double findAngleToTarget(Translation2d targett, Pose2d currentPose) {
         
         double temp = Math.atan2(
-            target.getY() - currentPose.getY(),
-            target.getX() - currentPose.getX()
+            targett.getY() - currentPose.getY(),
+            targett.getX() - currentPose.getX()
         );
 
         temp = Math.toDegrees(temp);

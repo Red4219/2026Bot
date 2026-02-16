@@ -40,7 +40,7 @@ public class ChassisAimCommand extends Command {
     public void AimAtTarget() {
 		if(Constants.ShooterConstants.enabled) {
 
-            Pose2d pose = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
+            /*Pose2d pose = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
 
 			double temp = RobotContainer.shooterSubsystem.findAngleToTarget(
                 RobotContainer.driveSubsystem.getPoseEstimatorPose2d()
@@ -52,7 +52,7 @@ public class ChassisAimCommand extends Command {
 				"DriveSubsystem::ChassisAimAtTarget() - temp: " + temp 
 				+ " angle: " + pose.getRotation().getDegrees()
 				+ " diff: " + diff
-			);
+			);*/
 
 
 			/*if(diff < 0.5) {
