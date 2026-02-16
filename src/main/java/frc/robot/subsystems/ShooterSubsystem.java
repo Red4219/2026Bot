@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -221,8 +222,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 case Shooting:
                     // Calculate Positions
                     targetHoodValue = calculateHood();
-                    targetFlyWheelSpeed = calculateFlywheelSpeed();
-                    targetTurretPosition = calculateTurretPosition();
+                    //targetFlyWheelSpeed = calculateFlywheelSpeed();
+                    //targetTurretPosition = calculateTurretPosition();
                     stateText = "Shooting";
                     break;
                 case Stopped:
@@ -235,8 +236,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 case Tracking:
                     // Calculate Positions
                     targetHoodValue = calculateHood();
-                    targetFlyWheelSpeed = calculateFlywheelSpeed();
-                    targetTurretPosition = calculateTurretPosition();
+                    //targetFlyWheelSpeed = calculateFlywheelSpeed();
+                    //targetTurretPosition = calculateTurretPosition();
                     stateText = "Tracking";
                     break;
             }
@@ -266,28 +267,34 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTarget = ShooterTarget.RedTower;
                         shootTargetText = "Red Tower";
                         target = targets[1];
+                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
                         shootTarget = ShooterTarget.RedWall;
                         shootTargetText = "Red Wall";
                         target = targets[5];
+                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
                         shootTarget = ShooterTarget.RedHumanElement;
                         shootTargetText = "Red Human Element";
                         target = targets[3];
+                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                     }
                 } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
                     if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getX() < 4.0) {
                         shootTarget = ShooterTarget.BlueTower;
                         shootTargetText = "Blue Tower";
                         target = targets[0];
+                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
                         shootTarget = ShooterTarget.BlueHumanElement;
                         shootTargetText = "Blue Human Element";
                         target = targets[2];
+                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
                         shootTarget = ShooterTarget.BlueWall;
                         shootTargetText = "Blue Wall";
                         target = targets[4];
+                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                     }
                 }
             }
@@ -316,17 +323,33 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    private double calculateFlywheelSpeed() {
+    private double calculateFlywheelSpeed(Translation2d target, Pose2d currentPose) {
 
-        if(limelight.lookForTarget(9)) {
-            // limelight can see the target we are looking for
-            distanceFromTarget = limelight.getDistancToTargetFromRobot(9);
-        } else {
-            distanceFromTarget = 0.0;
-        }
+        // double temp = Math.atan2(
+        //     target.getY() - currentPose.getY(),
+        //     target.getX() - currentPose.getX()
+        // );
 
-        // This needs to be filled in with a function to calculate the flywheel speed
-        return 0.0;
+        
+
+        // calculate the distance based off of telemetry
+        distanceFromTarget =  Math.sqrt(Math.pow(target.getX() - currentPose.getX(), 2.0) + Math.pow(target.getY() - currentPose.getY(), 2.0));
+
+        // Publish to network tables
+        pubDistanceFromTarget.set(distanceFromTarget);
+
+        return distanceFromTarget;
+        
+
+        // if(limelight.lookForTarget(9)) {
+        //     // limelight can see the target we are looking for
+        //     distanceFromTarget = limelight.getDistancToTargetFromRobot(9);
+        // } else {
+        //     distanceFromTarget = 0.0;
+        // }
+
+        // // This needs to be filled in with a function to calculate the flywheel speed
+        // return 0.0;
     }
 
     private double calculateHood() {
@@ -334,11 +357,11 @@ public class ShooterSubsystem extends SubsystemBase {
         return 0.0;
     }
 
-    public double findAngleToTarget(Translation2d targett, Pose2d currentPose) {
+    public double findAngleToTarget(Translation2d target, Pose2d currentPose) {
         
         double temp = Math.atan2(
-            targett.getY() - currentPose.getY(),
-            targett.getX() - currentPose.getX()
+            target.getY() - currentPose.getY(),
+            target.getX() - currentPose.getX()
         );
 
         temp = Math.toDegrees(temp);
