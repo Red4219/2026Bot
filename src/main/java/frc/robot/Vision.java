@@ -338,7 +338,7 @@ public class Vision {
                         || cam1Y != cameraToRobot.getY()
                         || cam1Rotation != cameraToRobot.getRotation().getAngle()) {
 
-                            System.out.println("cam1Rotation: " + cam1Rotation + " angle: " + cameraToRobot.getRotation().getAngle());
+                            //System.out.println("cam1Rotation: " + cam1Rotation + " angle: " + cameraToRobot.getRotation().getAngle());
                     cameraToRobot = new Transform3d(
                             new Translation3d(
                                 cam1X,
@@ -361,7 +361,7 @@ public class Vision {
                         || cam2Y != cameraToRobot.getY()
                         || cam2Rotation != cameraToRobot.getRotation().getAngle()) {
 
-                            System.out.println("cam2Rotation: " + cam2Rotation + " angle: " + cameraToRobot.getRotation().getAngle());
+                            //System.out.println("cam2Rotation: " + cam2Rotation + " angle: " + cameraToRobot.getRotation().getAngle());
                     cameraToRobot = new Transform3d(
                             new Translation3d(
                                 cam2X,
