@@ -2,9 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 
 public class IntakeCommand extends Command {

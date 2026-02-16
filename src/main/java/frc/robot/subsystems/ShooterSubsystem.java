@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import java.util.List;
+
+import com.fasterxml.jackson.databind.node.POJONode;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
@@ -11,6 +14,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
@@ -20,7 +24,9 @@ import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Limelight;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterConstants;
@@ -101,6 +107,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private ShooterTarget shootTarget = ShooterTarget.RedTower;
     private String shootTargetText = "Red Tower";
+
+    private Pose2d currentPosition = new Pose2d();
+    private FieldObject2d field;
 
     public ShooterSubsystem() {
 
@@ -202,6 +211,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (ShooterConstants.enabled) {
 
+            // Get the position from the drive system
+            currentPosition = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
+
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
 
@@ -280,6 +292,18 @@ public class ShooterSubsystem extends SubsystemBase {
                 }
             }
 
+            field = RobotContainer.field.getObject("My Objects");
+
+            field.setPoses(List.of(
+                currentPosition
+            ));
+
+            // List.of(
+            //     new Pose2d(1.0, 1.0, new Rotation2d()),
+            //     new Pose2d(2.0, 2.0, new Rotation2d()),
+            //     new Pose2d(3.0, 3.0, new Rotation2d())
+            // )
+
         }
     }
 
@@ -308,8 +332,6 @@ public class ShooterSubsystem extends SubsystemBase {
         // This needs to be filled in with a function to calculate the flywheel speed
         return 0.0;
     }
-
-    
 
     public double findAngleToTarget(Pose2d currentPose) {
         
