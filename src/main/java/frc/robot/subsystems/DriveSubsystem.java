@@ -286,6 +286,32 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
+	public void ChassisAimAtTarget() {
+		if(Constants.ShooterConstants.enabled) {
+
+			double temp = RobotContainer.shooterSubsystem.findAngleToTarget(getPoseEstimatorPose2d());
+
+			double diff = (temp - getPoseEstimatorPose2d().getRotation().getDegrees());
+
+			System.out.println(
+				"DriveSubsystem::ChassisAimAtTarget() - temp: " + temp 
+				+ " angle: " + getPoseEstimatorPose2d().getRotation().getDegrees()
+				+ " diff: " + diff
+			);
+
+
+			if(diff < 0.5) {
+				drive(0.0, 0.0, -0.2);
+			} else if(diff > 0.5) {
+				drive(0.0, 0.0, 0.2);
+			}
+
+			// Rotate to the target
+			//drive(0.0, 0.0, 0.05);
+			//System.out.println("DriveSubsystem::ChassisAimAtTarget() angle is: " + RobotContainer.shooterSubsystem.getAngleToTarget());
+		}
+	}
+
 	@Override
 	public void periodic() {
 		updateOdometry();

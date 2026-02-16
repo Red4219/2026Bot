@@ -340,7 +340,7 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static final boolean enabled = false;
+		public static final boolean enabled = true;
 		public static final boolean debug = true;
 
 		public static final boolean invertShooterMotor = false;

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Autos;
+import frc.robot.commands.ChassisAimCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetPositionCommand;
@@ -104,6 +105,8 @@ public class RobotContainer {
 
     //autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
     //autoChooser = AutoBuilder.buildAutoChooser();
+
+    driverController.button(1).whileTrue(new ChassisAimCommand());
 
     // SmartDashboard.putData("Auto", autoChooser);
 
