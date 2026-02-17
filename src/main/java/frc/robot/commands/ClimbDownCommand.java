@@ -21,14 +21,12 @@ public class ClimbDownCommand extends Command {
 
     @Override
     public void initialize() {
-        // Tell the Climber to go down
-        _climberSubsystem.climbState = ClimbState.Down;
+        
     }
 
     @Override
     public void execute() {
-
-        // Tell the climber subsystem that we need to no climb
+        // Tell the Climber to go down
         _climberSubsystem.climbState = ClimbState.Down;
     }
 

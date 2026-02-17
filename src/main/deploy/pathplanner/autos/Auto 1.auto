@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "ClimbUp"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Auto 1 Path 1"

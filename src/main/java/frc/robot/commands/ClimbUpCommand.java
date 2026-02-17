@@ -21,13 +21,13 @@ public class ClimbUpCommand extends Command {
 
     @Override
     public void initialize() {
-        // Tell the Climber to go up
-        _climberSubsystem.climbState = ClimbState.Up;
+        
     }
 
     @Override
     public void execute() {
-        
+        // Tell the Climber to go up
+        _climberSubsystem.climbState = ClimbState.Up;
     }
 
     @Override
