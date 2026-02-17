@@ -45,7 +45,7 @@ public class RobotContainer {
   public static final Field2d field = new Field2d();
   
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
@@ -96,8 +96,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    //new Trigger(m_exampleSubsystem::exampleCondition)
+    //    .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -106,7 +106,7 @@ public class RobotContainer {
     //autoChooser = AutoBuilder.buildAutoChooser("Auto 1");
     //autoChooser = AutoBuilder.buildAutoChooser();
 
-    driverController.button(1).whileTrue(new ChassisAimCommand());
+    //driverController.button(1).whileTrue(new ChassisAimCommand());
 
     // SmartDashboard.putData("Auto", autoChooser);
 

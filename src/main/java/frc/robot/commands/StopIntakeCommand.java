@@ -16,14 +16,14 @@ public class StopIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        
+        System.out.println("StopIntakeCommand::initialize() called");
+        // Tell the intake subsystem that we need to eject
+        _intakeSubsystem.intakeState = IntakeState.Stop;
     }
 
     @Override
     public void execute() {
-
-        // Tell the intake subsystem that we need to eject
-        _intakeSubsystem.intakeState = IntakeState.Stop;
+        
     }
 
     @Override

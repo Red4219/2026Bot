@@ -16,14 +16,16 @@ public class IntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        
+        System.out.println("IntakeCommand::initialize() called");
+
+        // Tell the intake subsystem that we need to intake
+        _intakeSubsystem.intakeState = IntakeState.Intake;
     }
 
     @Override
     public void execute() {
 
-        // Tell the intake subsystem that we need to intake
-        _intakeSubsystem.intakeState = IntakeState.Intake;
+        
     }
 
     @Override
