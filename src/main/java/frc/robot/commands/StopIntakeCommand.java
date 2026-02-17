@@ -16,7 +16,7 @@ public class StopIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("StopIntakeCommand::initialize() called");
+        //System.out.println("StopIntakeCommand::initialize() called");
         // Tell the intake subsystem that we need to eject
         _intakeSubsystem.intakeState = IntakeState.Stop;
     }
@@ -28,7 +28,7 @@ public class StopIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-
+        //System.out.println("StopIntakeCommand::end() called, interrupted: " + interrupted);
     }
 
     @Override

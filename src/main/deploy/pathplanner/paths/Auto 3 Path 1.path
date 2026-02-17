@@ -64,15 +64,25 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.8515923187022898,
+      "waypointRelativePos": 0.8981244036259541,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
     },
     {
       "name": "StopIntake",
-      "waypointRelativePos": 1.6338263358778613,
+      "waypointRelativePos": 1.5432371183206104,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "StopIntake"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -85,7 +95,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.68154899653558
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Auto 3 Paths",

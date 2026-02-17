@@ -16,7 +16,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("IntakeCommand::initialize() called");
+        //System.out.println("IntakeCommand::initialize() called");
 
         // Tell the intake subsystem that we need to intake
         _intakeSubsystem.intakeState = IntakeState.Intake;
@@ -24,13 +24,12 @@ public class IntakeCommand extends Command {
 
     @Override
     public void execute() {
-
         
     }
 
     @Override
     public void end(boolean interrupted) {
-
+        //System.out.println("IntakeCommand::end() called, interrupted: " + interrupted);
     }
 
     @Override

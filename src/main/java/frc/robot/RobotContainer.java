@@ -162,8 +162,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("ClimbUp", new ClimbUpCommand());
     NamedCommands.registerCommand("ClimbDown", new ClimbDownCommand());
     NamedCommands.registerCommand("Intake", new IntakeCommand());
-    NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
+    NamedCommands.registerCommand("Eject", new EjectCommand());
   }
 
   public void simulationInit() {
