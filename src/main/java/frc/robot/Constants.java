@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import java.util.List;
-
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -62,7 +59,7 @@ public final class Constants {
 		// Constants set for the _SDS MK4i_ and MK4
 		//public static final double kdriveGearRatioL1 = 1d / 8.14;
 		//public static final double kdriveGearRatioL2 = 1d / 6.75;
-		// public static final double kdriveGearRatioL3 = 1d / 6.12;
+		//public static final double kdriveGearRatioL3 = 1d / 6.12;
 		public static final double kdriveGearRatioL3 = 1d / 5.36;
 		//public static final double kdriveGearRatioL3 = 5.36 / 1.0;
 		// public static final double kdriveGearRatioL3 = 1d / 5.7;
@@ -73,8 +70,6 @@ public final class Constants {
 		//public static final double kwheelCircumference = 2 * Math.PI * Units.inchesToMeters(2);
 
 		// The max speed the modules are capable of
-		//public static final double kMaxModuleSpeedMetersPerSecond = Units.feetToMeters(16.5);
-		//public static final double kMaxModuleSpeedMetersPerSecond = 17.1;
 		public static final double kMaxModuleSpeedMetersPerSecond = 20.0;
 
 		//public static final double ksVolts = .1;
@@ -84,35 +79,19 @@ public final class Constants {
 		public static final double kvTurning = .43205;
 		public static final double ksTurning = .17161; 
 
-		// NEO drive motor CAN ID's
-		//public static final int kFrontLeftDriveMotorPort = 2;
-		//public static final int kFrontRightDriveMotorPort = 4;
-		//public static final int kRearLeftDriveMotorPort = 8;
-		//public static final int kRearRightDriveMotorPort = 6;
-
+		// Kraken drive motor CAN ID's
 		public static final int kFrontLeftDriveMotorPort = 6;
 		public static final int kFrontRightDriveMotorPort = 8;
 		public static final int kRearLeftDriveMotorPort = 4;
 		public static final int kRearRightDriveMotorPort = 2;
 
 		// NEO turning motor CAN ID's
-		// public static final int kFrontLeftTurningMotorPort = 1;
-		// public static final int kFrontRightTurningMotorPort = 3;
-		// public static final int kRearLeftTurningMotorPort = 7;
-		// public static final int kRearRightTurningMotorPort = 5;
-
 		public static final int kFrontLeftTurningMotorPort = 5;
 		public static final int kFrontRightTurningMotorPort = 7;
 		public static final int kRearLeftTurningMotorPort = 3;
 		public static final int kRearRightTurningMotorPort = 1;
 
-
 		// CANcoder CAN ID's
-		// public static final int kFrontLeftTurningEncoderPort = 9;
-		// public static final int kFrontRightTurningEncoderPort = 10;
-		// public static final int kRearLeftTurningEncoderPort = 12;
-		// public static final int kRearRightTurningEncoderPort = 11;
-
 		public static final int kFrontLeftTurningEncoderPort = 11;
 		public static final int kFrontRightTurningEncoderPort = 12;
 		public static final int kRearLeftTurningEncoderPort = 10;
@@ -151,7 +130,6 @@ public final class Constants {
 		public static double kAutoAlignSpeed = 0.02;
 		public static double kAutoAlignTolerance = 1.0;
 		public static double kAutoAlignOffset = 4.81;
-		//public static double kAutoAlignLeftOffset = -16.0;
 		public static double kAutoAlignRightOffset = 4.81;
 
 		public static double kAutoAlignLeftLeft = 10.7;
@@ -192,8 +170,6 @@ public final class Constants {
 			//public static final double kMaxModuleSpeed = 4.5; // Max module speed, in m/s
 			//public static final double kDriveBaseRadius = 0.4; // Drive base radius in meters. Distance from robot center to furthest module.
 		}
-
-		public static final double kAimTargetTolerance = 2.0;
 	}
 
 	/**
@@ -210,19 +186,9 @@ public final class Constants {
 		public static String name1 = "limelight";
 	}
 
-	public enum RobotState{
-		INTAKE,
-		SHOOT,
-		CLIMB
-	}
-
 	public static class PhotonVisionConstants {
 
 		public static final boolean debugPhotonVision = true;
-
-		//public static final PoseStrategy poseStrategy = PoseStrategy.AVERAGE_BEST_TARGETS;
-		public static final PoseStrategy poseStrategy = PoseStrategy.CLOSEST_TO_REFERENCE_POSE;
-
 		public static double camDiagFOV = 170.0;
 		public static double camPitch = 0.0;
 		public static double cam2Pitch = 0.0;
@@ -265,9 +231,6 @@ public final class Constants {
 
 		public static final String CameraName = "cam1";
 		public static final String Camera2Name = "cam2";
-		//public static final boolean kEnableCamera1 = true;
-		//public static final boolean kEnableCamera2 = true;
-
 
 		// Simulated Vision System.
     	// Configure these to match your PhotonVision Camera,
@@ -340,8 +303,8 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static final boolean enabled = true;
-		public static final boolean debug = true;
+		public static final boolean enabled = false;
+		public static final boolean debug = false;
 
 		public static final boolean invertShooterMotor = false;
 		public static final int flywheelMotorId = 30;

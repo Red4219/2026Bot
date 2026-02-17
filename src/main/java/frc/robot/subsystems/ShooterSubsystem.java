@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterConstants;
@@ -218,28 +219,81 @@ public class ShooterSubsystem extends SubsystemBase {
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
 
-            switch (shooterState) {
-                case Shooting:
-                    // Calculate Positions
-                    targetHoodValue = calculateHood();
-                    //targetFlyWheelSpeed = calculateFlywheelSpeed();
-                    //targetTurretPosition = calculateTurretPosition();
-                    stateText = "Shooting";
-                    break;
-                case Stopped:
-                    // Stop everything
-                    stateText = "Stopped";
-                    targetFlyWheelSpeed = 0.0;
-                    targetHoodValue = 0.0;
-                    targetTurretPosition = 0.0;
-                    break;
-                case Tracking:
-                    // Calculate Positions
-                    targetHoodValue = calculateHood();
-                    //targetFlyWheelSpeed = calculateFlywheelSpeed();
-                    //targetTurretPosition = calculateTurretPosition();
-                    stateText = "Tracking";
-                    break;
+            // switch (shooterState) {
+            //     case Shooting:
+            //         // Calculate Positions
+            //         targetHoodValue = calculateHood();
+            //         //targetFlyWheelSpeed = calculateFlywheelSpeed();
+            //         //targetTurretPosition = calculateTurretPosition();
+            //         stateText = "Shooting";
+            //         break;
+            //     case Stopped:
+            //         // Stop everything
+            //         stateText = "Stopped";
+            //         targetFlyWheelSpeed = 0.0;
+            //         targetHoodValue = 0.0;
+            //         targetTurretPosition = 0.0;
+            //         break;
+            //     case Tracking:
+            //         // Calculate Positions
+            //         targetHoodValue = calculateHood();
+            //         //targetFlyWheelSpeed = calculateFlywheelSpeed();
+            //         //targetTurretPosition = calculateTurretPosition();
+            //         stateText = "Tracking";
+            //         break;
+            // }
+
+            
+
+            // Check where we are and change the shooter accordingly
+            if (DriverStation.getAlliance().isPresent()) {
+                if (DriverStation.getAlliance().get() == Alliance.Red) {
+                    if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getX() > 11.5) {
+                        shootTarget = ShooterTarget.RedTower;
+                        shootTargetText = "Red Tower";
+                        target = targets[1];
+
+                        actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
+                        shootTarget = ShooterTarget.RedWall;
+                        shootTargetText = "Red Wall";
+                        target = targets[5];
+
+                        actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
+                        shootTarget = ShooterTarget.RedHumanElement;
+                        shootTargetText = "Red Human Element";
+                        target = targets[3];
+
+                        actualFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                    }
+                } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                    if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getX() < 4.0) {
+                        shootTarget = ShooterTarget.BlueTower;
+                        shootTargetText = "Blue Tower";
+                        target = targets[0];
+
+                        actualFlyWheelSpeed = calculateFlywheelSpeed(25, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
+                        shootTarget = ShooterTarget.BlueHumanElement;
+                        shootTargetText = "Blue Human Element";
+                        target = targets[2];
+
+                        actualFlyWheelSpeed = calculateFlywheelSpeed(30, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
+                        shootTarget = ShooterTarget.BlueWall;
+                        shootTargetText = "Blue Wall";
+                        target = targets[4];
+
+                        actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                    }
+                }
             }
 
             // Tell the motors where they need to be
@@ -260,47 +314,9 @@ public class ShooterSubsystem extends SubsystemBase {
             pubStateString.set(stateText);
             pubTargetString.set(shootTargetText);
 
-            // Check where we are and change the shooter accordingly
-            if (DriverStation.getAlliance().isPresent()) {
-                if (DriverStation.getAlliance().get() == Alliance.Red) {
-                    if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getX() > 11.5) {
-                        shootTarget = ShooterTarget.RedTower;
-                        shootTargetText = "Red Tower";
-                        target = targets[1];
-                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
-                        shootTarget = ShooterTarget.RedWall;
-                        shootTargetText = "Red Wall";
-                        target = targets[5];
-                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
-                        shootTarget = ShooterTarget.RedHumanElement;
-                        shootTargetText = "Red Human Element";
-                        target = targets[3];
-                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                    }
-                } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
-                    if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getX() < 4.0) {
-                        shootTarget = ShooterTarget.BlueTower;
-                        shootTargetText = "Blue Tower";
-                        target = targets[0];
-                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
-                        shootTarget = ShooterTarget.BlueHumanElement;
-                        shootTargetText = "Blue Human Element";
-                        target = targets[2];
-                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                    } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
-                        shootTarget = ShooterTarget.BlueWall;
-                        shootTargetText = "Blue Wall";
-                        target = targets[4];
-                        calculateFlywheelSpeed(target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                    }
-                }
-            }
-
             double angle = findAngleToTarget(target, currentPosition);
 
+            // Show the position on the map
             currentPosition = new Pose2d(
                 currentPosition.getX(), 
                 currentPosition.getY(), 
@@ -323,33 +339,29 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    private double calculateFlywheelSpeed(Translation2d target, Pose2d currentPose) {
+    private double calculateFlywheelSpeed(int targetId, Translation2d target, Pose2d currentPose) {
 
-        // double temp = Math.atan2(
-        //     target.getY() - currentPose.getY(),
-        //     target.getX() - currentPose.getX()
-        // );
+        if(targetId > 0 && Constants.kEnableLimelight) {
+            if(limelight.lookForTarget(targetId)) {
+                distanceFromTarget = limelight.getDistancToTargetFromRobot(targetId);
+            } else {
+                // calculate the distance based off of telemetry
+                distanceFromTarget =  Math.sqrt(Math.pow(target.getX() - currentPose.getX(), 2.0) + Math.pow(target.getY() - currentPose.getY(), 2.0));
 
-        
+                // Publish to network tables
+                pubDistanceFromTarget.set(distanceFromTarget);
+            }
+        } else {
+            // targetId must be -1 which means we need to hit the wall
+            // calculate the distance based off of telemetry
+            distanceFromTarget =  Math.sqrt(Math.pow(target.getX() - currentPose.getX(), 2.0) + Math.pow(target.getY() - currentPose.getY(), 2.0));
 
-        // calculate the distance based off of telemetry
-        distanceFromTarget =  Math.sqrt(Math.pow(target.getX() - currentPose.getX(), 2.0) + Math.pow(target.getY() - currentPose.getY(), 2.0));
-
-        // Publish to network tables
-        pubDistanceFromTarget.set(distanceFromTarget);
+            // Publish to network tables
+            pubDistanceFromTarget.set(distanceFromTarget);
+        }
 
         return distanceFromTarget;
         
-
-        // if(limelight.lookForTarget(9)) {
-        //     // limelight can see the target we are looking for
-        //     distanceFromTarget = limelight.getDistancToTargetFromRobot(9);
-        // } else {
-        //     distanceFromTarget = 0.0;
-        // }
-
-        // // This needs to be filled in with a function to calculate the flywheel speed
-        // return 0.0;
     }
 
     private double calculateHood() {
@@ -373,16 +385,16 @@ public class ShooterSubsystem extends SubsystemBase {
         return angleToTarget;
     }
 
-    private double calculateTurretPosition() {
-        // Pull data from the limelight to calculate this angle
-        // If over roated, spin around the other side
+    // private double calculateTurretPosition() {
+    //     // Pull data from the limelight to calculate this angle
+    //     // If over roated, spin around the other side
 
-        if(ShooterConstants.maxTurretPosition > actualTurretPosition && ShooterConstants.minTurretPosition < actualTurretPosition) {
-            // we should be good, we are within tolerable ranges
-        } // we need to determine if we need to spin around
+    //     if(ShooterConstants.maxTurretPosition > actualTurretPosition && ShooterConstants.minTurretPosition < actualTurretPosition) {
+    //         // we should be good, we are within tolerable ranges
+    //     } // we need to determine if we need to spin around
 
-        return 0.0;
-    }
+    //     return 0.0;
+    // }
 
     public String getStateString() {
         return stateText;
