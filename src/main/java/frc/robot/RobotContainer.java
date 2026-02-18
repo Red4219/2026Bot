@@ -8,6 +8,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ChassisAimCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ToggleTurretManualCommand;
 import frc.robot.commands.ResetPositionCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -55,7 +56,8 @@ public class RobotContainer {
 
   public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-  private final CommandXboxController driverController = new CommandXboxController(0);
+  public static final CommandXboxController driverController = new CommandXboxController(0);
+  public static final CommandXboxController operatorController = new CommandXboxController(1);
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -131,6 +133,9 @@ public class RobotContainer {
 			  )
 		  );
     } else {
+
+      operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
+
       driveSubsystem.setDefaultCommand(
 
 					new RunCommand(() -> driveSubsystem.drive(

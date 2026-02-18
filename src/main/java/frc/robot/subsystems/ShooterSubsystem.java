@@ -17,6 +17,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
@@ -35,11 +37,11 @@ import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    public enum ShooterState {
+    /*public enum ShooterState {
         Stopped,
         Shooting,
         Tracking
-    }
+    }*/
 
     public enum ShooterTarget {
         BlueTower,
@@ -61,6 +63,8 @@ public class ShooterSubsystem extends SubsystemBase {
         new Translation2d(16.5, 1.0) // Red Wall 
     };
 
+    private boolean manualControl = false;
+
     private String stateText = "Stopped";
     private SparkFlex flywheelMotor = null;
     private SparkMax turretMotor = null;
@@ -76,7 +80,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double distanceFromTarget = 0.0;
 
-    private ShooterState shooterState = ShooterState.Stopped;
+    //private ShooterState shooterState = ShooterState.Stopped;
 
     private NetworkTableInstance inst = null;
 	private NetworkTable table = null;
@@ -98,6 +102,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private StringTopic topicTargetString = null;
 	private StringPublisher pubTargetString = null;
+
+    private BooleanTopic topicManualControl = null;
+	private BooleanPublisher pubManualControl = null;
 
     private Limelight limelight = null;
 
@@ -199,6 +206,10 @@ public class ShooterSubsystem extends SubsystemBase {
             topicTargetString = table.getStringTopic("TargetString");
             pubTargetString = topicTargetString.publish();
             pubTargetString.set(shootTargetText);
+
+            topicManualControl = table.getBooleanTopic("ManualControl");
+            pubManualControl = topicManualControl.publish();
+            pubManualControl.set(manualControl);
 
             limelight = new Limelight("limelight");
 
@@ -313,6 +324,7 @@ public class ShooterSubsystem extends SubsystemBase {
             pubDistanceFromTarget.set(distanceFromTarget);
             pubStateString.set(stateText);
             pubTargetString.set(shootTargetText);
+            pubManualControl.set(manualControl);
 
             double angle = findAngleToTarget(target, currentPosition);
 
@@ -328,6 +340,10 @@ public class ShooterSubsystem extends SubsystemBase {
             field.setPoses(List.of(
                 currentPosition
             ));
+
+            if(manualControl) {
+                moveLaterally(RobotContainer.operatorController.getLeftY());
+            }
         }
     }
 
@@ -398,6 +414,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public String getStateString() {
         return stateText;
+    }
+
+    public void setManualControl(boolean manualControl) {
+        this.manualControl = manualControl;
+    }
+
+    public boolean getManualControl() {
+        return manualControl;
+    }
+
+    public void moveLaterally(double moveAmount) {
+        targetTurretPosition += moveAmount;
     }
     
 }
