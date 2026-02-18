@@ -321,11 +321,14 @@ public final class Constants {
 		public static final double minTurretPosition = 0.0;
 		public static final double maxTurretPosition = 100.0;
 
-		public static final int hoodMotorId = 32;
-		public static final boolean invertHoodMotor = false;
-		public static final double hoodP = 0.1;
-		public static final double hoodI = 0.2;
-		public static final double hoodD = 0.3;
+		// public static final int hoodMotorId = 32;
+		// public static final boolean invertHoodMotor = false;
+		// public static final double hoodP = 0.1;
+		// public static final double hoodI = 0.2;
+		// public static final double hoodD = 0.3;
+
+		public static final int hoodActuator1Port = 0;
+		public static final int hoodActuator2Port = 1;
 	}
 
 }
