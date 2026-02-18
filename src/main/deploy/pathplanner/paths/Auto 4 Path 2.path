@@ -36,7 +36,7 @@
         "y": 2.9429418742522784
       },
       "prevControl": {
-        "x": 0.81185714046381,
+        "x": 0.8118571404638097,
         "y": 2.9268770718373696
       },
       "nextControl": null,
@@ -47,11 +47,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.28063943161634575,
-      "rotationDegrees": 90.0
+      "rotationDegrees": 180.0
     },
     {
       "waypointRelativePos": 1.1332149200710444,
-      "rotationDegrees": 90.0
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
@@ -110,7 +110,7 @@
   "folder": "Auto 4 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 69.15
+    "rotation": -90.0
   },
   "useDefaultConstraints": false
 }
