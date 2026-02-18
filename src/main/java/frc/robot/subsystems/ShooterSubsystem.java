@@ -27,6 +27,7 @@ import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -68,7 +69,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private String stateText = "Stopped";
     private SparkFlex flywheelMotor = null;
     private SparkMax turretMotor = null;
-    private SparkMax hoodMotor = null;
+    //private SparkMax hoodMotor = null;
+    private Servo hoodActuator1 = null;
+    private Servo hoodActuator2 = null;
 
     private double targetFlyWheelSpeed = 0.0;
     private double actualFlyWheelSpeed = 0.0;
@@ -148,20 +151,22 @@ public class ShooterSubsystem extends SubsystemBase {
             flyWheelConfig.signals.primaryEncoderPositionPeriodMs(5);
 
             // Hood Motor
-            hoodMotor = new SparkMax(ShooterConstants.hoodMotorId, MotorType.kBrushless);
+            //hoodMotor = new SparkMax(ShooterConstants.hoodMotorId, MotorType.kBrushless);
+            hoodActuator1 = new Servo(Constants.ShooterConstants.hoodActuator1Port);
+            hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
 
             // Setup the config for the motors
-            SparkFlexConfig hoodConfig = new SparkFlexConfig();
-            hoodConfig
-                    .idleMode(IdleMode.kCoast)
-                    .inverted(ShooterConstants.invertHoodMotor).closedLoop
-                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    .pid(
-                            ShooterConstants.hoodP,
-                            ShooterConstants.hoodI,
-                            ShooterConstants.hoodD);
+            // SparkFlexConfig hoodConfig = new SparkFlexConfig();
+            // hoodConfig
+            //         .idleMode(IdleMode.kCoast)
+            //         .inverted(ShooterConstants.invertHoodMotor).closedLoop
+            //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            //         .pid(
+            //                 ShooterConstants.hoodP,
+            //                 ShooterConstants.hoodI,
+            //                 ShooterConstants.hoodD);
 
-            hoodConfig.signals.primaryEncoderPositionPeriodMs(5);
+            // hoodConfig.signals.primaryEncoderPositionPeriodMs(5);
 
             // Turret Motor
             turretMotor = new SparkMax(ShooterConstants.turretMotorId, MotorType.kBrushless);
@@ -305,16 +310,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
                     }
                 }
+
+                calculateHood();
             }
 
             // Tell the motors where they need to be
             flywheelMotor.getClosedLoopController().setSetpoint(targetFlyWheelSpeed, ControlType.kVelocity);
-            hoodMotor.getClosedLoopController().setSetpoint(targetHoodValue, ControlType.kPosition);
+            //hoodMotor.getClosedLoopController().setSetpoint(targetHoodValue, ControlType.kPosition);
             turretMotor.getClosedLoopController().setSetpoint(targetTurretPosition, ControlType.kPosition);
 
             // Get where the motors actually are
             actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();
-            actualHoodValue = hoodMotor.getAbsoluteEncoder().getPosition();
+            //actualHoodValue = hoodMotor.getAbsoluteEncoder().getPosition();
             actualTurretPosition = turretMotor.getAbsoluteEncoder().getPosition();
 
             // Publish to network tables the values
@@ -380,9 +387,16 @@ public class ShooterSubsystem extends SubsystemBase {
         
     }
 
-    private double calculateHood() {
+    private void calculateHood() {
         // This needs to be filled in with a function to calculate the flywheel speed
-        return 0.0;
+
+        // This needs to be replaced with a function or a lookup table
+        targetHoodValue = distanceFromTarget;
+
+        hoodActuator1.setPosition(targetHoodValue);
+        hoodActuator2.setPosition(targetHoodValue);
+
+        actualHoodValue = hoodActuator1.getPosition();
     }
 
     public double findAngleToTarget(Translation2d target, Pose2d currentPose) {
