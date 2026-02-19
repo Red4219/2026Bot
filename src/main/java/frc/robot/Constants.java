@@ -303,8 +303,8 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static final boolean enabled = true;
-		public static final boolean debug = true;
+		public static final boolean enabled = false;
+		public static final boolean debug = false;
 
 		public static final int flywheelMotor1Id = 30;
 		public static final double flywheel1P = 0.1;
