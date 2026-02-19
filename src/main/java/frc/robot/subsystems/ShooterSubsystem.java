@@ -1,10 +1,26 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.List;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.fasterxml.jackson.databind.node.POJONode;
+import com.revrobotics.sim.SparkFlexSim;
+import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -17,6 +33,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -27,22 +45,25 @@ import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    /*public enum ShooterState {
+    public enum ShooterState {
         Stopped,
         Shooting,
         Tracking
-    }*/
+    }
 
     public enum ShooterTarget {
         BlueTower,
@@ -67,8 +88,21 @@ public class ShooterSubsystem extends SubsystemBase {
     private boolean manualControl = false;
 
     private String stateText = "Stopped";
-    private SparkFlex flywheelMotor = null;
+    //private SparkFlex flywheelMotor = null;
+    private TalonFX flywheelMotor1 = null;
+	private TalonFXSimState flywheel1SimState = null;
+    private DCMotorSim flywheelMotor1SimModel = null;
+    private TalonFXConfiguration flywheelMotor1Config = null;
+
+    private TalonFX flywheelMotor2 = null;
+	private TalonFXSimState flywheel2SimState = null;
+    private DCMotorSim flywheelMotor2SimModel = null;
+    private TalonFXConfiguration flywheelMotor2Config = null;
+
     private SparkMax turretMotor = null;
+    private SparkMaxSim turretMotorSim = null;
+    private SparkFlex indexerMotor = null;
+    private SparkFlexSim indexerMotorSim = null;
     //private SparkMax hoodMotor = null;
     private Servo hoodActuator1 = null;
     private Servo hoodActuator2 = null;
@@ -83,7 +117,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double distanceFromTarget = 0.0;
 
-    //private ShooterState shooterState = ShooterState.Stopped;
+    public ShooterState shooterState = ShooterState.Stopped;
 
     private NetworkTableInstance inst = null;
 	private NetworkTable table = null;
@@ -135,20 +169,21 @@ public class ShooterSubsystem extends SubsystemBase {
             }*/
 
             // Flywheel Motor
-            flywheelMotor = new SparkFlex(ShooterConstants.flywheelMotorId, MotorType.kBrushless);
+            //flywheelMotor = new SparkFlex(ShooterConstants.flywheelMotor1Id, MotorType.kBrushless);
+            
 
             // Setup the config for the motors
-            SparkFlexConfig flyWheelConfig = new SparkFlexConfig();
-            flyWheelConfig
-                    .idleMode(IdleMode.kCoast)
-                    .inverted(ShooterConstants.invertFlywheelMotor).closedLoop
-                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    .pid(
-                            ShooterConstants.flywheelP,
-                            ShooterConstants.flywheelI,
-                            ShooterConstants.flywheelD);
+            // SparkFlexConfig flyWheelConfig = new SparkFlexConfig();
+            // flyWheelConfig
+            //         .idleMode(IdleMode.kCoast)
+            //         .inverted(ShooterConstants.invertFlywheelMotor1).closedLoop
+            //         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            //         .pid(
+            //                 ShooterConstants.flywheel1P,
+            //                 ShooterConstants.flywheel1I,
+            //                 ShooterConstants.flywheel1D);
 
-            flyWheelConfig.signals.primaryEncoderPositionPeriodMs(5);
+            // flyWheelConfig.signals.primaryEncoderPositionPeriodMs(5);
 
             // Hood Motor
             //hoodMotor = new SparkMax(ShooterConstants.hoodMotorId, MotorType.kBrushless);
@@ -168,6 +203,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // hoodConfig.signals.primaryEncoderPositionPeriodMs(5);
 
+            // Indexer Motor
+            indexerMotor = new SparkFlex(ShooterConstants.indexerMotorId, MotorType.kBrushless);
+            SparkFlexConfig indexConfig = new SparkFlexConfig();
+            indexConfig
+                    .idleMode(IdleMode.kCoast)
+                    .inverted(ShooterConstants.invertIndexerMotor).closedLoop
+                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+
+            indexerMotor.configure(indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+
+
             // Turret Motor
             turretMotor = new SparkMax(ShooterConstants.turretMotorId, MotorType.kBrushless);
 
@@ -183,6 +230,7 @@ public class ShooterSubsystem extends SubsystemBase {
                             ShooterConstants.turretD);
 
             turretConfig.signals.primaryEncoderPositionPeriodMs(5);
+            turretMotor.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             // Setup the network tables info
             inst = NetworkTableInstance.getDefault();
@@ -221,6 +269,52 @@ public class ShooterSubsystem extends SubsystemBase {
             //target = aprilTagFieldLayout.getTagPose(10).get().getTranslation().toTranslation2d();
             // Look at the center of the red target
             //target = new Translation2d(12.0, 4.0);
+
+            flywheelMotor1 = new TalonFX(ShooterConstants.flywheelMotor1Id, Constants.kCanivoreCANBusName);
+            flywheelMotor2 = new TalonFX(ShooterConstants.flywheelMotor2Id, Constants.kCanivoreCANBusName);
+
+            // Flywheel Motor 1
+            flywheelMotor1Config = new TalonFXConfiguration();
+		    flywheelMotor1Config
+		        .withMotorOutput(
+			        new MotorOutputConfigs()
+				        .withInverted(InvertedValue.Clockwise_Positive)
+				        .withNeutralMode(NeutralModeValue.Coast)
+		        );
+		    flywheelMotor1Config.Audio.AllowMusicDurDisable = true;
+		
+		    flywheelMotor1.getConfigurator().apply(flywheelMotor1Config);
+
+		    CurrentLimitsConfigs currentConfig = new CurrentLimitsConfigs();
+		    currentConfig.StatorCurrentLimitEnable = true;
+		    currentConfig.StatorCurrentLimit = Constants.ShooterConstants.flywheel1CurrentLimit;
+		    flywheelMotor1.getConfigurator().apply(currentConfig);
+
+		    var slot0Configs = new Slot0Configs();
+		    slot0Configs.kS = 0.1;
+		    slot0Configs.kV = 0.12;
+		    slot0Configs.kP = Constants.ShooterConstants.flywheel1P; // An error of 1 rps results in 0.11 V output
+		    slot0Configs.kI = Constants.ShooterConstants.flywheel1I; // no output for integrated error
+		    slot0Configs.kD = Constants.ShooterConstants.flywheel1D; // no output for error derivative
+		    flywheelMotor1.getConfigurator().apply(slot0Configs);
+
+            // Flywheel Motor 2
+            flywheelMotor2Config = new TalonFXConfiguration();
+		    flywheelMotor2Config
+		        .withMotorOutput(
+			        new MotorOutputConfigs()
+				        .withInverted(InvertedValue.Clockwise_Positive)
+				        .withNeutralMode(NeutralModeValue.Coast)
+		        );
+		    flywheelMotor1Config.Audio.AllowMusicDurDisable = true;
+		
+		    flywheelMotor1.getConfigurator().apply(flywheelMotor1Config);
+
+		    CurrentLimitsConfigs currentConfig2 = new CurrentLimitsConfigs();
+		    currentConfig2.StatorCurrentLimitEnable = true;
+		    currentConfig2.StatorCurrentLimit = Constants.ShooterConstants.flywheel2CurrentLimit;
+		    flywheelMotor2.getConfigurator().apply(currentConfig2);
+		    flywheelMotor2.getConfigurator().apply(slot0Configs);
         }
     }
 
@@ -235,29 +329,23 @@ public class ShooterSubsystem extends SubsystemBase {
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
 
-            // switch (shooterState) {
-            //     case Shooting:
-            //         // Calculate Positions
-            //         targetHoodValue = calculateHood();
-            //         //targetFlyWheelSpeed = calculateFlywheelSpeed();
-            //         //targetTurretPosition = calculateTurretPosition();
-            //         stateText = "Shooting";
-            //         break;
-            //     case Stopped:
-            //         // Stop everything
-            //         stateText = "Stopped";
-            //         targetFlyWheelSpeed = 0.0;
-            //         targetHoodValue = 0.0;
-            //         targetTurretPosition = 0.0;
-            //         break;
-            //     case Tracking:
-            //         // Calculate Positions
-            //         targetHoodValue = calculateHood();
-            //         //targetFlyWheelSpeed = calculateFlywheelSpeed();
-            //         //targetTurretPosition = calculateTurretPosition();
-            //         stateText = "Tracking";
-            //         break;
-            // }
+            switch (shooterState) {
+                case Shooting:
+                    stateText = "Shooting";
+                    //indexerMotor.set(Constants.ShooterConstants.indexMotorSpeed);
+                    turretMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
+                    break;
+                case Stopped:
+                    stateText = "Stopped";
+                    //indexerMotor.set(0.0);
+                    turretMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
+                    break;
+                case Tracking:
+                    stateText = "Tracking";
+                    indexerMotor.set(0.0);
+                    turretMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
+                    break;
+            }
 
             
 
@@ -314,13 +402,17 @@ public class ShooterSubsystem extends SubsystemBase {
                 calculateHood();
             }
 
+            
+
+
+
             // Tell the motors where they need to be
-            flywheelMotor.getClosedLoopController().setSetpoint(targetFlyWheelSpeed, ControlType.kVelocity);
+            //flywheelMotor.getClosedLoopController().setSetpoint(targetFlyWheelSpeed, ControlType.kVelocity);
             //hoodMotor.getClosedLoopController().setSetpoint(targetHoodValue, ControlType.kPosition);
             turretMotor.getClosedLoopController().setSetpoint(targetTurretPosition, ControlType.kPosition);
 
             // Get where the motors actually are
-            actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();
+            //actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();
             //actualHoodValue = hoodMotor.getAbsoluteEncoder().getPosition();
             actualTurretPosition = turretMotor.getAbsoluteEncoder().getPosition();
 
@@ -346,7 +438,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             field.setPoses(List.of(
                 currentPosition
-            ));
+            ));            
 
             if(manualControl) {
                 moveLaterally(RobotContainer.operatorController.getLeftY());
@@ -354,8 +446,84 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
+    public void simulationInit() {
+        if (ShooterConstants.enabled) {
+            flywheelMotor1SimModel = new DCMotorSim(
+                    LinearSystemId.createDCMotorSystem(
+                            DCMotor.getKrakenX60Foc(1),
+                            0.001,
+                            1.0),
+                    DCMotor.getKrakenX60Foc(1));
+
+            flywheel1SimState = flywheelMotor1.getSimState();
+            flywheel1SimState.Orientation = ChassisReference.CounterClockwise_Positive;
+            flywheel1SimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+
+            // Motor 2
+            flywheelMotor2SimModel = new DCMotorSim(
+                    LinearSystemId.createDCMotorSystem(
+                            DCMotor.getKrakenX60Foc(1),
+                            0.001,
+                            1.0),
+                    DCMotor.getKrakenX60Foc(1));
+
+            flywheel2SimState = flywheelMotor1.getSimState();
+            flywheel2SimState.Orientation = ChassisReference.CounterClockwise_Positive;
+            flywheel2SimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+
+            indexerMotorSim = new SparkFlexSim(indexerMotor, DCMotor.getNeoVortex(1));
+            indexerMotorSim.setBusVoltage(12.0);
+            turretMotorSim = new SparkMaxSim(turretMotor, DCMotor.getNEO(1));
+            turretMotorSim.setBusVoltage(12.0);
+        }
+    }
+
     @Override
     public void simulationPeriodic() {
+        if (ShooterConstants.enabled) {
+            flywheel1SimState = flywheelMotor1.getSimState();
+
+            // set the supply voltage of the TalonFX
+            flywheel1SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+            // get the motor voltage of the TalonFX
+            var motorVoltage = flywheel1SimState.getMotorVoltageMeasure();
+
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            flywheelMotor1SimModel.setInputVoltage(motorVoltage.in(Volts));
+            flywheelMotor1SimModel.update(0.020); // assume 20 ms loop time
+
+            // Motor 2
+            flywheel2SimState = flywheelMotor2.getSimState();
+
+            // set the supply voltage of the TalonFX
+            flywheel2SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+            // get the motor voltage of the TalonFX
+            motorVoltage = flywheel2SimState.getMotorVoltageMeasure();
+
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            flywheelMotor2SimModel.setInputVoltage(motorVoltage.in(Volts));
+            flywheelMotor2SimModel.update(0.020); // assume 20 ms loop time
+
+            switch (shooterState) {
+                case Shooting:
+                    stateText = "Shooting";
+                    indexerMotorSim.iterate(ShooterConstants.indexMotorSpeed, 12.0, 0.2);
+                    break;
+                case Stopped:
+                    stateText = "Stopped";
+                    indexerMotorSim.iterate(0.0, 12.0, 0.2);
+                    break;
+                case Tracking:
+                    stateText = "Tracking";
+                    indexerMotorSim.setVelocity(0.0);
+                    indexerMotorSim.iterate(0.0, 12.0, 0.2);
+                    break;
+            }
+        }
     }
 
     public void setTarget(ShooterTarget target) {

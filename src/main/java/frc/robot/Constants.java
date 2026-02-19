@@ -303,23 +303,34 @@ public final class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static final boolean enabled = false;
-		public static final boolean debug = false;
+		public static final boolean enabled = true;
+		public static final boolean debug = true;
 
-		public static final boolean invertShooterMotor = false;
-		public static final int flywheelMotorId = 30;
-		public static final double flywheelP = 0.1;
-		public static final double flywheelI = 0.2;
-		public static final double flywheelD = 0.3;
-		public static final boolean invertFlywheelMotor = false;
+		public static final int flywheelMotor1Id = 30;
+		public static final double flywheel1P = 0.1;
+		public static final double flywheel1I = 0.2;
+		public static final double flywheel1D = 0.3;
+		public static final double flywheel1CurrentLimit = 40.0;
+		public static final boolean invertFlywheelMotor1 = false;
 
-		public static final int turretMotorId = 31;
+		public static final int flywheelMotor2Id = 31;
+		public static final double flywheel2P = 0.1;
+		public static final double flywheel2I = 0.2;
+		public static final double flywheel2D = 0.3;
+		public static final double flywheel2CurrentLimit = 40.0;
+		public static final boolean invertFlywheelMotor2 = false;
+
+		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
 		public static final double turretP = 0.1;
 		public static final double turretI = 0.2;
 		public static final double turretD = 0.3;
 		public static final double minTurretPosition = 0.0;
 		public static final double maxTurretPosition = 100.0;
+
+		public static final int indexerMotorId = 33;
+		public static final boolean invertIndexerMotor = false;
+		public static final double indexMotorSpeed = 12.0;
 
 		// public static final int hoodMotorId = 32;
 		// public static final boolean invertHoodMotor = false;

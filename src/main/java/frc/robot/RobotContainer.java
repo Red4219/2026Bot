@@ -10,6 +10,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ToggleTurretManualCommand;
 import frc.robot.commands.ResetPositionCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -122,6 +123,9 @@ public class RobotContainer {
 
       // Driver to reset field oriented drive
 			driverController.button(8).whileTrue(new ResetPositionCommand());
+
+      driverController.rightTrigger().onTrue(new ShootCommand(true));
+      driverController.rightTrigger().onFalse(new ShootCommand(false));
     
       driveSubsystem.setDefaultCommand(
 			  new RunCommand(() -> driveSubsystem.drive(
@@ -135,6 +139,8 @@ public class RobotContainer {
     } else {
 
       operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
+      driverController.button(1).onTrue(new ShootCommand(true));
+      driverController.button(1).onFalse(new ShootCommand(false));
 
       driveSubsystem.setDefaultCommand(
 
@@ -169,9 +175,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", new IntakeCommand());
     NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
+    NamedCommands.registerCommand("ShootStart", new ShootCommand(true));
+    NamedCommands.registerCommand("ShootStop", new ShootCommand(false));
   }
 
   public void simulationInit() {
     driveSubsystem.simulationInit();
+    shooterSubsystem.simulationInit();
   }
 }
