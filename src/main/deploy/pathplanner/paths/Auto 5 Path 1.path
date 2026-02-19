@@ -3,47 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.5847394808070865,
-        "y": 0.7924035740649618
+        "x": 3.6161501969964114,
+        "y": 7.5095909802662035
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.584739480807085,
-        "y": 0.7924035740649619
+        "x": 8.07307507745169,
+        "y": 7.5466623450964825
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.920518423966535,
-        "y": 2.734390532726378
+        "x": 7.563506069841056,
+        "y": 4.730498509900324
       },
       "prevControl": {
-        "x": 4.397648252952759,
-        "y": 1.1893730007381897
+        "x": 7.563506069841056,
+        "y": 7.042882085523299
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Auto 5 Path 1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Coral4Command",
-      "waypointRelativePos": 0.9640730574324323,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Coral4Command"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 15.0,
     "maxAcceleration": 8.0,
@@ -54,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.10087105642722
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": "Auto 5 Paths",
