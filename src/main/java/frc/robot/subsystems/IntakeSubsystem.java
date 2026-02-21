@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.sim.SparkFlexSim;
+import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,7 +17,9 @@ import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -101,9 +104,18 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    public void simulationInit() {
+        if(IntakeConstants.enabled) {
+            intakeMotorSim = new SparkFlexSim(intakeMotor, DCMotor.getNEO(1));
+            intakeMotorSim.setBusVoltage(12.0);
+        }
+    }
+
     @Override
     public void simulationPeriodic() {
-        
+        if(IntakeConstants.enabled) {
+            intakeMotorSim.iterate(intakeMotor.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.2);
+        }
     }
 
     public String getStateString() {

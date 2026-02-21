@@ -259,9 +259,11 @@ public final class Constants {
 	}
 
 	public static class ClimberConstants {
-		public static boolean enabled = true;
-		public static int climberMotorId = 20;
-		public static boolean invertMotor = false;
+		public static boolean enabled = false;
+		public static int climberMotor1Id = 20;
+		public static int climberMotor2Id = 21;
+		public static boolean invertMotor1 = false;
+		public static boolean invertMotor2 = false;
 		public static double kP = 5.2;
 		public static double kI = 0.0;
 		public static double kD = 0.0;
@@ -273,7 +275,7 @@ public final class Constants {
 
 	public static class IntakeConstants {
 		public static boolean enabled = false;
-		public static int intakeMotorId = 21;
+		public static int intakeMotorId = 22;
 		public static boolean invertMotor = false;
 		public static double kP = 0.2;
 		public static double kI = 0.0;
@@ -283,28 +285,28 @@ public final class Constants {
 		public static double ejectPower = 1.0;
 	}
 
-	public static class PoseDefinitions {
-		public static enum kFieldPoses {
-			APRILTAG_3,
-			APRILTAG_4,
-			APRILTAG_9,
-			APRILTAG_10
-		}
+	// public static class PoseDefinitions {
+	// 	public static enum kFieldPoses {
+	// 		APRILTAG_3,
+	// 		APRILTAG_4,
+	// 		APRILTAG_9,
+	// 		APRILTAG_10
+	// 	}
 
-		/*public static final Pose2d kProcessorPoseRed = new Pose2d(14.73, 7.69, Rotation2d.fromDegrees(90.0));
-		public static final Pose2d kProcessorPoseBlue = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(115.655));
-		public static final Pose2d kReefPoseRed = new Pose2d(0.98, 1.05, Rotation2d.fromDegrees(-120.16));
-		public static final Pose2d kReefPoseBlue = new Pose2d(15.35, 0.88, Rotation2d.fromDegrees(-120.0));*/
+	// 	/*public static final Pose2d kProcessorPoseRed = new Pose2d(14.73, 7.69, Rotation2d.fromDegrees(90.0));
+	// 	public static final Pose2d kProcessorPoseBlue = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(115.655));
+	// 	public static final Pose2d kReefPoseRed = new Pose2d(0.98, 1.05, Rotation2d.fromDegrees(-120.16));
+	// 	public static final Pose2d kReefPoseBlue = new Pose2d(15.35, 0.88, Rotation2d.fromDegrees(-120.0));*/
 
-		/*public static final Pose2d APRILTAG_3 = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
-		public static final Pose2d APRILTAG_4 = new Pose2d(8.5, 2.0, Rotation2d.fromDegrees(0));
-		public static final Pose2d APRILTAG_9 = new Pose2d(5.4, 2.9, Rotation2d.fromDegrees(110));
-		public static final Pose2d APRILTAG_10 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));*/
-	}
+	// 	/*public static final Pose2d APRILTAG_3 = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
+	// 	public static final Pose2d APRILTAG_4 = new Pose2d(8.5, 2.0, Rotation2d.fromDegrees(0));
+	// 	public static final Pose2d APRILTAG_9 = new Pose2d(5.4, 2.9, Rotation2d.fromDegrees(110));
+	// 	public static final Pose2d APRILTAG_10 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));*/
+	// }
 
 	public static class ShooterConstants {
 		public static final boolean enabled = false;
-		public static final boolean debug = false;
+		public static final boolean debug = true;
 
 		public static final int flywheelMotor1Id = 30;
 		public static final double flywheel1P = 0.1;
@@ -322,15 +324,26 @@ public final class Constants {
 
 		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
-		public static final double turretP = 0.1;
-		public static final double turretI = 0.2;
-		public static final double turretD = 0.3;
+		public static final double turretP = 0.0;
+		public static final double turretI = 0.0;
+		public static final double turretD = 1.0;
 		public static final double minTurretPosition = 0.0;
 		public static final double maxTurretPosition = 100.0;
+		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
+		public static final double turretMotorMaxMotionMaxAcceleration = 10000;
+		public static final double turretMotorMaxMotionAllowedProfileError = 20.0;
 
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = false;
 		public static final double indexMotorSpeed = 12.0;
+
+		public static final int kickMotor1Id = 34;
+		public static final boolean invertKickMotor1 = false;
+		public static final double kickMotor1Speed = 12.0;
+
+		public static final int kickMotor2Id = 35;
+		public static final boolean invertKickMotor2 = false;
+		public static final double kickMotor2Speed = 12.0;
 
 		// public static final int hoodMotorId = 32;
 		// public static final boolean invertHoodMotor = false;

@@ -8,10 +8,12 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 public class IntakeCommand extends Command {
 
     private static IntakeSubsystem _intakeSubsystem;
+    private boolean intake = false;
 
-    public IntakeCommand() {
+    public IntakeCommand(boolean intake) {
         _intakeSubsystem = RobotContainer.intakeSubsystem;
         addRequirements(_intakeSubsystem);
+        this.intake = intake;
     }
 
     @Override
@@ -19,12 +21,16 @@ public class IntakeCommand extends Command {
         //System.out.println("IntakeCommand::initialize() called");
 
         // Tell the intake subsystem that we need to intake
-        _intakeSubsystem.intakeState = IntakeState.Intake;
+        //_intakeSubsystem.intakeState = IntakeState.Intake;
     }
 
     @Override
     public void execute() {
-        
+        if(intake) {
+            _intakeSubsystem.intakeState = IntakeState.Intake;
+        } else {
+            _intakeSubsystem.intakeState = IntakeState.Stop;
+        }
     }
 
     @Override

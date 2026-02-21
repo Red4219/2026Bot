@@ -6,20 +6,19 @@ package frc.robot;
 
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChassisAimCommand;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ToggleTurretManualCommand;
 import frc.robot.commands.ResetPositionCommand;
 import frc.robot.commands.ShootCommand;
-import frc.robot.commands.StopIntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.commands.ClimbUpCommand;
 import frc.robot.commands.EjectCommand;
-import frc.robot.commands.ClimbDownCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -139,8 +138,12 @@ public class RobotContainer {
     } else {
 
       operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
-      driverController.button(1).onTrue(new ShootCommand(true));
-      driverController.button(1).onFalse(new ShootCommand(false));
+      driverController.button(2).onTrue(new ShootCommand(true));
+      driverController.button(2).onFalse(new ShootCommand(false));
+      driverController.button(3).onTrue(new IntakeCommand(true));
+      driverController.button(3).onFalse(new IntakeCommand(false));
+      driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
+      driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
 
       driveSubsystem.setDefaultCommand(
 
@@ -170,10 +173,11 @@ public class RobotContainer {
 	}
 
   private void registerAutoCommands() {
-    NamedCommands.registerCommand("ClimbUp", new ClimbUpCommand());
-    NamedCommands.registerCommand("ClimbDown", new ClimbDownCommand());
-    NamedCommands.registerCommand("Intake", new IntakeCommand());
-    NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
+    NamedCommands.registerCommand("ClimbUp", new ClimbCommand(ClimbState.Up));
+    NamedCommands.registerCommand("ClimbDown", new ClimbCommand(ClimbState.Down));
+    NamedCommands.registerCommand("Intake", new IntakeCommand(true));
+    NamedCommands.registerCommand("StopIntake", new IntakeCommand(false));
+    //NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("ShootStart", new ShootCommand(true));
     NamedCommands.registerCommand("ShootStop", new ShootCommand(false));
@@ -182,5 +186,7 @@ public class RobotContainer {
   public void simulationInit() {
     driveSubsystem.simulationInit();
     shooterSubsystem.simulationInit();
+    intakeSubsystem.simulationInit();
+    climberSubsystem.simulationInit();
   }
 }

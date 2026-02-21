@@ -200,10 +200,10 @@ public class SwerveModule {
 
 	public void simulationPeriodic(SwerveModuleState swerveModuleState) {
 
-		if(isSim) {
-			m_moduleAngleRadians = Math.toRadians(swerveModuleState.angle.getDegrees());
-			_simulatedAbsoluteEncoderRotation2d = swerveModuleState.angle;
-		}
+		
+		m_moduleAngleRadians = Math.toRadians(swerveModuleState.angle.getDegrees());
+		_simulatedAbsoluteEncoderRotation2d = swerveModuleState.angle;
+		
 
 		talonFXSimState = driveMotor.getSimState();
 

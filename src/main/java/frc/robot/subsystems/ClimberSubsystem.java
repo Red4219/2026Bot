@@ -33,8 +33,10 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public ClimbState climbState = ClimbState.Stored;
-    private SparkMax climbMotor = null;
-	private SparkMaxSim climbMaxSim = null;
+    private SparkMax climbMotor1 = null;
+	private SparkMaxSim climbMax1Sim = null;
+    private SparkMax climbMotor2 = null;
+	private SparkMaxSim climbMax2Sim = null;
     private DCMotor maxGearbox = null;
     private double motorPosition = 0.0;
     private double targetPosition = 0.0;
@@ -55,32 +57,39 @@ public class ClimberSubsystem extends SubsystemBase {
 
         if (ClimberConstants.enabled) {
 
-            climbMotor = new SparkMax(ClimberConstants.climberMotorId, MotorType.kBrushless);
+            climbMotor1 = new SparkMax(ClimberConstants.climberMotor1Id, MotorType.kBrushless);
+            climbMotor2 = new SparkMax(ClimberConstants.climberMotor2Id, MotorType.kBrushless);
 
             // Setup the config for the motor
-            SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
-            sparkMaxConfig
+            SparkMaxConfig sparkMaxConfig1 = new SparkMaxConfig();
+            sparkMaxConfig1
                     .idleMode(IdleMode.kBrake)
-                    .inverted(ClimberConstants.invertMotor).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    .inverted(ClimberConstants.invertMotor1).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     .pid(
                             ClimberConstants.kP,
                             ClimberConstants.kI,
                             ClimberConstants.kD);
 
-            sparkMaxConfig.signals.primaryEncoderPositionPeriodMs(5);
+            SparkMaxConfig sparkMaxConfig2 = new SparkMaxConfig();
+            sparkMaxConfig2
+                    .idleMode(IdleMode.kBrake)
+                    .follow(ClimberConstants.climberMotor1Id)
+                    .inverted(ClimberConstants.invertMotor2).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    .pid(
+                            ClimberConstants.kP,
+                            ClimberConstants.kI,
+                            ClimberConstants.kD);
 
-            // Apply the config to the motor
-            climbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            sparkMaxConfig1.signals.primaryEncoderPositionPeriodMs(5);
+
+            // Apply the config to the motors
+            climbMotor1.configure(sparkMaxConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            climbMotor2.configure(sparkMaxConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
 
             // Setup the encoder
-            relativeEncoder = (SparkRelativeEncoder) climbMotor.getEncoder();
+            relativeEncoder = (SparkRelativeEncoder) climbMotor1.getEncoder();
             motorPosition = relativeEncoder.getPosition();
-
-            if (RobotBase.isSimulation()) {
-                maxGearbox = DCMotor.getNEO(1);
-                climbMaxSim = new SparkMaxSim(climbMotor, maxGearbox);
-                relativeEncoderSim = climbMaxSim.getRelativeEncoderSim();
-            }
 
             // Setup the network tables info
             inst = NetworkTableInstance.getDefault();
@@ -95,10 +104,23 @@ public class ClimberSubsystem extends SubsystemBase {
             pubStateString.set(stringState);
         }
     }
+
+    public void simulationInit() {
+        if (ClimberConstants.enabled) {
+            maxGearbox = DCMotor.getNEO(1);
+            climbMax1Sim = new SparkMaxSim(climbMotor1, maxGearbox);
+            relativeEncoderSim = climbMax1Sim.getRelativeEncoderSim();
+
+            climbMax2Sim = new SparkMaxSim(climbMotor2, maxGearbox);
+        }
+    }
     
     @Override
     public void simulationPeriodic() {
-        climbMaxSim.iterate(climbMotor.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.02);
+        if (ClimberConstants.enabled) {
+            climbMax1Sim.iterate(climbMotor1.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.02);
+            climbMax2Sim.iterate(climbMotor1.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.02);
+        }
     }
 
     @Override
@@ -119,7 +141,7 @@ public class ClimberSubsystem extends SubsystemBase {
             }
 
             // Go to the position based off of the target position
-            climbMotor.getClosedLoopController().setSetpoint(targetPosition, ControlType.kPosition);
+            climbMotor1.getClosedLoopController().setSetpoint(targetPosition, ControlType.kPosition);
 
             // Grab the position
             motorPosition = relativeEncoder.getPosition();
