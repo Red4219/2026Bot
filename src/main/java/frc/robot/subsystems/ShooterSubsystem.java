@@ -705,30 +705,25 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double findAngleToTarget(Translation2d target, Pose2d currentPose) {
         
-        double temp = Math.atan2(
+        /*double temp = Math.atan2(
             target.getY() - currentPose.getY(),
             target.getX() - currentPose.getX()
+        );*/
+
+        double temp = Math.atan2(
+            -target.getY() - (-currentPose.getY()),
+            -target.getX() - (-currentPose.getX())
         );
 
         temp = Math.toDegrees(temp);
+
+        //temp = (temp + 180.0) % 360.0;
 
         //temp = (currentPose.getRotation().getDegrees() - temp) + currentPose.getRotation().getDegrees();
 
         // Find the relative angle
         temp = temp - currentPose.getRotation().getDegrees();
-
-        /*if (DriverStation.getAlliance().isPresent()) {
-            if (DriverStation.getAlliance().get() == Alliance.Red) {
-                //double originalAngle = 45.0; // Example angle in degrees
-                //double rotatedAngle = (originalAngle + 180.0) % 360.0;
-
-                temp = (temp + 180.0) % 360.0;
-            }
-        }*/
-
-        //temp = (temp - currentPose.getRotation().getDegrees() + 360) % 360;
-        //temp = ((temp - currentPose.getRotation().getDegrees()) + 360);
-        //System.out.println("currentrotation: " + currentPose.getRotation().getDegrees());
+        //temp = temp - ((currentPose.getRotation().getDegrees() + 180.0) % 360.0);
 
         return temp;
     }
