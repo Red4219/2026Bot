@@ -19,6 +19,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkMaxSim;
+import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
@@ -26,6 +27,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.FeedForwardConfig;
 import com.revrobotics.spark.config.MAXMotionConfig;
@@ -112,6 +114,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // Turret motor, this turns the turret around
     private SparkMax turretMotor = null;
     private SparkMaxSim turretMotorSim = null;
+    private SparkRelativeEncoder relativeEncoderTurret = null;
+    private SparkRelativeEncoderSim relativeEncoderTurretSim = null;
+    private double motorPositionTurret = 0.0;
 
     // This is the indexer motor, it spins the indexer around to feed the kicker/turret
     private SparkFlex indexerMotor = null;
@@ -262,43 +267,42 @@ public class ShooterSubsystem extends SubsystemBase {
             SparkMaxConfig turretConfig = new SparkMaxConfig();
             
             turretConfig
-                    .idleMode(IdleMode.kBrake)
-                    .inverted(ShooterConstants.invertTurretMotor)
-                    .closedLoop
-                        //.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .p( ShooterConstants.turretP, ClosedLoopSlot.kSlot0)
-                        .i( ShooterConstants.turretI, ClosedLoopSlot.kSlot0)
-                        .d( ShooterConstants.turretD, ClosedLoopSlot.kSlot0)
-                        .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
-                        // .pid(
-                        //     ShooterConstants.turretP,
-                        //     ShooterConstants.turretI,
-                        //     ShooterConstants.turretD
-                        // );
+                .idleMode(IdleMode.kBrake)
+                .inverted(ShooterConstants.invertTurretMotor)
+                .closedLoop
+                //.outputRange(-10.0, 10.0)
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    .pid(
+                        ShooterConstants.turretP,
+                        ShooterConstants.turretI,
+                        ShooterConstants.turretD
+                    );
 
-            //turretConfig.encoder.positionConversionFactor(30.0);
-
-            turretConfig.closedLoop.apply(new MAXMotionConfig()
-                .cruiseVelocity(ShooterConstants.turretMotorMaxMotionCruiseVelocity)
-                .maxAcceleration(ShooterConstants.turretMotorMaxMotionMaxAcceleration)
-                .allowedProfileError(ShooterConstants.turretMotorMaxMotionAllowedProfileError)
-                .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
-                // .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot0)
-                // .cruiseVelocity(actualFlyWheelSpeed, ClosedLoopSlot.kSlot0)
-                // .maxAcceleration(actualFlyWheelSpeed, ClosedLoopSlot.kSlot0)
-                // .allowedProfileError(ShooterConstants.turretMotorMaxMotionAllowedProfileError, ClosedLoopSlot.kSlot0)
-            );
+            // turretConfig.closedLoop.apply(new MAXMotionConfig()
+            //     .cruiseVelocity(ShooterConstants.turretMotorMaxMotionCruiseVelocity)
+            //     .maxAcceleration(ShooterConstants.turretMotorMaxMotionMaxAcceleration)
+            //     .allowedProfileError(ShooterConstants.turretMotorMaxMotionAllowedProfileError)
+            //     .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
+            //     // .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot0)
+            //     // .cruiseVelocity(actualFlyWheelSpeed, ClosedLoopSlot.kSlot0)
+            //     // .maxAcceleration(actualFlyWheelSpeed, ClosedLoopSlot.kSlot0)
+            //     // .allowedProfileError(ShooterConstants.turretMotorMaxMotionAllowedProfileError, ClosedLoopSlot.kSlot0)
+            // );
             
-            turretConfig.closedLoop.apply(new FeedForwardConfig()
-                .kS(0.0, ClosedLoopSlot.kSlot0)
-                .kV(0.0, ClosedLoopSlot.kSlot0)
-                //.kV(12.0 / 5767, ClosedLoopSlot.kSlot0)
-                //.kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
-                .kA(0.0, ClosedLoopSlot.kSlot0)
-            );
+            // turretConfig.closedLoop.apply(new FeedForwardConfig()
+            //     .kS(0.0, ClosedLoopSlot.kSlot0)
+            //     .kV(0.0, ClosedLoopSlot.kSlot0)
+            //     //.kV(12.0 / 5767, ClosedLoopSlot.kSlot0)
+            //     //.kV(12.0 / 5767, ClosedLoopSlot.kSlot1);
+            //     .kA(0.0, ClosedLoopSlot.kSlot0)
+            // );
 
             turretConfig.signals.primaryEncoderPositionPeriodMs(5);
             turretMotor.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+            //turretConfig.encoder.positionConversionFactor(30.0);
+            relativeEncoderTurret = (SparkRelativeEncoder) turretMotor.getEncoder();
+            motorPositionTurret = relativeEncoderTurret.getPosition();
 
             // Setup the network tables info
             inst = NetworkTableInstance.getDefault();
@@ -501,9 +505,16 @@ public class ShooterSubsystem extends SubsystemBase {
             //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl);
 
             //if(turretTargetAngle < -175)
-            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
             //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
             //turretMotor.getClosedLoopController().setSetpoint(10.0, SparkBase.ControlType.kMAXMotionPositionControl);
+
+            //
+            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
+            
+            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+
 
             // Get where the motors actually are
             //actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();
@@ -528,7 +539,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 currentPosition.getY(), 
                 //new Rotation2d(Math.toRadians(angle))
                 //new Rotation2d(Math.toRadians(turretTargetAngle))
-                new Rotation2d(Math.toRadians(turretMotor.getEncoder().getPosition()))
+                new Rotation2d(Math.toRadians(turretMotor.getEncoder().getPosition() + currentPosition.getRotation().getDegrees()))
             );
 
             field = RobotContainer.field.getObject("My Objects");
@@ -574,6 +585,7 @@ public class ShooterSubsystem extends SubsystemBase {
             // Turret motor
             turretMotorSim = new SparkMaxSim(turretMotor, DCMotor.getNEO(1));
             turretMotorSim.setBusVoltage(12.0);
+            relativeEncoderTurretSim = turretMotorSim.getRelativeEncoderSim();
 
             // Kick motor 1
             kickMotor1Sim = new SparkFlexSim(kickMotor1, DCMotor.getNeoVortex(1));
@@ -615,13 +627,16 @@ public class ShooterSubsystem extends SubsystemBase {
             flywheelMotor2SimModel.setInputVoltage(motorVoltage.in(Volts));
             flywheelMotor2SimModel.update(0.020); // assume 20 ms loop time
 
-            //System.out.println("turretAngle: " + turretTargetAngle + ", position: " + turretMotorSim.getPosition() + ", diff: " + Math.abs(turretTargetAngle - turretMotorSim.getPosition()));
+            // 1. Get the motor speed (voltage) from the simulation
+            double motorSpeed = turretMotorSim.getAppliedOutput();
 
-            // Set the turret position
-            //turretMotorSim.iterate(turretMotor.getEncoder().getVelocity(), 12.0, 0.2);
-            turretMotorSim.iterate(turretMotor.getClosedLoopController().getMAXMotionSetpointVelocity(), RoboRioSim.getVInVoltage(), 0.2);
-            //turretMotorSim.setPosition(turretTargetAngle);
-            //turretMotorSim.set
+            // 2. Simulate the movement (e.g., update position based on speed)
+            // In a real simulation, you would use physics models here (WPILib) 
+            turretMotorSim.setVelocity(motorSpeed * 5676);
+            turretMotorSim.setPosition(turretMotorSim.getPosition() + (motorSpeed * 0.1));
+
+            // 3. Update simulation sensors
+            turretMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
 
             switch (shooterState) {
                 case Shooting:
@@ -697,10 +712,23 @@ public class ShooterSubsystem extends SubsystemBase {
 
         temp = Math.toDegrees(temp);
 
-        /*if(temp > 170 || temp < -170) {
-            // flip the sign
-            temp = -temp;
+        //temp = (currentPose.getRotation().getDegrees() - temp) + currentPose.getRotation().getDegrees();
+
+        // Find the relative angle
+        temp = temp - currentPose.getRotation().getDegrees();
+
+        /*if (DriverStation.getAlliance().isPresent()) {
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                //double originalAngle = 45.0; // Example angle in degrees
+                //double rotatedAngle = (originalAngle + 180.0) % 360.0;
+
+                temp = (temp + 180.0) % 360.0;
+            }
         }*/
+
+        //temp = (temp - currentPose.getRotation().getDegrees() + 360) % 360;
+        //temp = ((temp - currentPose.getRotation().getDegrees()) + 360);
+        //System.out.println("currentrotation: " + currentPose.getRotation().getDegrees());
 
         return temp;
     }
