@@ -337,10 +337,12 @@ public final class Constants {
 		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
 		public static final double turretMotorMaxMotionMaxAcceleration = 10000;
 		public static final double turretMotorMaxMotionAllowedProfileError = 20.0;
+		public static final int turretMotorCurrentLimit = 10;
 
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = false;
 		public static final double indexMotorSpeed = 12.0;
+		public static final int indexerMotorCurrentLimit = 10;
 
 		public static final int kickMotor1Id = 34;
 		public static final boolean invertKickMotor1 = false;
@@ -349,6 +351,8 @@ public final class Constants {
 		public static final int kickMotor2Id = 35;
 		public static final boolean invertKickMotor2 = false;
 		public static final double kickMotor2Speed = 12.0;
+
+		public static final int kickMotorCurrentLimit = 10;
 
 		// public static final int hoodMotorId = 32;
 		// public static final boolean invertHoodMotor = false;

@@ -236,6 +236,7 @@ public class ShooterSubsystem extends SubsystemBase {
             indexerMotor = new SparkFlex(ShooterConstants.indexerMotorId, MotorType.kBrushless);
             SparkFlexConfig indexConfig = new SparkFlexConfig();
             indexConfig
+                    .smartCurrentLimit(ShooterConstants.indexerMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
                     .inverted(ShooterConstants.invertIndexerMotor).closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -246,6 +247,7 @@ public class ShooterSubsystem extends SubsystemBase {
             kickMotor1 = new SparkFlex(ShooterConstants.kickMotor1Id, MotorType.kBrushless);
             SparkFlexConfig kick1Config = new SparkFlexConfig();
             kick1Config
+                    .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
                     .inverted(ShooterConstants.invertFlywheelMotor1).closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -256,6 +258,7 @@ public class ShooterSubsystem extends SubsystemBase {
             kickMotor2 = new SparkFlex(ShooterConstants.kickMotor2Id, MotorType.kBrushless);
             SparkFlexConfig kick2Config = new SparkFlexConfig();
             kick2Config
+                    .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
                     .inverted(ShooterConstants.invertFlywheelMotor2).closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -269,6 +272,7 @@ public class ShooterSubsystem extends SubsystemBase {
             turretConfig
                 .idleMode(IdleMode.kBrake)
                 .inverted(ShooterConstants.invertTurretMotor)
+                .smartCurrentLimit(ShooterConstants.turretMotorCurrentLimit)
                 .closedLoop
                 //.outputRange(-10.0, 10.0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
