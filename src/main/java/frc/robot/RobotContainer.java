@@ -4,10 +4,8 @@
 
 package frc.robot;
 
-import frc.robot.commands.Autos;
 import frc.robot.commands.ChassisAimCommand;
 import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ToggleTurretManualCommand;
 import frc.robot.commands.ResetPositionCommand;
@@ -17,7 +15,6 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.commands.EjectCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
