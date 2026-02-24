@@ -277,12 +277,16 @@ public final class Constants {
 		public static boolean enabled = false;
 		public static int intakeMotorId = 22;
 		public static boolean invertMotor = false;
+		public static int currentLimit = 10;
 		public static double kP = 0.2;
 		public static double kI = 0.0;
 		public static double kD = 0.0;
 
 		public static double intakePower = 1.0;
 		public static double ejectPower = 1.0;
+
+		public static int linearActuator1Id = 0;
+		public static int linearActuator2Id = 1;
 	}
 
 	// public static class PoseDefinitions {

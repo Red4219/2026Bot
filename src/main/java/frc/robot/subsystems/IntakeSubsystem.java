@@ -11,15 +11,22 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.simulation.SolenoidSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -40,8 +47,18 @@ public class IntakeSubsystem extends SubsystemBase {
     private StringTopic topicStateString = null;
 	private StringPublisher pubStateString = null;
 
+    private BooleanTopic topicLinearActuators = null;
+    private BooleanPublisher pubLinearActuators = null;
+
     private SparkFlex intakeMotor = null;
     private SparkFlexSim intakeMotorSim = null;
+
+    private Solenoid solenoid1 = null;
+    private SolenoidSim solenoid1Sim = null;
+    private Solenoid solenoid2 = null;
+    private SolenoidSim solenoid2Sim = null;
+
+    private boolean deployed = false;
 
     public IntakeSubsystem() {
 
@@ -55,6 +72,10 @@ public class IntakeSubsystem extends SubsystemBase {
             pubStateString = topicStateString.publish();
             pubStateString.set(stringState);
 
+            topicLinearActuators = table.getBooleanTopic("LinearActuators");
+            pubLinearActuators = topicLinearActuators.publish();
+            pubLinearActuators.set(deployed);
+
             // Motor
             intakeMotor = new SparkFlex(IntakeConstants.intakeMotorId, MotorType.kBrushless);
 
@@ -62,6 +83,7 @@ public class IntakeSubsystem extends SubsystemBase {
             SparkFlexConfig sparkFlexConfig = new SparkFlexConfig();
             sparkFlexConfig
                     .idleMode(IdleMode.kCoast)
+                    .smartCurrentLimit(IntakeConstants.currentLimit)
                     .inverted(IntakeConstants.invertMotor).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     .pid(
                             IntakeConstants.kP,
@@ -76,6 +98,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
             // Apply the config to the motor
             intakeMotor.configure(sparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+            solenoid1 = new Solenoid(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
+            solenoid2 = new Solenoid(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
         }
     }
 
@@ -88,19 +113,32 @@ public class IntakeSubsystem extends SubsystemBase {
                 case Eject:
                     stringState = "Eject";
                     intakeMotor.set(-IntakeConstants.ejectPower);
+
+                    deployed = true;
+
                     break;
                 case Intake:
                     stringState = "Intake";
                     intakeMotor.set(IntakeConstants.intakePower);
+
+                    deployed = true;
+
                     break;
                 case Stop:
                     stringState = "Stop";
                     intakeMotor.set(0.0);
+
+                    deployed = false;
+
                     break;
             }
 
+            solenoid1.set(deployed);
+            solenoid2.set(deployed);
+
             // Publish the state string of the climber
             pubStateString.set(stringState);
+            pubLinearActuators.set(deployed);
         }
     }
 
@@ -108,6 +146,20 @@ public class IntakeSubsystem extends SubsystemBase {
         if(IntakeConstants.enabled) {
             intakeMotorSim = new SparkFlexSim(intakeMotor, DCMotor.getNEO(1));
             intakeMotorSim.setBusVoltage(12.0);
+
+            solenoid1Sim = new SolenoidSim(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
+            solenoid2Sim = new SolenoidSim(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+
+            // 1. Get the motor speed (voltage) from the simulation
+            double motorSpeed = intakeMotorSim.getAppliedOutput();
+
+            // 2. Simulate the movement (e.g., update position based on speed)
+            // In a real simulation, you would use physics models here (WPILib) 
+            intakeMotorSim.setVelocity(motorSpeed * 5676);
+            intakeMotorSim.setPosition(intakeMotorSim.getPosition() + (motorSpeed * 0.1));
+
+            // 3. Update simulation sensors
+            intakeMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
         }
     }
 

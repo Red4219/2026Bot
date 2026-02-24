@@ -142,8 +142,11 @@ public class RobotContainer {
       driverController.button(2).onFalse(new ShootCommand(false));
       driverController.button(3).onTrue(new IntakeCommand(true));
       driverController.button(3).onFalse(new IntakeCommand(false));
-      driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
-      driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
+      //driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
+      //driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
+
+      driverController.button(4).onTrue(new IntakeCommand(true));
+      driverController.button(4).onFalse(new IntakeCommand(false));
 
       driveSubsystem.setDefaultCommand(
 
