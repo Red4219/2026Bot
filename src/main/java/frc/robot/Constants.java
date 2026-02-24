@@ -287,6 +287,7 @@ public final class Constants {
 
 		public static int linearActuator1Id = 0;
 		public static int linearActuator2Id = 1;
+		public static int controllerId = 36;
 	}
 
 	// public static class PoseDefinitions {

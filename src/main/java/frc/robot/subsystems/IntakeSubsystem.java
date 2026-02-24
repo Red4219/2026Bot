@@ -99,8 +99,8 @@ public class IntakeSubsystem extends SubsystemBase {
             // Apply the config to the motor
             intakeMotor.configure(sparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-            solenoid1 = new Solenoid(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
-            solenoid2 = new Solenoid(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+            solenoid1 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
+            solenoid2 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
         }
     }
 
@@ -147,8 +147,17 @@ public class IntakeSubsystem extends SubsystemBase {
             intakeMotorSim = new SparkFlexSim(intakeMotor, DCMotor.getNEO(1));
             intakeMotorSim.setBusVoltage(12.0);
 
-            solenoid1Sim = new SolenoidSim(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
-            solenoid2Sim = new SolenoidSim(PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+            solenoid1Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
+            solenoid2Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+
+            
+        }
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        if(IntakeConstants.enabled) {
+            intakeMotorSim.iterate(intakeMotor.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.2);
 
             // 1. Get the motor speed (voltage) from the simulation
             double motorSpeed = intakeMotorSim.getAppliedOutput();
@@ -160,13 +169,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
             // 3. Update simulation sensors
             intakeMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
-        }
-    }
 
-    @Override
-    public void simulationPeriodic() {
-        if(IntakeConstants.enabled) {
-            intakeMotorSim.iterate(intakeMotor.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.2);
+            solenoid1Sim.setOutput(deployed);
+            solenoid2Sim.setOutput(deployed);
         }
     }
 
