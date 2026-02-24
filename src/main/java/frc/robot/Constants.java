@@ -259,18 +259,19 @@ public final class Constants {
 	}
 
 	public static class ClimberConstants {
-		public static boolean enabled = false;
-		public static int climberMotor1Id = 20;
-		public static int climberMotor2Id = 21;
-		public static boolean invertMotor1 = false;
-		public static boolean invertMotor2 = false;
-		public static double kP = 5.2;
-		public static double kI = 0.0;
-		public static double kD = 0.0;
+		public static final boolean enabled = false;
+		public static final int climberMotor1Id = 20;
+		public static final int climberMotor2Id = 21;
+		public static final boolean invertMotor1 = false;
+		public static final boolean invertMotor2 = false;
+		public static final int climberMotorCurrentLimit = 10;
+		public static final double kP = 5.2;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0;
 
-		public static double targetPositionUp = 15.0;
-		public static double targetPositionDown = 10.0;
-		public static double targetPositionStored = 0.0;
+		public static final double targetPositionUp = 15.0;
+		public static final double targetPositionDown = 10.0;
+		public static final double targetPositionStored = 0.0;
 	}
 
 	public static class IntakeConstants {

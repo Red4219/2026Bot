@@ -63,6 +63,7 @@ public class ClimberSubsystem extends SubsystemBase {
             // Setup the config for the motor
             SparkMaxConfig sparkMaxConfig1 = new SparkMaxConfig();
             sparkMaxConfig1
+                    .smartCurrentLimit(ClimberConstants.climberMotorCurrentLimit)
                     .idleMode(IdleMode.kBrake)
                     .inverted(ClimberConstants.invertMotor1).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     .pid(
@@ -72,6 +73,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
             SparkMaxConfig sparkMaxConfig2 = new SparkMaxConfig();
             sparkMaxConfig2
+                    .smartCurrentLimit(ClimberConstants.climberMotorCurrentLimit)
                     .idleMode(IdleMode.kBrake)
                     .follow(ClimberConstants.climberMotor1Id)
                     .inverted(ClimberConstants.invertMotor2).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
