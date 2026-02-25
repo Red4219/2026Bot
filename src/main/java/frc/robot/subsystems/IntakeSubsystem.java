@@ -5,10 +5,13 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.BooleanPublisher;
@@ -53,10 +56,13 @@ public class IntakeSubsystem extends SubsystemBase {
     private SparkFlex intakeMotor = null;
     private SparkFlexSim intakeMotorSim = null;
 
-    private Solenoid solenoid1 = null;
-    private SolenoidSim solenoid1Sim = null;
-    private Solenoid solenoid2 = null;
-    private SolenoidSim solenoid2Sim = null;
+    // private Solenoid solenoid1 = null;
+    // private SolenoidSim solenoid1Sim = null;
+    // private Solenoid solenoid2 = null;
+    // private SolenoidSim solenoid2Sim = null;
+
+    private SparkMax intakeEjectRetractMotor = null;
+    private SparkMaxSim intakeEjectRetractMotorSim = null;
 
     private boolean deployed = false;
 
@@ -92,15 +98,31 @@ public class IntakeSubsystem extends SubsystemBase {
 
             sparkFlexConfig.signals.primaryEncoderPositionPeriodMs(5);
 
-            if (RobotBase.isReal()) {
+            /*if (RobotBase.isReal()) {
                 intakeMotorSim = new SparkFlexSim(intakeMotor, DCMotor.getNeoVortex(1));
-            }
+            }*/
 
             // Apply the config to the motor
             intakeMotor.configure(sparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-            solenoid1 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
-            solenoid2 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+            // solenoid1 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
+            // solenoid2 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+
+            intakeEjectRetractMotor = new SparkMax(IntakeConstants.intakeEjectRetractMotorId, MotorType.kBrushless);
+
+            SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+            sparkMaxConfig
+                    .idleMode(IdleMode.kBrake)
+                    .smartCurrentLimit(IntakeConstants.intakeEjectRetractMotorIdCurrentLimit)
+                    .inverted(IntakeConstants.invertIntakeEjectRetractMotor)
+                    .closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    .pid(
+                        IntakeConstants.kIntakeRetractP,
+                        IntakeConstants.kIntakeRetractI,
+                        IntakeConstants.kIntakeRetractD
+                    );
+
+            intakeEjectRetractMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         }
     }
 
@@ -133,8 +155,14 @@ public class IntakeSubsystem extends SubsystemBase {
                     break;
             }
 
-            solenoid1.set(deployed);
-            solenoid2.set(deployed);
+            //solenoid1.set(deployed);
+            //solenoid2.set(deployed);
+
+            if(deployed) {
+                intakeEjectRetractMotor.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
+            } else {
+                intakeEjectRetractMotor.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
+            }
 
             // Publish the state string of the climber
             pubStateString.set(stringState);
@@ -147,17 +175,18 @@ public class IntakeSubsystem extends SubsystemBase {
             intakeMotorSim = new SparkFlexSim(intakeMotor, DCMotor.getNEO(1));
             intakeMotorSim.setBusVoltage(12.0);
 
-            solenoid1Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
-            solenoid2Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
+            //solenoid1Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
+            //solenoid2Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
 
-            
+            intakeEjectRetractMotorSim = new SparkMaxSim(intakeEjectRetractMotor, DCMotor.getNEO(1));
+            intakeEjectRetractMotorSim.setBusVoltage(12.0);
         }
     }
 
     @Override
     public void simulationPeriodic() {
         if(IntakeConstants.enabled) {
-            intakeMotorSim.iterate(intakeMotor.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.2);
+            //intakeMotorSim.iterate(intakeMotor.getOutputCurrent(), RoboRioSim.getVInVoltage(), 0.2);
 
             // 1. Get the motor speed (voltage) from the simulation
             double motorSpeed = intakeMotorSim.getAppliedOutput();
@@ -170,8 +199,22 @@ public class IntakeSubsystem extends SubsystemBase {
             // 3. Update simulation sensors
             intakeMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
 
-            solenoid1Sim.setOutput(deployed);
-            solenoid2Sim.setOutput(deployed);
+            //solenoid1Sim.setOutput(deployed);
+            //solenoid2Sim.setOutput(deployed);
+
+
+            ///////////////////
+
+            // 1. Get the motor speed (voltage) from the simulation
+            double intakeEjectRetractmotorSpeed = intakeEjectRetractMotorSim.getAppliedOutput();
+
+            // 2. Simulate the movement (e.g., update position based on speed)
+            // In a real simulation, you would use physics models here (WPILib) 
+            intakeEjectRetractMotorSim.setVelocity(intakeEjectRetractmotorSpeed * 5676);
+            intakeEjectRetractMotorSim.setPosition(intakeEjectRetractMotorSim.getPosition() + (intakeEjectRetractmotorSpeed * 0.1));
+
+            // 3. Update simulation sensors
+            intakeEjectRetractMotorSim.iterate(intakeEjectRetractmotorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
         }
     }
 

@@ -286,9 +286,17 @@ public final class Constants {
 		public static double intakePower = 1.0;
 		public static double ejectPower = 1.0;
 
-		public static int linearActuator1Id = 0;
-		public static int linearActuator2Id = 1;
-		public static int controllerId = 36;
+		//public static int linearActuator1Id = 0;
+		//public static int linearActuator2Id = 1;
+		//public static int controllerId = 36;
+		public static int intakeEjectRetractMotorId = 36;
+		public static boolean invertIntakeEjectRetractMotor = false;
+		public static int intakeEjectRetractMotorIdCurrentLimit = 10;
+		public static double kIntakeRetractP = 0.2;
+		public static double kIntakeRetractI = 0.0;
+		public static double kIntakeRetractD = 0.0;
+		public static double intakeExtendedPosition = 100;
+		public static double intakeRetractedPosition = 0;
 	}
 
 	// public static class PoseDefinitions {
