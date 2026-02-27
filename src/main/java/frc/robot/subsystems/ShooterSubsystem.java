@@ -466,6 +466,13 @@ public class ShooterSubsystem extends SubsystemBase {
                     indexerMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
                     kickMotor1.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor1Speed, ControlType.kVelocity);
                     kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
+
+                    // The are for the turret
+                    turretTargetAngle = findAngleToTarget(target, currentPosition);
+                    turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+
+                    // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
+                    flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
                     break;
                 case Stopped:
                     // Stop everything
@@ -473,6 +480,10 @@ public class ShooterSubsystem extends SubsystemBase {
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
                     kickMotor2.set(0.0);
+
+                    // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
+                    flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
+
                     break;
                 case Tracking:
                     // The turret is tracking the target, spinning the fly wheel, but not spinning/kicking the fuel
@@ -481,6 +492,13 @@ public class ShooterSubsystem extends SubsystemBase {
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
                     kickMotor2.set(0.0);
+
+                    // These are for the turret
+                    turretTargetAngle = findAngleToTarget(target, currentPosition);
+                    turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+
+                    // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
+                    flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
                     break;
             }
 
@@ -550,8 +568,7 @@ public class ShooterSubsystem extends SubsystemBase {
             
             // This does the math to find the angle to the target using the
             // robots position on the field
-            //double angle = findAngleToTarget(target, currentPosition);
-            turretTargetAngle = findAngleToTarget(target, currentPosition);
+            //turretTargetAngle = findAngleToTarget(target, currentPosition);
 
             // Tell the motors where they need to be
             //flywheelMotor.getClosedLoopController().setSetpoint(targetFlyWheelSpeed, ControlType.kVelocity);
@@ -570,9 +587,8 @@ public class ShooterSubsystem extends SubsystemBase {
             //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
             //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
             
-            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-
-            flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
+            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+            //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
 
             // Get where the motors actually are
             //actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();

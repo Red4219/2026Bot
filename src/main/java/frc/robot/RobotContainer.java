@@ -9,12 +9,13 @@ import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ToggleTurretManualCommand;
 import frc.robot.commands.ResetPositionCommand;
-import frc.robot.commands.ShootCommand;
+import frc.robot.commands.SetShooterStateCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
+import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.commands.EjectCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -120,8 +121,29 @@ public class RobotContainer {
       // Driver to reset field oriented drive
 			driverController.button(8).whileTrue(new ResetPositionCommand());
 
-      driverController.rightTrigger().onTrue(new ShootCommand(true));
-      driverController.rightTrigger().onFalse(new ShootCommand(false));
+      // When the drive pulls the right trigger, start shooting
+      driverController.rightTrigger().onTrue(new SetShooterStateCommand(ShooterState.Shooting));
+
+      // Driver has released the trigger stop shooting and go to tracking
+      driverController.rightTrigger().onFalse(new SetShooterStateCommand(ShooterState.Tracking));
+
+      // Set the turret to tracking but not shooting, this is for when we first go into teleop
+      driverController.button(1).whileTrue(new SetShooterStateCommand(ShooterState.Tracking));
+
+      // Set the turret to stopped
+      driverController.button(2).whileTrue(new SetShooterStateCommand(ShooterState.Stopped));
+
+      // When the drive pulls the left trigger, start to intake
+      driverController.leftTrigger().onTrue(new IntakeCommand(true));
+
+      // Driver has released the left trigger stop intaking
+      driverController.leftTrigger().onFalse(new IntakeCommand(false));
+
+      // Climb up
+      driverController.button(3).onTrue(new ClimbCommand(ClimbState.Up));
+      // Climb Down
+      driverController.button(4).onTrue(new ClimbCommand(ClimbState.Down));
+
     
       driveSubsystem.setDefaultCommand(
 			  new RunCommand(() -> driveSubsystem.drive(
@@ -134,13 +156,15 @@ public class RobotContainer {
 		  );
     } else {
 
-      operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
-      driverController.button(2).onTrue(new ShootCommand(true));
-      driverController.button(2).onFalse(new ShootCommand(false));
+      //operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
+      driverController.button(1).whileTrue(new SetShooterStateCommand(ShooterState.Tracking));
+      driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Shooting));
+      //driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Tracking));
       driverController.button(3).onTrue(new IntakeCommand(true));
       driverController.button(3).onFalse(new IntakeCommand(false));
-      driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
-      driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
+      //driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
+      //driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
+      driverController.button(4).onFalse(new SetShooterStateCommand(ShooterState.Stopped));
 
       driveSubsystem.setDefaultCommand(
 
@@ -176,8 +200,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopIntake", new IntakeCommand(false));
     //NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
-    NamedCommands.registerCommand("ShootStart", new ShootCommand(true));
-    NamedCommands.registerCommand("ShootStop", new ShootCommand(false));
+    NamedCommands.registerCommand("ShootStart", new SetShooterStateCommand(ShooterState.Shooting));
+    NamedCommands.registerCommand("ShootStop", new SetShooterStateCommand(ShooterState.Tracking));
   }
 
   public void simulationInit() {
