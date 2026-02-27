@@ -8,9 +8,12 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -99,21 +102,21 @@ public class ShooterSubsystem extends SubsystemBase {
     private String stateText = "Stopped";
 
     // Fly wheel motors
-    private SparkFlex flywheelMotor1 = null;
-    private SparkFlex flywheelMotor2 = null;
-    private SparkFlexSim flywheelMotor1Sim = null;
-    private SparkFlexSim flywheelMotor2Sim = null;
+    // private SparkFlex flywheelMotor1 = null;
+    // private SparkFlex flywheelMotor2 = null;
+    // private SparkFlexSim flywheelMotor1Sim = null;
+    // private SparkFlexSim flywheelMotor2Sim = null;
 
 
-    // private TalonFX flywheelMotor1 = null;
-	// private TalonFXSimState flywheel1SimState = null;
-    // private DCMotorSim flywheelMotor1SimModel = null;
-    // private TalonFXConfiguration flywheelMotor1Config = null;
+    private TalonFX flywheelMotor1 = null;
+	private TalonFXSimState flywheel1SimState = null;
+    private DCMotorSim flywheelMotor1SimModel = null;
+    private TalonFXConfiguration flywheelMotor1Config = null;
 
-    // private TalonFX flywheelMotor2 = null;
-	// private TalonFXSimState flywheel2SimState = null;
-    // private DCMotorSim flywheelMotor2SimModel = null;
-    // private TalonFXConfiguration flywheelMotor2Config = null;
+    private TalonFX flywheelMotor2 = null;
+	private TalonFXSimState flywheel2SimState = null;
+    private DCMotorSim flywheelMotor2SimModel = null;
+    private TalonFXConfiguration flywheelMotor2Config = null;
 
 
     // Turret motor, this turns the turret around
@@ -353,93 +356,89 @@ public class ShooterSubsystem extends SubsystemBase {
 
             //////////////////////////////
 
-            // flywheelMotor1 = new TalonFX(ShooterConstants.flywheelMotor1Id, Constants.kCanivoreCANBusName);
-            // flywheelMotor2 = new TalonFX(ShooterConstants.flywheelMotor2Id, Constants.kCanivoreCANBusName);
+            flywheelMotor1 = new TalonFX(ShooterConstants.flywheelMotor1Id, Constants.kCanivoreCANBusName);
+            flywheelMotor2 = new TalonFX(ShooterConstants.flywheelMotor2Id, Constants.kCanivoreCANBusName);
 
-            // // Flywheel Motor 1
-            // flywheelMotor1Config = new TalonFXConfiguration();
-		    // flywheelMotor1Config
-		    //     .withMotorOutput(
-			//         new MotorOutputConfigs()
-			// 	        .withInverted(InvertedValue.Clockwise_Positive)
-			// 	        .withNeutralMode(NeutralModeValue.Coast)
-		    //     );
-		    // flywheelMotor1Config.Audio.AllowMusicDurDisable = true;
+            // Flywheel Motor 1
+            flywheelMotor1Config = new TalonFXConfiguration();
+		    flywheelMotor1Config
+		        .withMotorOutput(
+			        new MotorOutputConfigs()
+				        .withInverted(InvertedValue.Clockwise_Positive)
+				        .withNeutralMode(NeutralModeValue.Coast)
+		        );
+		    flywheelMotor1Config.Audio.AllowMusicDurDisable = true;
 		
-		    // flywheelMotor1.getConfigurator().apply(flywheelMotor1Config);
+		    flywheelMotor1.getConfigurator().apply(flywheelMotor1Config);
 
-		    // CurrentLimitsConfigs currentConfig = new CurrentLimitsConfigs();
-		    // currentConfig.StatorCurrentLimitEnable = true;
-		    // currentConfig.StatorCurrentLimit = Constants.ShooterConstants.flywheel1CurrentLimit;
-		    // flywheelMotor1.getConfigurator().apply(currentConfig);
+		    CurrentLimitsConfigs currentConfig = new CurrentLimitsConfigs();
+		    currentConfig.StatorCurrentLimitEnable = true;
+		    currentConfig.StatorCurrentLimit = Constants.ShooterConstants.flywheel1CurrentLimit;
+		    flywheelMotor1.getConfigurator().apply(currentConfig);
 
-		    // var slot0Configs = new Slot0Configs();
-		    // slot0Configs.kS = 0.1;
-		    // slot0Configs.kV = 0.12;
-		    // slot0Configs.kP = Constants.ShooterConstants.flywheel1P; // An error of 1 rps results in 0.11 V output
-		    // slot0Configs.kI = Constants.ShooterConstants.flywheel1I; // no output for integrated error
-		    // slot0Configs.kD = Constants.ShooterConstants.flywheel1D; // no output for error derivative
-		    // flywheelMotor1.getConfigurator().apply(slot0Configs);
+		    var slot0Configs = new Slot0Configs();
+		    slot0Configs.kS = 0.1;
+		    slot0Configs.kV = 0.12;
+		    slot0Configs.kP = Constants.ShooterConstants.flywheel1P; // An error of 1 rps results in 0.11 V output
+		    slot0Configs.kI = Constants.ShooterConstants.flywheel1I; // no output for integrated error
+		    slot0Configs.kD = Constants.ShooterConstants.flywheel1D; // no output for error derivative
+		    flywheelMotor1.getConfigurator().apply(slot0Configs);
 
-            // // Flywheel Motor 2
-            // flywheelMotor2Config = new TalonFXConfiguration();
-		    // flywheelMotor2Config
-		    //     .withMotorOutput(
-			//         new MotorOutputConfigs()
-			// 	        .withInverted(InvertedValue.Clockwise_Positive)
-			// 	        .withNeutralMode(NeutralModeValue.Coast)
-		    //     );
-		    // flywheelMotor1Config.Audio.AllowMusicDurDisable = true;
+            // Flywheel Motor 2
+            flywheelMotor2Config = new TalonFXConfiguration();
+		    flywheelMotor2Config
+		        .withMotorOutput(
+			        new MotorOutputConfigs()
+				        .withInverted(InvertedValue.Clockwise_Positive)
+				        .withNeutralMode(NeutralModeValue.Coast)
+		        );
+		    flywheelMotor2Config.Audio.AllowMusicDurDisable = true;
 		
-		    // flywheelMotor1.getConfigurator().apply(flywheelMotor1Config);
+		    flywheelMotor2.getConfigurator().apply(flywheelMotor1Config);
 
-		    // CurrentLimitsConfigs currentConfig2 = new CurrentLimitsConfigs();
-		    // currentConfig2.StatorCurrentLimitEnable = true;
-		    // currentConfig2.StatorCurrentLimit = Constants.ShooterConstants.flywheel2CurrentLimit;
-		    // flywheelMotor2.getConfigurator().apply(currentConfig2);
-		    // flywheelMotor2.getConfigurator().apply(slot0Configs);
+		    CurrentLimitsConfigs currentConfig2 = new CurrentLimitsConfigs();
+		    currentConfig2.StatorCurrentLimitEnable = true;
+		    currentConfig2.StatorCurrentLimit = Constants.ShooterConstants.flywheel2CurrentLimit;
+		    flywheelMotor2.getConfigurator().apply(currentConfig2);
+		    flywheelMotor2.getConfigurator().apply(slot0Configs);
+
+            // Tell the second fly wheel motor to follow motor1 but in the opposite direction
+            flywheelMotor2.setControl(new Follower(ShooterConstants.flywheelMotor1Id, MotorAlignmentValue.Opposed));
 
             //////////////////////////////////
             
             // Flywheel Motor
-            flywheelMotor1 = new SparkFlex(ShooterConstants.flywheelMotor1Id, MotorType.kBrushless);
-            SparkFlexConfig flywheel1Config = new SparkFlexConfig();
+            // flywheelMotor1 = new SparkFlex(ShooterConstants.flywheelMotor1Id, MotorType.kBrushless);
+            // SparkFlexConfig flywheel1Config = new SparkFlexConfig();
             
-            flywheel1Config
-                .idleMode(IdleMode.kCoast)
-                .inverted(ShooterConstants.invertFlywheelMotor1)
-                .smartCurrentLimit(ShooterConstants.indexerMotorCurrentLimit)
-                .closedLoop
-                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    .pid(
-                        ShooterConstants.flywheel1P,
-                        ShooterConstants.flywheel1I,
-                        ShooterConstants.flywheel1D
-                    );
+            // flywheel1Config
+            //     .idleMode(IdleMode.kCoast)
+            //     .inverted(ShooterConstants.invertFlywheelMotor1)
+            //     .smartCurrentLimit(ShooterConstants.indexerMotorCurrentLimit)
+            //     .closedLoop
+            //     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            //         .pid(
+            //             ShooterConstants.flywheel1P,
+            //             ShooterConstants.flywheel1I,
+            //             ShooterConstants.flywheel1D
+            //         );
 
-            flywheel1Config.signals.primaryEncoderPositionPeriodMs(5);
-            flywheelMotor1.configure(flywheel1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            // flywheel1Config.signals.primaryEncoderPositionPeriodMs(5);
+            // flywheelMotor1.configure(flywheel1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-            // motor 2
+            // // motor 2
 
-            flywheelMotor2 = new SparkFlex(ShooterConstants.flywheelMotor2Id, MotorType.kBrushless);
-            SparkFlexConfig flywheel2Config = new SparkFlexConfig();
+            // flywheelMotor2 = new SparkFlex(ShooterConstants.flywheelMotor2Id, MotorType.kBrushless);
+            // SparkFlexConfig flywheel2Config = new SparkFlexConfig();
            
-            flywheel2Config
-                .idleMode(IdleMode.kCoast)
-                .follow(ShooterConstants.flywheelMotor1Id)
-                .inverted(ShooterConstants.invertFlywheelMotor2)
-                .smartCurrentLimit(ShooterConstants.indexerMotorCurrentLimit);
-                // .closedLoop
-                // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                //     .pid(
-                //         ShooterConstants.flywheel2P,
-                //         ShooterConstants.flywheel2I,
-                //         ShooterConstants.flywheel2D
-                //     );
+            // flywheel2Config
+            //     .idleMode(IdleMode.kCoast)
+            //     .follow(ShooterConstants.flywheelMotor1Id)
+            //     .inverted(ShooterConstants.invertFlywheelMotor2)
+            //     .smartCurrentLimit(ShooterConstants.indexerMotorCurrentLimit);
 
-            flywheel2Config.signals.primaryEncoderPositionPeriodMs(5);
-            flywheelMotor2.configure(flywheel2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            // flywheel2Config.signals.primaryEncoderPositionPeriodMs(5);
+            // flywheelMotor2.configure(flywheel2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             
 
@@ -472,7 +471,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
+                    //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
+                    flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
                     break;
                 case Stopped:
                     // Stop everything
@@ -482,7 +482,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     kickMotor2.set(0.0);
 
                     // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
-                    flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
+                    //flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
+                    flywheelMotor1.setControl(new VelocityDutyCycle(0.0));
 
                     break;
                 case Tracking:
@@ -498,7 +499,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
+                    //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
+                    flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
                     break;
             }
 
@@ -630,34 +632,34 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void simulationInit() {
         if (ShooterConstants.enabled) {
-            // flywheelMotor1SimModel = new DCMotorSim(
-            //         LinearSystemId.createDCMotorSystem(
-            //                 DCMotor.getKrakenX60Foc(1),
-            //                 0.001,
-            //                 1.0),
-            //         DCMotor.getKrakenX60Foc(1));
+            flywheelMotor1SimModel = new DCMotorSim(
+                    LinearSystemId.createDCMotorSystem(
+                            DCMotor.getKrakenX60Foc(1),
+                            0.001,
+                            1.0),
+                    DCMotor.getKrakenX60Foc(1));
 
-            // flywheel1SimState = flywheelMotor1.getSimState();
-            // flywheel1SimState.Orientation = ChassisReference.CounterClockwise_Positive;
-            // flywheel1SimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            flywheel1SimState = flywheelMotor1.getSimState();
+            flywheel1SimState.Orientation = ChassisReference.CounterClockwise_Positive;
+            flywheel1SimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
 
-            // // Motor 2
-            // flywheelMotor2SimModel = new DCMotorSim(
-            //         LinearSystemId.createDCMotorSystem(
-            //                 DCMotor.getKrakenX60Foc(1),
-            //                 0.001,
-            //                 1.0),
-            //         DCMotor.getKrakenX60Foc(1));
+            // Motor 2
+            flywheelMotor2SimModel = new DCMotorSim(
+                    LinearSystemId.createDCMotorSystem(
+                            DCMotor.getKrakenX60Foc(1),
+                            0.001,
+                            1.0),
+                    DCMotor.getKrakenX60Foc(1));
 
-            // flywheel2SimState = flywheelMotor1.getSimState();
-            // flywheel2SimState.Orientation = ChassisReference.CounterClockwise_Positive;
-            // flywheel2SimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            flywheel2SimState = flywheelMotor1.getSimState();
+            flywheel2SimState.Orientation = ChassisReference.CounterClockwise_Positive;
+            flywheel2SimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
 
-            flywheelMotor1Sim = new SparkFlexSim(flywheelMotor1, DCMotor.getNeoVortex(1));
-            flywheelMotor1Sim.setBusVoltage(12.0);
+            // flywheelMotor1Sim = new SparkFlexSim(flywheelMotor1, DCMotor.getNeoVortex(1));
+            // flywheelMotor1Sim.setBusVoltage(12.0);
 
-            flywheelMotor2Sim = new SparkFlexSim(flywheelMotor2, DCMotor.getNeoVortex(1));
-            flywheelMotor2Sim.setBusVoltage(12.0);
+            // flywheelMotor2Sim = new SparkFlexSim(flywheelMotor2, DCMotor.getNeoVortex(1));
+            // flywheelMotor2Sim.setBusVoltage(12.0);
 
             indexerMotorSim = new SparkFlexSim(indexerMotor, DCMotor.getNeoVortex(1));
             indexerMotorSim.setBusVoltage(12.0);
@@ -680,54 +682,66 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         if (ShooterConstants.enabled) {
-            // flywheel1SimState = flywheelMotor1.getSimState();
+            flywheel1SimState = flywheelMotor1.getSimState();
 
-            // // set the supply voltage of the TalonFX
-            // flywheel1SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            flywheel1SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-            // // get the motor voltage of the TalonFX
-            // var motorVoltage = flywheel1SimState.getMotorVoltageMeasure();
+            // get the motor voltage of the TalonFX
+            var motorVoltage = flywheel1SimState.getMotorVoltageMeasure();
 
-            // // use the motor voltage to calculate new position and velocity
-            // // using WPILib's DCMotorSim class for physics simulation
-            // flywheelMotor1SimModel.setInputVoltage(motorVoltage.in(Volts));
-            // flywheelMotor1SimModel.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            flywheelMotor1SimModel.setInputVoltage(motorVoltage.in(Volts));
+            flywheelMotor1SimModel.update(0.020); // assume 20 ms loop time
 
-            // // Motor 2
-            // flywheel2SimState = flywheelMotor2.getSimState();
+            // apply the new rotor position and velocity to the TalonFX;
+   		    // note that this is rotor position/velocity (before gear ratio), but
+   		    // DCMotorSim returns mechanism position/velocity (after gear ratio)
+   		    flywheel1SimState.setRawRotorPosition(flywheelMotor1SimModel.getAngularPosition().times(1.0));
+   		    flywheel1SimState.setRotorVelocity(flywheelMotor1SimModel.getAngularVelocity().times(1.0));
 
-            // // set the supply voltage of the TalonFX
-            // flywheel2SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // Motor 2
+            flywheel2SimState = flywheelMotor2.getSimState();
 
-            // // get the motor voltage of the TalonFX
-            // motorVoltage = flywheel2SimState.getMotorVoltageMeasure();
+            // set the supply voltage of the TalonFX
+            flywheel2SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-            // // use the motor voltage to calculate new position and velocity
-            // // using WPILib's DCMotorSim class for physics simulation
-            // flywheelMotor2SimModel.setInputVoltage(motorVoltage.in(Volts));
-            // flywheelMotor2SimModel.update(0.020); // assume 20 ms loop time
+            // get the motor voltage of the TalonFX
+            motorVoltage = flywheel2SimState.getMotorVoltageMeasure();
+
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            flywheelMotor2SimModel.setInputVoltage(motorVoltage.in(Volts));
+            flywheelMotor2SimModel.update(0.020); // assume 20 ms loop time
+
+            // apply the new rotor position and velocity to the TalonFX;
+   		    // note that this is rotor position/velocity (before gear ratio), but
+   		    // DCMotorSim returns mechanism position/velocity (after gear ratio)
+   		    flywheel2SimState.setRawRotorPosition(flywheelMotor2SimModel.getAngularPosition().times(1.0));
+   		    flywheel2SimState.setRotorVelocity(flywheelMotor2SimModel.getAngularVelocity().times(1.0));
 
             // Flywheel Motor 1
 
-            double flywheelMotor1Speed = flywheelMotor1Sim.getAppliedOutput();
+            // double flywheelMotor1Speed = flywheelMotor1Sim.getAppliedOutput();
 
-            // 2. Simulate the movement (e.g., update position based on speed)
-            // In a real simulation, you would use physics models here (WPILib) 
-            flywheelMotor1Sim.setVelocity(flywheelMotor1Speed * 5676);
-            flywheelMotor1Sim.setPosition(flywheelMotor1Sim.getPosition() + (flywheelMotor1Speed * 0.1));
+            // // 2. Simulate the movement (e.g., update position based on speed)
+            // // In a real simulation, you would use physics models here (WPILib) 
+            // flywheelMotor1Sim.setVelocity(flywheelMotor1Speed * 5676);
+            // flywheelMotor1Sim.setPosition(flywheelMotor1Sim.getPosition() + (flywheelMotor1Speed * 0.1));
 
-            flywheelMotor1Sim.iterate(flywheelMotor1Speed * 5676, RoboRioSim.getVInVoltage(), 0.02);
+            // flywheelMotor1Sim.iterate(flywheelMotor1Speed * 5676, RoboRioSim.getVInVoltage(), 0.02);
 
-            // Flywheel Motor 2
+            // // Flywheel Motor 2
 
-            double flywheelMotor2Speed = flywheelMotor2Sim.getAppliedOutput();
+            // double flywheelMotor2Speed = flywheelMotor2Sim.getAppliedOutput();
 
-            // 2. Simulate the movement (e.g., update position based on speed)
-            // In a real simulation, you would use physics models here (WPILib) 
-            flywheelMotor2Sim.setVelocity(flywheelMotor2Speed * 5676);
-            flywheelMotor2Sim.setPosition(flywheelMotor2Sim.getPosition() + (flywheelMotor2Speed * 0.1));
+            // // 2. Simulate the movement (e.g., update position based on speed)
+            // // In a real simulation, you would use physics models here (WPILib) 
+            // flywheelMotor2Sim.setVelocity(flywheelMotor2Speed * 5676);
+            // flywheelMotor2Sim.setPosition(flywheelMotor2Sim.getPosition() + (flywheelMotor2Speed * 0.1));
 
-            flywheelMotor2Sim.iterate(flywheelMotor2Speed * 5676, RoboRioSim.getVInVoltage(), 0.02);
+            // flywheelMotor2Sim.iterate(flywheelMotor2Speed * 5676, RoboRioSim.getVInVoltage(), 0.02);
 
             // Turret motor
 
