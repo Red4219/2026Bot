@@ -50,7 +50,7 @@ public final class Constants {
 	public static class ModuleConstants {
 
 		public static final String[] song = {"EvangelionMisato.chrp", "EvangelionCAT.chrp", "FetyWap.chrp"}; 
-		public static final Boolean enableMusic = true;
+		public static final Boolean enableMusic = false;
 
 		// Current limits for the wheels
 		//public static final int kTurnMotorCurrentLimit = 25;
@@ -195,14 +195,14 @@ public final class Constants {
 		public static double camHeightOffGround = Units.inchesToMeters(10.25);
 		public static double cam2HeightOffGround = Units.inchesToMeters(10.25);
 		// the side to side position of the camera relative to the robot center
-		public static double camX = .5;
-		public static double cam2X = 0.3;
+		public static double camX = 0;
+		public static double cam2X = 0;
 		// the front to back position of the camera relative to the robot center
-		public static double camY = .15;
-		public static double cam2Y = 0.1016;
+		public static double camY = -.5;
+		public static double cam2Y = 0.3;
 
-		public static double camRotation = Math.toRadians(0.0);
-		public static double cam2Rotation = Math.toRadians(180.0);
+		public static double camRotation = Math.toRadians(-90.0);
+		public static double cam2Rotation = Math.toRadians(90.0);
 
 		public static Transform3d cameraToRobot = new Transform3d(
                     new Translation3d(
@@ -319,8 +319,8 @@ public final class Constants {
 	// }
 
 	public static class ShooterConstants {
-		public static final boolean enabled = false;
-		public static final boolean debug = false;
+		public static final boolean enabled = true;
+		public static final boolean debug = true;
 
 		public static final int flywheelMotor1Id = 30;
 		public static final double flywheel1P = 0.1;
