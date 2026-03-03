@@ -268,8 +268,9 @@ public class ShooterSubsystem extends SubsystemBase {
             kick2Config
                     .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
-                    .inverted(ShooterConstants.invertFlywheelMotor2).closedLoop
-                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+                    .follow(ShooterConstants.kickMotor1Id);
+                    // .inverted(ShooterConstants.invertFlywheelMotor2).closedLoop
+                    // .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
             kickMotor2.configure(kick2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -464,7 +465,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Shooting";
                     indexerMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
                     kickMotor1.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor1Speed, ControlType.kVelocity);
-                    kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
+                    //kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
 
                     // The are for the turret
                     turretTargetAngle = findAngleToTarget(target, currentPosition);
@@ -479,7 +480,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Stopped";
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
-                    kickMotor2.set(0.0);
+                    //kickMotor2.set(0.0);
 
                     // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
@@ -492,7 +493,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Tracking";
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
-                    kickMotor2.set(0.0);
+                    //kickMotor2.set(0.0);
 
                     // These are for the turret
                     turretTargetAngle = findAngleToTarget(target, currentPosition);
@@ -753,15 +754,19 @@ public class ShooterSubsystem extends SubsystemBase {
             turretMotorSim.setVelocity(motorSpeed * 5676);
             turretMotorSim.setPosition(turretMotorSim.getPosition() + (motorSpeed * 0.1));
 
+            // get positions for kicker motors
+            kickMotor1Sim.setVelocity(ShooterConstants.kickMotor1Speed * 5676);
+            kickMotor1Sim.setPosition(kickMotor1Sim.getPosition() + (ShooterConstants.kickMotor1Speed * 0.1));
+
             // 3. Update simulation sensors
-            turretMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
+            //turretMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
 
             switch (shooterState) {
                 case Shooting:
                     stateText = "Shooting";
                     indexerMotorSim.iterate(ShooterConstants.indexMotorSpeed, 12.0, 0.2);
-                    kickMotor1Sim.iterate(ShooterConstants.kickMotor1Speed, 12.0, 0.2);
-                    kickMotor2Sim.iterate(ShooterConstants.kickMotor2Speed, 12.0, 0.2);
+                    kickMotor1Sim.iterate(ShooterConstants.kickMotor1Speed * 5676, 12.0, 0.2);
+                    kickMotor2Sim.iterate(ShooterConstants.kickMotor1Speed * 5676, 12.0, 0.2);
                     break;
                 case Stopped:
                     stateText = "Stopped";

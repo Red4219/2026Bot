@@ -289,14 +289,17 @@ public final class Constants {
 		//public static int linearActuator1Id = 0;
 		//public static int linearActuator2Id = 1;
 		//public static int controllerId = 36;
-		public static int intakeEjectRetractMotorId = 36;
-		public static boolean invertIntakeEjectRetractMotor = false;
-		public static int intakeEjectRetractMotorIdCurrentLimit = 10;
+		public static int intakeEjectRetractMotor1Id = 36;
+		public static boolean invertIntakeEjectRetractMotor1 = false;
+		public static int intakeEjectRetractMotorCurrentLimit = 10;
 		public static double kIntakeRetractP = 0.2;
 		public static double kIntakeRetractI = 0.0;
 		public static double kIntakeRetractD = 0.0;
 		public static double intakeExtendedPosition = 100;
 		public static double intakeRetractedPosition = 0;
+
+		public static int intakeEjectRetractMotor2Id = 37;
+		public static boolean invertIntakeEjectRetractMotor2 = false;
 	}
 
 	// public static class PoseDefinitions {
@@ -319,8 +322,8 @@ public final class Constants {
 	// }
 
 	public static class ShooterConstants {
-		public static final boolean enabled = true;
-		public static final boolean debug = true;
+		public static final boolean enabled = false;
+		public static final boolean debug = false;
 
 		public static final int flywheelMotor1Id = 30;
 		public static final double flywheel1P = 0.1;

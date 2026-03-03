@@ -159,6 +159,7 @@ public class RobotContainer {
       //operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
       driverController.button(1).whileTrue(new SetShooterStateCommand(ShooterState.Tracking));
       driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Shooting));
+      driverController.button(2).onFalse(new SetShooterStateCommand(ShooterState.Tracking));
       //driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Tracking));
       driverController.button(3).onTrue(new IntakeCommand(true));
       driverController.button(3).onFalse(new IntakeCommand(false));
