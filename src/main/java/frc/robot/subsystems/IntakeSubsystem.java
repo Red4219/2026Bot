@@ -16,6 +16,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanTopic;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -51,21 +53,16 @@ public class IntakeSubsystem extends SubsystemBase {
     private StringTopic topicStateString = null;
 	private StringPublisher pubStateString = null;
 
-    private BooleanTopic topicLinearActuators = null;
-    private BooleanPublisher pubLinearActuators = null;
-
     private SparkFlex intakeMotor = null;
     private SparkFlexSim intakeMotorSim = null;
-
-    // private Solenoid solenoid1 = null;
-    // private SolenoidSim solenoid1Sim = null;
-    // private Solenoid solenoid2 = null;
-    // private SolenoidSim solenoid2Sim = null;
 
     private SparkMax intakeEjectRetractMotor1 = null;
     private SparkMaxSim intakeEjectRetractMotor1Sim = null;
     private SparkMax intakeEjectRetractMotor2 = null;
     private SparkMaxSim intakeEjectRetractMotor2Sim = null;
+
+    private DoubleTopic topicEjectRetractMotorPosition = null;
+    private DoublePublisher pubEjectRetractMotorPosition = null;
 
     private boolean deployed = false;
 
@@ -81,9 +78,9 @@ public class IntakeSubsystem extends SubsystemBase {
             pubStateString = topicStateString.publish();
             pubStateString.set(stringState);
 
-            topicLinearActuators = table.getBooleanTopic("LinearActuators");
-            pubLinearActuators = topicLinearActuators.publish();
-            pubLinearActuators.set(deployed);
+            topicEjectRetractMotorPosition = table.getDoubleTopic("EjectRetractMotorPositiom");
+            pubEjectRetractMotorPosition = topicEjectRetractMotorPosition.publish();
+            pubEjectRetractMotorPosition.set(0.0);
 
             // Motor
             intakeMotor = new SparkFlex(IntakeConstants.intakeMotorId, MotorType.kBrushless);
@@ -168,9 +165,7 @@ public class IntakeSubsystem extends SubsystemBase {
                     break;
             }
 
-            //solenoid1.set(deployed);
-            //solenoid2.set(deployed);
-
+            // Check if we need to retrect or extend
             if(deployed) {
                 intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
             } else {
@@ -179,7 +174,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
             // Publish the state string of the climber
             pubStateString.set(stringState);
-            pubLinearActuators.set(deployed);
+            pubEjectRetractMotorPosition.set(intakeEjectRetractMotor1.getEncoder().getPosition());
         }
     }
 
@@ -214,10 +209,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
             // 3. Update simulation sensors
             intakeMotorSim.iterate(motorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
-
-            //solenoid1Sim.setOutput(deployed);
-            //solenoid2Sim.setOutput(deployed);
-
 
             ///////////////////
 

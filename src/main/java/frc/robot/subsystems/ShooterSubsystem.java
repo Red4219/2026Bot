@@ -88,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //public Map<Integer, Translation2d> targets = new HashMap<Integer, Translation2d>();
 
-    public Translation2d[] targets = {
+    public final Translation2d[] targets = {
         new Translation2d(4.5,4.0), // Blue tower
         new Translation2d(12.0, 4.0), // Red tower
         new Translation2d(0.0, 1.0), // Blue Human Element
@@ -98,8 +98,6 @@ public class ShooterSubsystem extends SubsystemBase {
     };
 
     private boolean manualControl = false;
-
-    private String stateText = "Stopped";
 
     // Fly wheel motors
     // private SparkFlex flywheelMotor1 = null;
@@ -154,6 +152,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double distanceFromTarget = 0.0;
 
+    private String stateText = "Stopped";
     public ShooterState shooterState = ShooterState.Stopped;
 
     private NetworkTableInstance inst = null;
