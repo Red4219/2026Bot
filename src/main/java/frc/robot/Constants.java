@@ -183,7 +183,7 @@ public final class Constants {
 	}
 
 	public static class LimelightConstants {
-		public static String name1 = "limelight";
+		public static final String name1 = "limelight";
 	}
 
 	public static class PhotonVisionConstants {
