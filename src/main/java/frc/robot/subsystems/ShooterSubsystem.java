@@ -473,6 +473,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
                     flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
+
+                    calculateHood();
                     break;
                 case Stopped:
                     // Stop everything
@@ -484,6 +486,9 @@ public class ShooterSubsystem extends SubsystemBase {
                     // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
                     flywheelMotor1.setControl(new VelocityDutyCycle(0.0));
+
+                    hoodActuator1.set(0.0);
+                    hoodActuator2.set(0.0);
 
                     break;
                 case Tracking:
@@ -501,6 +506,10 @@ public class ShooterSubsystem extends SubsystemBase {
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
                     flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
+
+                    // If we are not shooting, retract the hood to go under the tunnel
+                    hoodActuator1.set(0.0);
+                    hoodActuator2.set(0.0);
                     break;
             }
 
@@ -564,7 +573,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     }
                 }
 
-                calculateHood();
+                //calculateHood();
             }
 
             
