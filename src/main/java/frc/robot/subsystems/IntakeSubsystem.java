@@ -167,12 +167,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
             // Check if we need to retrect or extend
             if(deployed) {
+                // We don't have to set motor 2 beceause it follows motor 1
                 intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
             } else {
+                // We don't have to set motor 2 beceause it follows motor 1
                 intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
             }
 
-            // Publish the state string of the climber
+            // Publish the state string of the intake
             pubStateString.set(stringState);
             pubEjectRetractMotorPosition.set(intakeEjectRetractMotor1.getEncoder().getPosition());
         }

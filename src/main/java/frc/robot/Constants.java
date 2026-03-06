@@ -326,26 +326,28 @@ public final class Constants {
 		public static final boolean debug = true;
 
 		public static final int flywheelMotor1Id = 30;
-		public static final double flywheel1P = 0.1;
-		public static final double flywheel1I = 0.2;
-		public static final double flywheel1D = 0.3;
+		//public static final double flywheel1P = 0.1;
+		//public static final double flywheel1I = 0.2;
+		//public static final double flywheel1D = 0.3;
+		public static final double[] flywheelPID = {0.1, 0.2, 0.3};
 		public static final double flywheel1CurrentLimit = 40.0;
 		public static final boolean invertFlywheelMotor1 = false;
 
 		public static final int flywheelMotor2Id = 31;
-		public static final double flywheel2P = 0.1;
-		public static final double flywheel2I = 0.2;
-		public static final double flywheel2D = 0.3;
+		//public static final double flywheel2P = 0.1;
+		//public static final double flywheel2I = 0.2;
+		//public static final double flywheel2D = 0.3;
 		public static final double flywheel2CurrentLimit = 40.0;
 		public static final boolean invertFlywheelMotor2 = false;
 
 		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
-		public static final double turretP = 0.05;
-		public static final double turretI = 0.0;
-		public static final double turretD = 0.02;
-		public static final double minTurretPosition = 0.0;
-		public static final double maxTurretPosition = 100.0;
+		//public static final double turretP = 50.0;
+		//public static final double turretI = 0.0;
+		//public static final double turretD = 0.0;
+		public static final double[] turretPID = {.05, 0.0, .02};
+		//public static final double minTurretPosition = 0.0;
+		//public static final double maxTurretPosition = 100.0;
 		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
 		public static final double turretMotorMaxMotionMaxAcceleration = 10000;
 		public static final double turretMotorMaxMotionAllowedProfileError = 20.0;

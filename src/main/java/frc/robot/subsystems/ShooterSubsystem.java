@@ -47,8 +47,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.BooleanTopic;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -99,6 +104,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private boolean manualControl = false;
 
+    private double[] flywheelPID = ShooterConstants.flywheelPID;
+
     // Fly wheel motors
     // private SparkFlex flywheelMotor1 = null;
     // private SparkFlex flywheelMotor2 = null;
@@ -123,6 +130,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkRelativeEncoder relativeEncoderTurret = null;
     private SparkRelativeEncoderSim relativeEncoderTurretSim = null;
     private double motorPositionTurret = 0.0;
+    // private double turretMotorP = 0.0;
+    // private double turretMotorI = 0.0;
+    // private double turretMotorD = 0.0;
+    private double[] turretPID = ShooterConstants.turretPID;
 
     // This is the indexer motor, it spins the indexer around to feed the kicker/turret
     private SparkFlex indexerMotor = null;
@@ -144,6 +155,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double targetFlyWheelSpeed = 0.0;
     private double actualFlyWheelSpeed = 0.0;
+    private boolean flyWheelTargetVelocityOverride = false;
+
     private double targetHoodValue = 0.0;
     private double actualHoodValue = 0.0;
     private double targetTurretPosition = 0.0;
@@ -161,11 +174,43 @@ public class ShooterSubsystem extends SubsystemBase {
     private DoubleTopic topicFlywheelVelocity = null;
 	private DoublePublisher pubFlywheelVelocity = null;
 
+    private DoubleTopic topicFlywheelTargetVelocity = null;
+    private DoublePublisher pubFlywheelTargetVelocity = null;
+    private DoubleSubscriber subFlywheelTargetVelocity = null;
+
+    private BooleanTopic topicFlywheelTargetVelocityOverride = null;
+    private BooleanPublisher pubFlywheelTargetVelocityOverride = null;
+    private BooleanSubscriber subFlywheelTargetVelocityOverride = null;
+
+    private DoubleArrayTopic topicFlywheelPID = null;
+    private DoubleArrayPublisher pubFlywheelPID = null;
+    private DoubleArraySubscriber subFlywheelPID = null;
+
     private DoubleTopic topicHoodPosition = null;
 	private DoublePublisher pubHoodPosition = null;
+    private DoubleSubscriber subHoodPosition = null;
 
     private DoubleTopic topicTurretPosition = null;
 	private DoublePublisher pubTurretPosition = null;
+
+    private DoubleTopic topicTurretTargetPosition = null;
+	private DoublePublisher pubTurretTargetPosition = null;
+
+    // private DoubleTopic topicTurretP = null;
+	// private DoublePublisher pubTurretP = null;
+    // private DoubleSubscriber subTurretP = null;
+
+    // private DoubleTopic topicTurretI = null;
+	// private DoublePublisher pubTurretI = null;
+    // private DoubleSubscriber subTurretI = null;
+
+    // private DoubleTopic topicTurretD = null;
+	// private DoublePublisher pubTurretD = null;
+    // private DoubleSubscriber subTurretD = null;
+
+    private DoubleArrayTopic topicTurretPID = null;
+	private DoubleArrayPublisher pubTurretPID = null;
+    private DoubleArraySubscriber subTurretPID = null;
 
     private DoubleTopic topicDistanceFromTarget = null;
 	private DoublePublisher pubDistanceFromTarget = null;
@@ -178,6 +223,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private BooleanTopic topicManualControl = null;
 	private BooleanPublisher pubManualControl = null;
+    private BooleanSubscriber subManualControl = null;
 
     private Limelight limelight = null;
 
@@ -276,6 +322,11 @@ public class ShooterSubsystem extends SubsystemBase {
             // Turret Motor
             turretMotor = new SparkMax(ShooterConstants.turretMotorId, MotorType.kBrushless);
             SparkMaxConfig turretConfig = new SparkMaxConfig();
+
+            // turretMotorP = ShooterConstants.turretP;
+            // turretMotorI = ShooterConstants.turretI;
+            // turretMotorD = ShooterConstants.turretD;
+            turretPID = ShooterConstants.turretPID;
             
             turretConfig
                 .idleMode(IdleMode.kBrake)
@@ -285,10 +336,15 @@ public class ShooterSubsystem extends SubsystemBase {
                 //.outputRange(-10.0, 10.0)
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     .pid(
-                        ShooterConstants.turretP,
-                        ShooterConstants.turretI,
-                        ShooterConstants.turretD
+                        turretPID[0],
+                        turretPID[1],
+                        turretPID[2]
                     );
+                    // .pid(
+                    //     turretMotorP,
+                    //     turretMotorI,
+                    //     turretMotorD
+                    // );
 
             // turretConfig.closedLoop.apply(new MAXMotionConfig()
             //     .cruiseVelocity(ShooterConstants.turretMotorMaxMotionCruiseVelocity)
@@ -325,6 +381,21 @@ public class ShooterSubsystem extends SubsystemBase {
             pubFlywheelVelocity = topicFlywheelVelocity.publish();
             pubFlywheelVelocity.set(actualFlyWheelSpeed);
 
+            topicFlywheelTargetVelocity = table.getDoubleTopic("Flywheel Target Velocity");
+            pubFlywheelTargetVelocity = topicFlywheelTargetVelocity.publish();
+            pubFlywheelTargetVelocity.set(targetFlyWheelSpeed);
+            subFlywheelTargetVelocity = topicFlywheelTargetVelocity.subscribe(0.0);
+
+            topicFlywheelTargetVelocityOverride = table.getBooleanTopic("Flywheel Target Velocity Override");
+            pubFlywheelTargetVelocityOverride = topicFlywheelTargetVelocityOverride.publish();
+            pubFlywheelTargetVelocityOverride.set(flyWheelTargetVelocityOverride);
+            subFlywheelTargetVelocityOverride = topicFlywheelTargetVelocityOverride.subscribe(false);
+
+            topicFlywheelPID = table.getDoubleArrayTopic("Flywheel PID");
+            pubFlywheelPID = topicFlywheelPID.publish();
+            pubFlywheelPID.set(ShooterConstants.flywheelPID);
+            subFlywheelPID = topicFlywheelPID.subscribe(ShooterConstants.flywheelPID);
+
             topicHoodPosition = table.getDoubleTopic("Hood Position");
             pubHoodPosition = topicHoodPosition.publish();
             pubHoodPosition.set(actualHoodValue);
@@ -332,6 +403,30 @@ public class ShooterSubsystem extends SubsystemBase {
             topicTurretPosition = table.getDoubleTopic("Turret Position");
             pubTurretPosition = topicTurretPosition.publish();
             pubTurretPosition.set(actualTurretPosition);
+
+            topicTurretTargetPosition = table.getDoubleTopic("Turret Target Position");
+            pubTurretTargetPosition = topicTurretTargetPosition.publish();
+            pubTurretTargetPosition.set(actualTurretPosition);
+
+            // topicTurretP = table.getDoubleTopic("Turret P");
+            // pubTurretP = topicTurretP.publish();
+            // pubTurretP.set(turretMotorP);
+            // subTurretP = topicTurretP.subscribe(0.0);
+
+            // topicTurretI = table.getDoubleTopic("Turret I");
+            // pubTurretI = topicTurretI.publish();
+            // pubTurretI.set(turretMotorI);
+            // subTurretI = topicTurretI.subscribe(0.0);
+
+            // topicTurretD = table.getDoubleTopic("Turret D");
+            // pubTurretD = topicTurretD.publish();
+            // pubTurretD.set(turretMotorD);
+            // subTurretD = topicTurretD.subscribe(0.0);
+
+            topicTurretPID = table.getDoubleArrayTopic("Turret PID");
+            pubTurretPID = topicTurretPID.publish();
+            pubTurretPID.set(turretPID);
+            subTurretPID = topicTurretPID.subscribe(ShooterConstants.turretPID);
 
             topicDistanceFromTarget = table.getDoubleTopic("Distance from Target");
             pubDistanceFromTarget = topicDistanceFromTarget.publish();
@@ -348,6 +443,7 @@ public class ShooterSubsystem extends SubsystemBase {
             topicManualControl = table.getBooleanTopic("ManualControl");
             pubManualControl = topicManualControl.publish();
             pubManualControl.set(manualControl);
+            subManualControl = topicManualControl.subscribe(false);
 
             limelight = new Limelight("limelight");
 
@@ -380,9 +476,12 @@ public class ShooterSubsystem extends SubsystemBase {
 		    var slot0Configs = new Slot0Configs();
 		    slot0Configs.kS = 0.1;
 		    slot0Configs.kV = 0.12;
-		    slot0Configs.kP = Constants.ShooterConstants.flywheel1P; // An error of 1 rps results in 0.11 V output
-		    slot0Configs.kI = Constants.ShooterConstants.flywheel1I; // no output for integrated error
-		    slot0Configs.kD = Constants.ShooterConstants.flywheel1D; // no output for error derivative
+		    //slot0Configs.kP = Constants.ShooterConstants.flywheel1P; // An error of 1 rps results in 0.11 V output
+            slot0Configs.kP = Constants.ShooterConstants.flywheelPID[0]; // An error of 1 rps results in 0.11 V output
+		    //slot0Configs.kI = Constants.ShooterConstants.flywheel1I; // no output for integrated error
+            slot0Configs.kI = Constants.ShooterConstants.flywheelPID[1]; // no output for integrated error
+		    //slot0Configs.kD = Constants.ShooterConstants.flywheel1D; // no output for error derivative
+            slot0Configs.kD = Constants.ShooterConstants.flywheelPID[2]; // no output for error derivative
 		    flywheelMotor1.getConfigurator().apply(slot0Configs);
 
             // Flywheel Motor 2
@@ -452,6 +551,78 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (ShooterConstants.enabled) {
 
+            if(ShooterConstants.debug) {
+
+                //if(turretMotorP != subTurretP.get() || turretMotorI != subTurretI.get() || turretMotorD != subTurretD.get()) {
+                if(
+                    turretPID[0] != subTurretPID.get()[0]
+                    || turretPID[1] != subTurretPID.get()[1]
+                    || turretPID[2] != subTurretPID.get()[2]
+                ) {
+
+                    // We have changed the PID value so lets re-configure the motor with the new values
+
+                    // turretMotorP = subTurretP.get();
+                    // turretMotorI = subTurretI.get();
+                    // turretMotorD = subTurretD.get();
+
+                    turretPID = subTurretPID.get();
+
+                    SparkMaxConfig turretConfig = new SparkMaxConfig();
+
+                    turretConfig
+                        .idleMode(IdleMode.kBrake)
+                        .inverted(ShooterConstants.invertTurretMotor)
+                        .smartCurrentLimit(ShooterConstants.turretMotorCurrentLimit)
+                        .closedLoop
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        .pid(
+                            //turretMotorP,
+                            turretPID[0],
+                            //turretMotorI,
+                            turretPID[1],
+                            //turretMotorD
+                            turretPID[2]
+                        );
+
+                    turretConfig.signals.primaryEncoderPositionPeriodMs(5);
+                    turretMotor.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+                }
+                
+            }
+
+            // Set the override
+            if(flyWheelTargetVelocityOverride != subFlywheelTargetVelocityOverride.get()) {
+                flyWheelTargetVelocityOverride = subFlywheelTargetVelocityOverride.get();
+            }
+
+            // Set the targetFlywheelSpeed
+            if(flyWheelTargetVelocityOverride && targetFlyWheelSpeed != subFlywheelTargetVelocity.get()) {
+                targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
+            }
+
+            // Set the manual control
+            if(manualControl != subManualControl.get()) {
+                manualControl = subManualControl.get();
+            }
+
+            if(
+                flywheelPID[0] != subFlywheelPID.get()[0]
+                || flywheelPID[1] != subFlywheelPID.get()[1]
+                || flywheelPID[2] != subFlywheelPID.get()[2]
+            ) {
+                // we are changing the flywheel PID
+                flywheelPID = subFlywheelPID.get();
+
+                var slot0Configs = new Slot0Configs();
+		        slot0Configs.kS = 0.1;
+		        slot0Configs.kV = 0.12;
+                slot0Configs.kP = flywheelPID[0]; // An error of 1 rps results in 0.11 V output
+                slot0Configs.kI = flywheelPID[1]; // no output for integrated error
+                slot0Configs.kD = flywheelPID[2]; // no output for error derivative
+		        flywheelMotor1.getConfigurator().apply(slot0Configs);
+            }
+
             // Get the position from the drive system
             currentPosition = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
 
@@ -469,12 +640,14 @@ public class ShooterSubsystem extends SubsystemBase {
                     //kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
 
                     // The are for the turret
+                    //turretTargetAngle = findAngleToTarget(target, currentPosition);
                     turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+                    
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
-                    flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
+                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
 
                     calculateHood();
                     break;
@@ -507,7 +680,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
-                    flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
+                    //flywheelMotor1.setControl(new VelocityDutyCycle(actualFlyWheelSpeed));
+                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));
 
                     // If we are not shooting, retract the hood to go under the tunnel
                     hoodActuator1.set(0.0);
@@ -530,21 +704,24 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Red Tower";
                         target = targets[1];
 
-                        actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        //actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
                         shootTarget = ShooterTarget.RedWall;
                         shootTargetText = "Red Wall";
                         target = targets[5];
 
-                        actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        //actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
                         shootTarget = ShooterTarget.RedHumanElement;
                         shootTargetText = "Red Human Element";
                         target = targets[3];
 
-                        actualFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        //actualFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     }
                 } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
@@ -556,21 +733,24 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Blue Tower";
                         target = targets[0];
 
-                        actualFlyWheelSpeed = calculateFlywheelSpeed(25, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        //actualFlyWheelSpeed = calculateFlywheelSpeed(25, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(25, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
                         shootTarget = ShooterTarget.BlueHumanElement;
                         shootTargetText = "Blue Human Element";
                         target = targets[2];
 
-                        actualFlyWheelSpeed = calculateFlywheelSpeed(30, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        //actualFlyWheelSpeed = calculateFlywheelSpeed(30, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(30, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
                         shootTarget = ShooterTarget.BlueWall;
                         shootTargetText = "Blue Wall";
                         target = targets[4];
 
-                        actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        //actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     }
                 }
@@ -606,12 +786,14 @@ public class ShooterSubsystem extends SubsystemBase {
             // Get where the motors actually are
             //actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();
             //actualHoodValue = hoodMotor.getAbsoluteEncoder().getPosition();
+            //actualTurretPosition = turretMotor.getEncoder().getPosition();
             actualTurretPosition = relativeEncoderTurret.getPosition();
 
             // Publish to network tables the values
-            pubFlywheelVelocity.set(actualFlyWheelSpeed);
+            pubFlywheelVelocity.set(flywheelMotor1.getVelocity().getValueAsDouble());
             pubHoodPosition.set(actualHoodValue);
             //pubTurretPosition.set(actualTurretPosition);
+            //pubTurretPosition.set(turretTargetAngle);
             pubTurretPosition.set(actualTurretPosition);
             pubDistanceFromTarget.set(distanceFromTarget);
             pubStateString.set(stateText);
