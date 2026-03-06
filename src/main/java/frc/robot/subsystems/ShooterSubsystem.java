@@ -629,8 +629,8 @@ public class ShooterSubsystem extends SubsystemBase {
             //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
 
             // Get where the motors actually are
-            //actualTurretPosition = relativeEncoderTurret.getPosition();
-            actualTurretPosition = turretMotor.getEncoder().getPosition();
+            actualTurretPosition = relativeEncoderTurret.getPosition();
+            //actualTurretPosition = turretMotor.getEncoder().getPosition();
 
             // Publish to network tables the values
             pubFlywheelVelocity.set(flywheelMotor1.getVelocity().getValueAsDouble());
