@@ -314,6 +314,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             //turretConfig.encoder.positionConversionFactor(30.0);
             relativeEncoderTurret = (SparkRelativeEncoder) turretMotor.getEncoder();
+           
             motorPositionTurret = relativeEncoderTurret.getPosition();
 
             // Setup the network tables info
@@ -456,6 +457,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
+            
 
             switch (shooterState) {
                 case Shooting:
@@ -467,7 +469,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     //kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
 
                     // The are for the turret
-                    turretTargetAngle = findAngleToTarget(target, currentPosition);
+                    turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
@@ -604,13 +606,13 @@ public class ShooterSubsystem extends SubsystemBase {
             // Get where the motors actually are
             //actualFlyWheelSpeed = flywheelMotor.getAbsoluteEncoder().getVelocity();
             //actualHoodValue = hoodMotor.getAbsoluteEncoder().getPosition();
-            actualTurretPosition = turretMotor.getEncoder().getPosition();
+            actualTurretPosition = relativeEncoderTurret.getPosition();
 
             // Publish to network tables the values
             pubFlywheelVelocity.set(actualFlyWheelSpeed);
             pubHoodPosition.set(actualHoodValue);
             //pubTurretPosition.set(actualTurretPosition);
-            pubTurretPosition.set(turretTargetAngle);
+            pubTurretPosition.set(actualTurretPosition);
             pubDistanceFromTarget.set(distanceFromTarget);
             pubStateString.set(stateText);
             pubTargetString.set(shootTargetText);

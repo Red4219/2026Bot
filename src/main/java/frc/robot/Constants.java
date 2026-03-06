@@ -322,8 +322,8 @@ public final class Constants {
 	// }
 
 	public static class ShooterConstants {
-		public static final boolean enabled = false;
-		public static final boolean debug = false;
+		public static final boolean enabled = true;
+		public static final boolean debug = true;
 
 		public static final int flywheelMotor1Id = 30;
 		public static final double flywheel1P = 0.1;
@@ -341,9 +341,9 @@ public final class Constants {
 
 		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
-		public static final double turretP = 50.0;
+		public static final double turretP = 0.05;
 		public static final double turretI = 0.0;
-		public static final double turretD = 0.0;
+		public static final double turretD = 0.02;
 		public static final double minTurretPosition = 0.0;
 		public static final double maxTurretPosition = 100.0;
 		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
