@@ -41,6 +41,7 @@ public class SetShooterStateCommand extends Command {
                 break;
             case Tracking:
                 shooterSubsystem.shooterState = ShooterState.Tracking;
+                intakeSubsystem.intakeState = IntakeState.Stop;
                 break;
             default:
                 shooterSubsystem.shooterState = ShooterState.Stopped;

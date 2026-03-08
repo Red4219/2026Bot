@@ -275,7 +275,7 @@ public final class Constants {
 	}
 
 	public static class IntakeConstants {
-		public static final boolean enabled = false;
+		public static final boolean enabled = true;
 		public static final int intakeMotorId = 22;
 		public static final boolean invertMotor = false;
 		public static final int currentLimit = 10;
@@ -345,9 +345,9 @@ public final class Constants {
 		public static final int turretMotorCurrentLimit = 10;
 
 		public static final int indexerMotorId = 33;
-		public static final boolean invertIndexerMotor = false;
+		public static final boolean invertIndexerMotor = true;
 		public static final double indexMotorSpeed = 12.0;
-		public static final int indexerMotorCurrentLimit = 10;
+		public static final int indexerMotorCurrentLimit = 30;
 
 		public static final int kickMotor1Id = 34;
 		public static final boolean invertKickMotor1 = false;

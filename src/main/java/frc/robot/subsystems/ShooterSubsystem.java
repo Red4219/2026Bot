@@ -131,10 +131,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkFlexSim indexerMotorSim = null;
 
     // These are the kicker motors, that pull the ball up from the indexer and pushed into the turret
-    private SparkFlex kickMotor1 = null;
-    private SparkFlexSim kickMotor1Sim = null;
-    private SparkFlex kickMotor2 = null;
-    private SparkFlexSim kickMotor2Sim = null;
+    private SparkMax kickMotor1 = null;
+    private SparkMaxSim kickMotor1Sim = null;
+    private SparkMax kickMotor2 = null;
+    private SparkMaxSim kickMotor2Sim = null;
 
 
     //private SparkMax hoodMotor = null;
@@ -245,10 +245,10 @@ public class ShooterSubsystem extends SubsystemBase {
             indexerMotor.configure(indexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             // Kick Motor 1
-            kickMotor1 = new SparkFlex(ShooterConstants.kickMotor1Id, MotorType.kBrushless);
+            kickMotor1 = new SparkMax(ShooterConstants.kickMotor1Id, MotorType.kBrushless);
             SparkFlexConfig kick1Config = new SparkFlexConfig();
             kick1Config
-                    .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
+                    //.smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
                     .inverted(ShooterConstants.invertFlywheelMotor1).closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -256,12 +256,12 @@ public class ShooterSubsystem extends SubsystemBase {
             kickMotor1.configure(kick1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             // Kick Motor 2
-            kickMotor2 = new SparkFlex(ShooterConstants.kickMotor2Id, MotorType.kBrushless);
+            kickMotor2 = new SparkMax(ShooterConstants.kickMotor2Id, MotorType.kBrushless);
             SparkFlexConfig kick2Config = new SparkFlexConfig();
             kick2Config
-                    .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
-                    .idleMode(IdleMode.kCoast)
-                    .follow(ShooterConstants.kickMotor1Id);
+                    //.smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
+                    .idleMode(IdleMode.kCoast);
+                    //.follow(ShooterConstants.kickMotor1Id);
                     // .inverted(ShooterConstants.invertFlywheelMotor2).closedLoop
                     // .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
@@ -483,8 +483,11 @@ public class ShooterSubsystem extends SubsystemBase {
                     // The turret is tracking the target, spinning the fly wheel, and we are kicking the fuel
                     // up to the turret to be shot
                     stateText = "Shooting";
-                    indexerMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
-                    kickMotor1.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor1Speed, ControlType.kVelocity);
+                    //indexerMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
+                    indexerMotor.set(0.7);
+                    //kickMotor1.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor1Speed, ControlType.kVelocity);
+                    kickMotor1.set(.7);
+                    kickMotor2.set(.7);
                     //kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
 
                     // The are for the turret
@@ -519,6 +522,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Tracking";
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
+                    kickMotor2.set(0.0);
                     //kickMotor2.set(0.0);
 
                     // These are for the turret
@@ -699,11 +703,11 @@ public class ShooterSubsystem extends SubsystemBase {
             relativeEncoderTurretSim = turretMotorSim.getRelativeEncoderSim();
 
             // Kick motor 1
-            kickMotor1Sim = new SparkFlexSim(kickMotor1, DCMotor.getNeoVortex(1));
+            kickMotor1Sim = new SparkMaxSim(kickMotor1, DCMotor.getNeoVortex(1));
             kickMotor1Sim.setBusVoltage(12.0);
 
             // Kick motor 2
-            kickMotor2Sim = new SparkFlexSim(kickMotor2, DCMotor.getNeoVortex(1));
+            kickMotor2Sim = new SparkMaxSim(kickMotor2, DCMotor.getNeoVortex(1));
             kickMotor2Sim.setBusVoltage(12.0);
         }
     }

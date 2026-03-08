@@ -89,12 +89,13 @@ public class IntakeSubsystem extends SubsystemBase {
             SparkFlexConfig sparkFlexConfig = new SparkFlexConfig();
             sparkFlexConfig
                     .idleMode(IdleMode.kCoast)
-                    .smartCurrentLimit(IntakeConstants.currentLimit)
-                    .inverted(IntakeConstants.invertMotor).closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    .pid(
-                            IntakeConstants.kP,
-                            IntakeConstants.kI,
-                            IntakeConstants.kD);
+                    //.smartCurrentLimit(IntakeConstants.currentLimit)
+                    .inverted(IntakeConstants.invertMotor);
+                    // .closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    // .pid(
+                    //         IntakeConstants.kP,
+                    //         IntakeConstants.kI,
+                    //         IntakeConstants.kD);
 
             sparkFlexConfig.signals.primaryEncoderPositionPeriodMs(5);
 
@@ -143,12 +144,13 @@ public class IntakeSubsystem extends SubsystemBase {
             switch (intakeState) {
                 case Eject:
                     stringState = "Eject";
-                    intakeMotor.set(-IntakeConstants.ejectPower);
+                    intakeMotor.set(-0.5);
                     deployed = true;
                     break;
                 case Intake:
                     stringState = "Intake";
-                    intakeMotor.set(IntakeConstants.intakePower);
+                    //intakeMotor.set(IntakeConstants.intakePower);
+                    intakeMotor.set(0.35);
                     deployed = true;
                     break;
                 case Stop:
@@ -158,7 +160,7 @@ public class IntakeSubsystem extends SubsystemBase {
                     break;
                 case CollapseIntake:
                     stringState = "CollapseIntake";
-                    intakeMotor.set(IntakeConstants.intakePower);
+                    intakeMotor.set(0.5);
                     deployed = false;
                     break;
                 default:
