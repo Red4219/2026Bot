@@ -248,9 +248,9 @@ public class ShooterSubsystem extends SubsystemBase {
             kickMotor1 = new SparkMax(ShooterConstants.kickMotor1Id, MotorType.kBrushless);
             SparkFlexConfig kick1Config = new SparkFlexConfig();
             kick1Config
-                    //.smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
+                    .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
-                    .inverted(ShooterConstants.invertFlywheelMotor1).closedLoop
+                    .inverted(ShooterConstants.invertKickMotor1).closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
             kickMotor1.configure(kick1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -260,10 +260,10 @@ public class ShooterSubsystem extends SubsystemBase {
             SparkFlexConfig kick2Config = new SparkFlexConfig();
             kick2Config
                     //.smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
-                    .idleMode(IdleMode.kCoast);
+                    .idleMode(IdleMode.kCoast)
                     //.follow(ShooterConstants.kickMotor1Id);
-                    // .inverted(ShooterConstants.invertFlywheelMotor2).closedLoop
-                    // .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+                    .inverted(ShooterConstants.invertKickMotor2).closedLoop
+                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
             kickMotor2.configure(kick2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -506,7 +506,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Stopped";
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
-                    //kickMotor2.set(0.0);
+                    kickMotor2.set(0.0);
 
                     // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);

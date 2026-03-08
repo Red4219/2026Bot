@@ -326,9 +326,9 @@ public final class Constants {
 		public static final boolean debug = true;
 
 		public static final int flywheelMotor1Id = 30;
-		public static final double[] flywheelPID = {.05, 0.0, .02};
+		public static final double[] flywheelPID = {.005, 0.0001, 0.005};
 		public static final double flywheel1CurrentLimit = 40.0;
-		public static final boolean invertFlywheelMotor1 = false;
+		public static final boolean invertFlywheelMotor1 = true;
 
 		public static final int flywheelMotor2Id = 31;
 		public static final double flywheel2CurrentLimit = 40.0;
@@ -336,7 +336,7 @@ public final class Constants {
 
 		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
-		public static final double[] turretPID = {.05, 0.0, .02};
+		public static final double[] turretPID = {.005, 0.0, .1};
 		//public static final double minTurretPosition = 0.0;
 		//public static final double maxTurretPosition = 100.0;
 		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
@@ -346,7 +346,7 @@ public final class Constants {
 
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = true;
-		public static final double indexMotorSpeed = 12.0;
+		public static final double indexMotorSpeed = 5.0;
 		public static final int indexerMotorCurrentLimit = 30;
 
 		public static final int kickMotor1Id = 34;
@@ -354,10 +354,10 @@ public final class Constants {
 		public static final double kickMotor1Speed = 12.0;
 
 		public static final int kickMotor2Id = 35;
-		public static final boolean invertKickMotor2 = false;
+		public static final boolean invertKickMotor2 = true;
 		public static final double kickMotor2Speed = 12.0;
 
-		public static final int kickMotorCurrentLimit = 10;
+		public static final int kickMotorCurrentLimit = 40;
 
 		public static final int hoodActuator1Port = 0;
 		public static final int hoodActuator2Port = 1;
