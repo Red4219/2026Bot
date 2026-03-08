@@ -8,34 +8,44 @@ import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 public class IntakeCommand extends Command {
 
     private static IntakeSubsystem _intakeSubsystem;
-    private boolean intake = false;
+    private IntakeState intakeState = IntakeState.Stop;
 
-    public IntakeCommand(boolean intake) {
+    public IntakeCommand(IntakeState intakeState) {
         _intakeSubsystem = RobotContainer.intakeSubsystem;
         addRequirements(_intakeSubsystem);
-        this.intake = intake;
+        this.intakeState = intakeState;
     }
 
     @Override
     public void initialize() {
-        //System.out.println("IntakeCommand::initialize() called");
-
-        // Tell the intake subsystem that we need to intake
-        //_intakeSubsystem.intakeState = IntakeState.Intake;
+        
     }
 
     @Override
     public void execute() {
-        if(intake) {
-            _intakeSubsystem.intakeState = IntakeState.Intake;
-        } else {
-            _intakeSubsystem.intakeState = IntakeState.Stop;
+
+        switch(intakeState) {
+            case Eject:
+                _intakeSubsystem.intakeState = IntakeState.Eject;
+                break;
+            case Intake:
+                _intakeSubsystem.intakeState = IntakeState.Intake;
+                break;
+            case Stop:
+                _intakeSubsystem.intakeState = IntakeState.Stop;
+                break;
+            case CollapseIntake:
+                _intakeSubsystem.intakeState = IntakeState.CollapseIntake;
+                break;
+            default:
+                break;
+            
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        //System.out.println("IntakeCommand::end() called, interrupted: " + interrupted);
+        
     }
 
     @Override

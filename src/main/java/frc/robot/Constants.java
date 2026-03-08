@@ -283,12 +283,9 @@ public final class Constants {
 		public static final double kI = 0.0;
 		public static final double kD = 0.0;
 
-		public static final double intakePower = 1.0;
-		public static final double ejectPower = 1.0;
+		public static final double intakePower = 0.35;
+		public static final double ejectPower = 0.35;
 
-		//public static int linearActuator1Id = 0;
-		//public static int linearActuator2Id = 1;
-		//public static int controllerId = 36;
 		public static final int intakeEjectRetractMotor1Id = 36;
 		public static final boolean invertIntakeEjectRetractMotor1 = false;
 		public static final int intakeEjectRetractMotorCurrentLimit = 10;
@@ -346,16 +343,16 @@ public final class Constants {
 
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = true;
-		public static final double indexMotorSpeed = 12.0;
+		public static final double indexMotorSpeed = 0.7;
 		public static final int indexerMotorCurrentLimit = 30;
 
 		public static final int kickMotor1Id = 34;
 		public static final boolean invertKickMotor1 = false;
-		public static final double kickMotor1Speed = 12.0;
+		public static final double kickMotor1Speed = 0.7;
 
 		public static final int kickMotor2Id = 35;
 		public static final boolean invertKickMotor2 = false;
-		public static final double kickMotor2Speed = 12.0;
+		public static final double kickMotor2Speed = 0.7;
 
 		public static final int kickMotorCurrentLimit = 10;
 

@@ -15,6 +15,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
+import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.commands.EjectCommand;
 
@@ -134,10 +135,16 @@ public class RobotContainer {
       driverController.button(2).whileTrue(new SetShooterStateCommand(ShooterState.Stopped));
 
       // When the drive pulls the left trigger, start to intake
-      driverController.leftTrigger().onTrue(new IntakeCommand(true));
+      driverController.leftTrigger().onTrue(new IntakeCommand(IntakeState.Intake));
 
       // Driver has released the left trigger stop intaking
-      driverController.leftTrigger().onFalse(new IntakeCommand(false));
+      driverController.leftTrigger().onFalse(new IntakeCommand(IntakeState.Stop));
+
+      // Eject the ball
+      driverController.leftBumper().onTrue(new IntakeCommand(IntakeState.Eject));
+
+      // Stop the intake
+      driverController.leftBumper().onTrue(new IntakeCommand(IntakeState.Stop));
 
       // Climb up
       driverController.button(3).onTrue(new ClimbCommand(ClimbState.Up));
@@ -161,8 +168,8 @@ public class RobotContainer {
       driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Shooting));
       driverController.button(2).onFalse(new SetShooterStateCommand(ShooterState.Tracking));
       //driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Tracking));
-      driverController.button(3).onTrue(new IntakeCommand(true));
-      driverController.button(3).onFalse(new IntakeCommand(false));
+      driverController.button(3).onTrue(new IntakeCommand(IntakeState.Intake));
+      driverController.button(3).onFalse(new IntakeCommand(IntakeState.Stop));
       //driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
       //driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
       driverController.button(4).onFalse(new SetShooterStateCommand(ShooterState.Stopped));
@@ -197,8 +204,8 @@ public class RobotContainer {
   private void registerAutoCommands() {
     NamedCommands.registerCommand("ClimbUp", new ClimbCommand(ClimbState.Up));
     NamedCommands.registerCommand("ClimbDown", new ClimbCommand(ClimbState.Down));
-    NamedCommands.registerCommand("Intake", new IntakeCommand(true));
-    NamedCommands.registerCommand("StopIntake", new IntakeCommand(false));
+    NamedCommands.registerCommand("Intake", new IntakeCommand(IntakeState.Intake));
+    NamedCommands.registerCommand("StopIntake", new IntakeCommand(IntakeState.Stop));
     //NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("ShootStart", new SetShooterStateCommand(ShooterState.Shooting));
