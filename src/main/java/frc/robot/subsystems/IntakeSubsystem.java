@@ -144,13 +144,14 @@ public class IntakeSubsystem extends SubsystemBase {
             switch (intakeState) {
                 case Eject:
                     stringState = "Eject";
-                    intakeMotor.set(-0.5);
+                    //intakeMotor.set(-0.5);
+                    intakeMotor.set(IntakeConstants.ejectPower);
                     deployed = true;
                     break;
                 case Intake:
                     stringState = "Intake";
-                    //intakeMotor.set(IntakeConstants.intakePower);
-                    intakeMotor.set(0.35);
+                    intakeMotor.set(IntakeConstants.intakePower);
+                    //intakeMotor.set(0.35);
                     deployed = true;
                     break;
                 case Stop:
@@ -160,7 +161,8 @@ public class IntakeSubsystem extends SubsystemBase {
                     break;
                 case CollapseIntake:
                     stringState = "CollapseIntake";
-                    intakeMotor.set(0.5);
+                    //intakeMotor.set(0.5);
+                    intakeMotor.set(IntakeConstants.intakePower);
                     deployed = false;
                     break;
                 default:

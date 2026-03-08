@@ -205,6 +205,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private BooleanSubscriber subManualControl = null;
 
     private Limelight limelight = null;
+    private int limelightTarget = -1;
 
     private double angleToTarget = 0.0;
 
@@ -476,6 +477,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
+
+
             
 
             switch (shooterState) {
@@ -484,14 +487,28 @@ public class ShooterSubsystem extends SubsystemBase {
                     // up to the turret to be shot
                     stateText = "Shooting";
                     //indexerMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
-                    indexerMotor.set(0.7);
+                    indexerMotor.set(ShooterConstants.indexMotorSpeed);
                     //kickMotor1.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor1Speed, ControlType.kVelocity);
-                    kickMotor1.set(.7);
-                    kickMotor2.set(.7);
+                    //kickMotor1.set(.7);
+                    kickMotor1.set(ShooterConstants.kickMotor1Speed);
+                    //kickMotor2.set(.7);
+                    kickMotor2.set(ShooterConstants.kickMotor2Speed);
                     //kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
 
-                    // The are for the turret
-                    turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
+                    // This is for the turret
+                    
+                    // This is for testing
+                    if(Constants.kEnableLimelight && limelight.lookForTarget(limelightTarget)) {
+                        // The Limelight is enabled and it sees the target
+                        if(limelight.getHorizontalOffsetFromTarget(limelightTarget) > 0) {
+                            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle - 0.1, ControlType.kPosition);
+                        } else {
+                            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle + 0.1, ControlType.kPosition);
+                        }
+                    } else {
+                        turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
+                    }
+                    
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
                     
 
@@ -526,7 +543,19 @@ public class ShooterSubsystem extends SubsystemBase {
                     //kickMotor2.set(0.0);
 
                     // These are for the turret
-                    turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
+
+                    // This is for testing
+                    if(Constants.kEnableLimelight && limelight.lookForTarget(limelightTarget)) {
+                        // The Limelight is enabled and it sees the target
+                        if(limelight.getHorizontalOffsetFromTarget(limelightTarget) > 0) {
+                            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle - 0.1, ControlType.kPosition);
+                        } else {
+                            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle + 0.1, ControlType.kPosition);
+                        }
+                    } else {
+                        turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
+                    }
+
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
@@ -555,6 +584,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
                         //actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        limelightTarget = 10;
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
                         shootTarget = ShooterTarget.RedWall;
@@ -563,6 +593,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
                         //actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        limelightTarget = -1;
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
                         shootTarget = ShooterTarget.RedHumanElement;
@@ -571,6 +602,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
                         //actualFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        limelightTarget = 13;
 
                     }
                 } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
@@ -606,31 +638,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
                 //calculateHood();
             }
-
-            
-            // This does the math to find the angle to the target using the
-            // robots position on the field
-            //turretTargetAngle = findAngleToTarget(target, currentPosition);
-
-            // Tell the motors where they need to be
-            //flywheelMotor.getClosedLoopController().setSetpoint(targetFlyWheelSpeed, ControlType.kVelocity);
-            //hoodMotor.getClosedLoopController().setSetpoint(targetHoodValue, ControlType.kPosition);
-            //turretMotor.getClosedLoopController().setSetpoint(targetTurretPosition, ControlType.kPosition);
-            //turretMotor.getClosedLoopController().setSetpoint(angle, ControlType.kPosition);
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl);
-
-            //if(turretTargetAngle < -175)
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-            //turretMotor.getClosedLoopController().setSetpoint(10.0, SparkBase.ControlType.kMAXMotionPositionControl);
-
-            //
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-            
-            //turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-            //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
 
             // Get where the motors actually are
             actualTurretPosition = relativeEncoderTurret.getPosition();

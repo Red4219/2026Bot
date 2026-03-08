@@ -78,6 +78,12 @@ public class Limelight {
 		return rawFiducials[target].distToRobot;
 	}
 
+	public double getHorizontalOffsetFromTarget(int target) {
+		rawFiducials = LimelightHelpers.getRawFiducials(Constants.LimelightConstants.name1);
+
+		return rawFiducials[target].txnc;
+	}
+
 	public int[] getDetections() {
 		rawDetections = LimelightHelpers.getRawDetections(Constants.LimelightConstants.name1);
 
