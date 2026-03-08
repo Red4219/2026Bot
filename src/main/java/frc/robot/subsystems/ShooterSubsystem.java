@@ -232,7 +232,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // Hood Motor
             hoodActuator1 = new Servo(Constants.ShooterConstants.hoodActuator1Port);
-            hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
+            // hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
 
             // Indexer Motor
             indexerMotor = new SparkFlex(ShooterConstants.indexerMotorId, MotorType.kBrushless);
@@ -331,7 +331,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             topicTurretPID = table.getDoubleArrayTopic("Turret PID");
             pubTurretPID = topicTurretPID.publish();
-            pubTurretPID.set(turretPID);
+            // pubTurretPID.set(turretPID);
             subTurretPID = topicTurretPID.subscribe(ShooterConstants.turretPID);
 
             topicDistanceFromTarget = table.getDoubleTopic("Distance from Target");

@@ -357,7 +357,7 @@ public final class Constants {
 		public static final int kickMotorCurrentLimit = 40;
 
 		public static final int hoodActuator1Port = 0;
-		public static final int hoodActuator2Port = 1;
+		// public static final int hoodActuator2Port = 0;
 	}
 
 }
