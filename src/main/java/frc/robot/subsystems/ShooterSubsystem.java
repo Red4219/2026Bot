@@ -477,7 +477,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
-
+            
 
             
 
