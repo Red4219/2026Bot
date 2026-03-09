@@ -539,7 +539,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Tracking";
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
-                    // kickMotor2.set(0.0);
+                    kickMotor2.set(0.0);
                     //kickMotor2.set(0.0);
 
                     // These are for the turret

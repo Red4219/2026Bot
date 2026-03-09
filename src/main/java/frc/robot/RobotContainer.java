@@ -150,7 +150,7 @@ public class RobotContainer {
       driverController.button(3).onTrue(new ClimbCommand(ClimbState.Up));
       // Climb Down
       driverController.button(4).onTrue(new ClimbCommand(ClimbState.Down));
-      //operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
+      operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
 
 
     
