@@ -530,7 +530,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     flywheelMotor1.setControl(new VelocityDutyCycle(0.0));
 
                     hoodActuator1.set(0.0);
-                    hoodActuator2.set(0.0);
+                    // hoodActuator2.set(0.0);
 
                     break;
                 case Tracking:
@@ -539,7 +539,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     stateText = "Tracking";
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
-                    kickMotor2.set(0.0);
+                    // kickMotor2.set(0.0);
                     //kickMotor2.set(0.0);
 
                     // These are for the turret
@@ -559,11 +559,14 @@ public class ShooterSubsystem extends SubsystemBase {
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));
-
+                    if (targetFlyWheelSpeed == 0){
+                        flywheelMotor1.stopMotor();
+                    } else {
+                        flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));
+                    }
                     // If we are not shooting, retract the hood to go under the tunnel
                     hoodActuator1.set(0.0);
-                    hoodActuator2.set(0.0);
+                    // hoodActuator2.set(0.0);
                     break;
             }
 
