@@ -79,7 +79,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public enum ShooterState {
         Stopped,
         Shooting,
-        Tracking
+        Tracking,
+        Eject
     }
 
     public enum ShooterTarget {
@@ -143,6 +144,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // These are the hood actuators to lift/lower the hood
     private Servo hoodActuator1 = null;
     private Servo hoodActuator2 = null;
+    private boolean hoodOverride = false;
 
     private double targetFlyWheelSpeed = 0.0;
     private double actualFlyWheelSpeed = 0.0;
@@ -204,6 +206,14 @@ public class ShooterSubsystem extends SubsystemBase {
 	private BooleanPublisher pubManualControl = null;
     private BooleanSubscriber subManualControl = null;
 
+    private BooleanTopic topicManualHood = null;
+    private BooleanPublisher pubManualHood = null;
+    private BooleanSubscriber subManualHood = null;
+
+    private DoubleTopic topicHoodAdj = null;
+	private DoublePublisher pubHoodAdj = null;
+    private DoubleSubscriber subHoodAdj = null;
+
     private Limelight limelight = null;
     private int limelightTarget = -1;
 
@@ -260,7 +270,7 @@ public class ShooterSubsystem extends SubsystemBase {
             kickMotor2 = new SparkMax(ShooterConstants.kickMotor2Id, MotorType.kBrushless);
             SparkFlexConfig kick2Config = new SparkFlexConfig();
             kick2Config
-                    //.smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
+                    .smartCurrentLimit(ShooterConstants.kickMotorCurrentLimit)
                     .idleMode(IdleMode.kCoast)
                     //.follow(ShooterConstants.kickMotor1Id);
                     .inverted(ShooterConstants.invertKickMotor2).closedLoop
@@ -331,7 +341,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             topicTurretPID = table.getDoubleArrayTopic("Turret PID");
             pubTurretPID = topicTurretPID.publish();
-            // pubTurretPID.set(turretPID);
+            pubTurretPID.set(turretPID);
             subTurretPID = topicTurretPID.subscribe(ShooterConstants.turretPID);
 
             topicDistanceFromTarget = table.getDoubleTopic("Distance from Target");
@@ -346,10 +356,20 @@ public class ShooterSubsystem extends SubsystemBase {
             pubTargetString = topicTargetString.publish();
             pubTargetString.set(shootTargetText);
 
+            topicHoodAdj = table.getDoubleTopic("Hood Target Value");
+            pubHoodAdj = topicHoodAdj.publish();
+            pubHoodAdj.set(targetHoodValue);
+            subHoodAdj = topicHoodAdj.subscribe(targetHoodValue);
+
             topicManualControl = table.getBooleanTopic("ManualControl");
             pubManualControl = topicManualControl.publish();
             pubManualControl.set(manualControl);
             subManualControl = topicManualControl.subscribe(false);
+
+            topicManualHood = table.getBooleanTopic("Hood Manual Override");
+            pubManualHood = topicManualHood.publish();
+            pubManualHood.set(hoodOverride);
+            subManualHood = topicManualHood.subscribe(false);
 
             limelight = new Limelight("limelight");
 
@@ -411,6 +431,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
             if(ShooterConstants.debug) {
 
+                // if (hoodActuator1.get() != subHoodAdj.get()){
+                //     targetHoodValue = subHoodAdj.get();
+                // }
+                // if (subManualHood.get()){
+                targetHoodValue = subHoodAdj.get();
+                hoodActuator1.set(targetHoodValue);
+                pubHoodPosition.set(hoodActuator1.get());
+                // }
+
                 if(
                     turretPID[0] != subTurretPID.get()[0]
                     || turretPID[1] != subTurretPID.get()[1]
@@ -445,6 +474,10 @@ public class ShooterSubsystem extends SubsystemBase {
                 flyWheelTargetVelocityOverride = subFlywheelTargetVelocityOverride.get();
             }
 
+            if (hoodOverride != subManualHood.get()){
+                hoodOverride = subManualHood.get();
+            }
+
             // Set the targetFlywheelSpeed
             if(flyWheelTargetVelocityOverride && targetFlyWheelSpeed != subFlywheelTargetVelocity.get()) {
                 targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
@@ -454,6 +487,8 @@ public class ShooterSubsystem extends SubsystemBase {
             if(manualControl != subManualControl.get()) {
                 manualControl = subManualControl.get();
             }
+
+        
 
             if(
                 flywheelPID[0] != subFlywheelPID.get()[0]
@@ -465,7 +500,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
                 var slot0Configs = new Slot0Configs();
 		        slot0Configs.kS = 0.1;
-		        slot0Configs.kV = 0.12;
+		        slot0Configs.kV = 0.0;
                 slot0Configs.kP = flywheelPID[0]; // An error of 1 rps results in 0.11 V output
                 slot0Configs.kI = flywheelPID[1]; // no output for integrated error
                 slot0Configs.kD = flywheelPID[2]; // no output for error derivative
@@ -514,9 +549,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
-                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
+                    // if (subFlywheelTargetVelocityOverride.get()){
+                    //     targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
+                    // }
+                    flywheelMotor1.setControl(new VelocityDutyCycle(subFlywheelTargetVelocity.get()));                    
 
-                    calculateHood();
+                    // calculateHood();
+                    hoodActuator1.set(targetHoodValue);
                     break;
                 case Stopped:
                     // Stop everything
@@ -528,8 +567,12 @@ public class ShooterSubsystem extends SubsystemBase {
                     // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
                     //flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
                     flywheelMotor1.setControl(new VelocityDutyCycle(0.0));
-
-                    hoodActuator1.set(0.0);
+                    pubHoodAdj.set(0);
+                    if (subManualHood.get()){
+                        hoodActuator1.set(targetHoodValue);
+                    } else {
+                        hoodActuator1.set(0.0);
+                    }
                     // hoodActuator2.set(0.0);
 
                     break;
@@ -559,14 +602,26 @@ public class ShooterSubsystem extends SubsystemBase {
                     turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    if (targetFlyWheelSpeed == 0){
-                        flywheelMotor1.stopMotor();
-                    } else {
-                        flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));
+                    if (subFlywheelTargetVelocityOverride.get()){
+                        targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
                     }
+                    flywheelMotor1.setControl(new VelocityDutyCycle(subFlywheelTargetVelocity.get()));                    
+                    
                     // If we are not shooting, retract the hood to go under the tunnel
-                    hoodActuator1.set(0.0);
+                    pubHoodAdj.set(0);
+                    if (subManualHood.get()){
+                        hoodActuator1.set(targetHoodValue);
+                    } else {
+                        hoodActuator1.set(0.0);
+                    }
                     // hoodActuator2.set(0.0);
+                    break;
+                case Eject:
+                    stateText = "Ejecting";
+                    indexerMotor.set(-0.5);
+                    kickMotor1.set(-0.7);
+                    kickMotor2.set(-0.7);
+                    flywheelMotor1.setControl(new VelocityDutyCycle(-1));
                     break;
             }
 
@@ -639,7 +694,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     }
                 }
 
-                //calculateHood();
+                calculateHood();
             }
 
             // Get where the motors actually are
@@ -657,6 +712,7 @@ public class ShooterSubsystem extends SubsystemBase {
             pubStateString.set(stateText);
             pubTargetString.set(shootTargetText);
             pubManualControl.set(manualControl);
+            pubHoodAdj.set(targetHoodValue);
 
             
 
@@ -833,7 +889,8 @@ public class ShooterSubsystem extends SubsystemBase {
             pubDistanceFromTarget.set(distanceFromTarget);
         }
 
-        return distanceFromTarget;
+        // return distanceFromTarget;
+        return 20;
         
     }
 
@@ -841,12 +898,15 @@ public class ShooterSubsystem extends SubsystemBase {
         // This needs to be filled in with a function to calculate the flywheel speed
 
         // This needs to be replaced with a function or a lookup table
-        targetHoodValue = distanceFromTarget;
+        // targetHoodValue = distanceFromTarget;
 
-        hoodActuator1.setPosition(targetHoodValue);
-        hoodActuator2.setPosition(targetHoodValue);
+        // hoodActuator1.setPosition(targetHoodValue);
+        // hoodActuator2.setPosition(targetHoodValue);
+        double trg = Math.log(distanceFromTarget) * 0.511169 + 0.0187317;
 
+        targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();
+        
     }
 
     public double findAngleToTarget(Translation2d target, Pose2d currentPose) {

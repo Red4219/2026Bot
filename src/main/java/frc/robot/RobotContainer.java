@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -141,16 +142,23 @@ public class RobotContainer {
       driverController.leftTrigger().onFalse(new IntakeCommand(IntakeState.Stop));
 
       // Eject the ball
-      driverController.leftBumper().onTrue(new IntakeCommand(IntakeState.Eject));
+      driverController.button(5).onTrue(new IntakeCommand(IntakeState.Eject));
+      driverController.button(5).onFalse(new SequentialCommandGroup(
+      new IntakeCommand(IntakeState.Stop), 
+      new SetShooterStateCommand(ShooterState.Stopped)));
+      // driverController.button(5).onFalse(new SequentialCommandGroup(
+      //   new IntakeCommand(IntakeState.Stop),
+      //   new SetShooterStateCommand(ShooterState.Stopped)
+      // ));
 
       // Stop the intake
-      driverController.leftBumper().onTrue(new IntakeCommand(IntakeState.Stop));
+      // driverController.leftBumper().onTrue(new IntakeCommand(IntakeState.Stop));
 
       // Climb up
       driverController.button(3).onTrue(new ClimbCommand(ClimbState.Up));
       // Climb Down
       driverController.button(4).onTrue(new ClimbCommand(ClimbState.Down));
-      operatorController.button(1).whileTrue(new ToggleTurretManualCommand());
+      operatorController.button(1).onTrue(new ToggleTurretManualCommand());
 
 
     

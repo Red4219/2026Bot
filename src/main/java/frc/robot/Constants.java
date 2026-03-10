@@ -278,13 +278,13 @@ public final class Constants {
 		public static final boolean enabled = true;
 		public static final int intakeMotorId = 22;
 		public static final boolean invertMotor = false;
-		public static final int currentLimit = 10;
+		public static final int currentLimit = 8;
 		public static final double kP = 0.2;
 		public static final double kI = 0.0;
 		public static final double kD = 0.0;
 
 		public static final double intakePower = 0.35;
-		public static final double ejectPower = 0.35;
+		public static final double ejectPower = -0.35;
 
 		public static final int intakeEjectRetractMotor1Id = 36;
 		public static final boolean invertIntakeEjectRetractMotor1 = false;
@@ -323,17 +323,17 @@ public final class Constants {
 		public static final boolean debug = true;
 
 		public static final int flywheelMotor1Id = 30;
-		public static final double[] flywheelPID = {.005, 0.0001, 0.005};
-		public static final double flywheel1CurrentLimit = 40.0;
+		public static final double[] flywheelPID = {.01, 0.0, 0.0};
+		public static final double flywheel1CurrentLimit = 30.0;
 		public static final boolean invertFlywheelMotor1 = true;
 
 		public static final int flywheelMotor2Id = 31;
-		public static final double flywheel2CurrentLimit = 40.0;
+		public static final double flywheel2CurrentLimit = 30.0;
 		public static final boolean invertFlywheelMotor2 = false;
 
 		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
-		public static final double[] turretPID = {.05, 0.0, .1};
+		public static final double[] turretPID = {.08, 0.0, 0.001};
 		//public static final double minTurretPosition = 0.0;
 		//public static final double maxTurretPosition = 100.0;
 		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
@@ -343,16 +343,16 @@ public final class Constants {
 
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = true;
-		public static final double indexMotorSpeed = 0.5;
-		public static final int indexerMotorCurrentLimit = 30;
+		public static final double indexMotorSpeed = 0.7;
+		public static final int indexerMotorCurrentLimit = 20;
 
 		public static final int kickMotor1Id = 34;
 		public static final boolean invertKickMotor1 = false;
-		public static final double kickMotor1Speed = 0.7;
+		public static final double kickMotor1Speed = 0.75;
 
 		public static final int kickMotor2Id = 35;
-		public static final boolean invertKickMotor2 = true;
-		public static final double kickMotor2Speed = 0.7;
+		public static final boolean invertKickMotor2 = false;
+		public static final double kickMotor2Speed = 0.75;
 
 		public static final int kickMotorCurrentLimit = 10;
 

@@ -30,8 +30,8 @@ public class SetShooterStateCommand extends Command {
 
     @Override
     public void execute() {
-
-        switch(shooterState) {
+        System.out.println("set shooter command ran " + this.shooterState);
+        switch(this.shooterState) {
             case Shooting:
                 shooterSubsystem.shooterState = ShooterState.Shooting;
                 intakeSubsystem.intakeState = IntakeState.Intake;
@@ -43,6 +43,9 @@ public class SetShooterStateCommand extends Command {
                 shooterSubsystem.shooterState = ShooterState.Tracking;
                 intakeSubsystem.intakeState = IntakeState.Stop;
                 break;
+            case Eject:
+                shooterSubsystem.shooterState = ShooterState.Eject;
+                // intakeSubsystem.intakeState = IntakeState.Eject;
             default:
                 shooterSubsystem.shooterState = ShooterState.Stopped;
                 break;
@@ -58,6 +61,6 @@ public class SetShooterStateCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return shooterSubsystem.shooterState.equals(this.shooterState);
     }
 }
