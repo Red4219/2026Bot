@@ -296,11 +296,13 @@ public class ShooterSubsystem extends SubsystemBase {
                         turretPID[1],
                         turretPID[2]
                     );
+        
 
             turretConfig.signals.primaryEncoderPositionPeriodMs(5);
             turretMotor.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             relativeEncoderTurret = (SparkRelativeEncoder) turretMotor.getEncoder();
+            
            
             motorPositionTurret = relativeEncoderTurret.getPosition();
 
@@ -440,6 +442,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 pubHoodPosition.set(hoodActuator1.get());
                 // }
 
+                // Are we trying to change the turret PID dynamically?
                 if(
                     turretPID[0] != subTurretPID.get()[0]
                     || turretPID[1] != subTurretPID.get()[1]
@@ -474,6 +477,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 flyWheelTargetVelocityOverride = subFlywheelTargetVelocityOverride.get();
             }
 
+            // Get if we are trying to override the hood location
             if (hoodOverride != subManualHood.get()){
                 hoodOverride = subManualHood.get();
             }
@@ -488,14 +492,13 @@ public class ShooterSubsystem extends SubsystemBase {
                 manualControl = subManualControl.get();
             }
 
-        
-
+            // Are we attempting to change the flywheel PID dynamically?
             if(
                 flywheelPID[0] != subFlywheelPID.get()[0]
                 || flywheelPID[1] != subFlywheelPID.get()[1]
                 || flywheelPID[2] != subFlywheelPID.get()[2]
             ) {
-                // we are changing the flywheel PID
+                // we are changing the flywheel PID dynamically
                 flywheelPID = subFlywheelPID.get();
 
                 var slot0Configs = new Slot0Configs();
@@ -515,7 +518,7 @@ public class ShooterSubsystem extends SubsystemBase {
             calculateHood();
 
             
-
+            //  change behaviour based off the the state of the shooter subsystem
             switch (shooterState) {
                 case Shooting:
                     // The turret is tracking the target, spinning the fly wheel, and we are kicking the fuel
@@ -541,10 +544,16 @@ public class ShooterSubsystem extends SubsystemBase {
                             turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle + 0.1, ControlType.kPosition);
                         }
                     } else {
-                        turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
+                        turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47)/360; // this is in ticks
+            
+                    }
+                    // Set the turret motor to the position
+                    if(turretTargetAngle > -27 || turretTargetAngle < 27) {
+                        turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+                    } else {
+                        System.out.println("turretangle is: " + turretAngle);
                     }
                     
-                    turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
                     
 
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
@@ -552,6 +561,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     // if (subFlywheelTargetVelocityOverride.get()){
                     //     targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
                     // }
+
+                    // Set the flywheel to the specific speed needed
                     flywheelMotor1.setControl(new VelocityDutyCycle(subFlywheelTargetVelocity.get()));                    
 
                     // calculateHood();
@@ -565,7 +576,6 @@ public class ShooterSubsystem extends SubsystemBase {
                     kickMotor2.set(0.0);
 
                     // Stop the flywheel, only need to set flywheelmotor1 because flywheel motor follows it
-                    //flywheelMotor1.getClosedLoopController().setSetpoint(0.0, ControlType.kVelocity);
                     flywheelMotor1.setControl(new VelocityDutyCycle(0.0));
                     pubHoodAdj.set(0);
                     if (subManualHood.get()){
@@ -573,7 +583,6 @@ public class ShooterSubsystem extends SubsystemBase {
                     } else {
                         hoodActuator1.set(0.0);
                     }
-                    // hoodActuator2.set(0.0);
 
                     break;
                 case Tracking:
@@ -583,24 +592,33 @@ public class ShooterSubsystem extends SubsystemBase {
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
                     kickMotor2.set(0.0);
-                    //kickMotor2.set(0.0);
 
                     // These are for the turret
 
-                    // This is for testing
+                    // This is for testing 
+                    // It checks if the limelight can see the target and moves left or right if the target is not in the center of the
+                    // field of view.  It also checks if the target position is within the range of movement
                     if(Constants.kEnableLimelight && limelight.lookForTarget(limelightTarget)) {
                         // The Limelight is enabled and it sees the target
-                        if(limelight.getHorizontalOffsetFromTarget(limelightTarget) > 0) {
+                        if(limelight.getHorizontalOffsetFromTarget(limelightTarget) > 0.5  && actualTurretPosition > 0.1) {
                             turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle - 0.1, ControlType.kPosition);
-                        } else {
+                        } else if(limelight.getHorizontalOffsetFromTarget(limelightTarget) < 0.5 && actualTurretPosition < 44.0) {
                             turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle + 0.1, ControlType.kPosition);
                         }
                     } else {
+
+                        // the limelight is disabled so we are using odometry to calculate 
+                        // target angle
                         turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47) / 360; // this is in ticks
                     }
 
-                    turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-
+                    // Set the position of the turret motor
+                    // turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+                     if(turretTargetAngle > -27 || turretTargetAngle < 27) {
+                        turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+                    } else {
+                        System.out.println("turretangle is: " + turretAngle);
+                    }
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
                     if (subFlywheelTargetVelocityOverride.get()){
                         targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
@@ -614,7 +632,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     } else {
                         hoodActuator1.set(0.0);
                     }
-                    // hoodActuator2.set(0.0);
+
                     break;
                 case Eject:
                     stateText = "Ejecting";
@@ -904,8 +922,13 @@ public class ShooterSubsystem extends SubsystemBase {
         // hoodActuator2.setPosition(targetHoodValue);
         double trg = Math.log(distanceFromTarget) * 0.511169 + 0.0187317;
 
-        targetHoodValue = trg;
+        // targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();
+        if (subManualHood.get()){
+            actualHoodValue = subHoodAdj.get();
+        } else {
+            actualHoodValue = trg;
+        }
         
     }
 
@@ -937,6 +960,11 @@ public class ShooterSubsystem extends SubsystemBase {
         // Find the relative angle
         temp = temp - currentPose.getRotation().getDegrees();
         //temp = temp - ((currentPose.getRotation().getDegrees() + 180.0) % 360.0);
+        if (temp > 180){
+            temp -= 360;
+        } else if (temp < -180){
+            temp += 360;
+        }
 
         return temp;
     }

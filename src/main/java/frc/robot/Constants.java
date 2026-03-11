@@ -286,7 +286,7 @@ public final class Constants {
 		public static final double intakePower = 0.35;
 		public static final double ejectPower = -0.35;
 
-		public static final int intakeEjectRetractMotor1Id = 36;
+		public static final int intakeEjectRetractMotor1Id = 38;
 		public static final boolean invertIntakeEjectRetractMotor1 = false;
 		public static final int intakeEjectRetractMotorCurrentLimit = 10;
 		public static final double kIntakeRetractP = 0.2;
@@ -295,7 +295,7 @@ public final class Constants {
 		public static final double intakeExtendedPosition = 100;
 		public static final double intakeRetractedPosition = 0;
 
-		public static final int intakeEjectRetractMotor2Id = 37;
+		public static final int intakeEjectRetractMotor2Id = 39;
 		public static final boolean invertIntakeEjectRetractMotor2 = false;
 	}
 
@@ -333,7 +333,7 @@ public final class Constants {
 
 		public static final int turretMotorId = 32;
 		public static final boolean invertTurretMotor = false;
-		public static final double[] turretPID = {.08, 0.0, 0.001};
+		public static final double[] turretPID = {0.8, 0.0, 0.0001};
 		//public static final double minTurretPosition = 0.0;
 		//public static final double maxTurretPosition = 100.0;
 		public static final double turretMotorMaxMotionCruiseVelocity = 10000;
@@ -344,7 +344,7 @@ public final class Constants {
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = true;
 		public static final double indexMotorSpeed = 0.7;
-		public static final int indexerMotorCurrentLimit = 20;
+		public static final int indexerMotorCurrentLimit = 30;
 
 		public static final int kickMotor1Id = 34;
 		public static final boolean invertKickMotor1 = false;
@@ -354,7 +354,7 @@ public final class Constants {
 		public static final boolean invertKickMotor2 = false;
 		public static final double kickMotor2Speed = 0.75;
 
-		public static final int kickMotorCurrentLimit = 10;
+		public static final int kickMotorCurrentLimit = 20;
 
 		public static final int hoodActuator1Port = 0;
 		// public static final int hoodActuator2Port = 0;
