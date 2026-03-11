@@ -126,6 +126,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkRelativeEncoderSim relativeEncoderTurretSim = null;
     private double motorPositionTurret = 0.0;
     private double[] turretPID = ShooterConstants.turretPID;
+    public double operatorTurretModifier = 0.0;
 
     // This is the indexer motor, it spins the indexer around to feed the kicker/turret
     private SparkFlex indexerMotor = null;
@@ -146,11 +147,13 @@ public class ShooterSubsystem extends SubsystemBase {
     private Servo hoodActuator2 = null;
     private boolean hoodOverride = false;
 
+    public double operatorFlywheelVelocityModifier = 0.0;
     private double targetFlyWheelSpeed = 0.0;
     private double actualFlyWheelSpeed = 0.0;
     private boolean flyWheelTargetVelocityOverride = false;
 
-    private double targetHoodValue = 0.0;
+    public double operatorHoodModifier = 0.0;
+    private double targetHoodValue = 0.3;
     private double actualHoodValue = 0.0;
     private double targetTurretPosition = 0.0;
     private double actualTurretPosition = 0.0;
@@ -437,8 +440,9 @@ public class ShooterSubsystem extends SubsystemBase {
                 //     targetHoodValue = subHoodAdj.get();
                 // }
                 // if (subManualHood.get()){
-                targetHoodValue = subHoodAdj.get();
-                hoodActuator1.set(targetHoodValue);
+                // targetHoodValue = subHoodAdj.get();
+                // calculateHood();
+                // hoodActuator1.set(targetHoodValue);
                 pubHoodPosition.set(hoodActuator1.get());
                 // }
 
@@ -485,6 +489,8 @@ public class ShooterSubsystem extends SubsystemBase {
             // Set the targetFlywheelSpeed
             if(flyWheelTargetVelocityOverride && targetFlyWheelSpeed != subFlywheelTargetVelocity.get()) {
                 targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
+            } else {
+                calculateFlywheelSpeed(limelightTarget, target, currentPosition);
             }
 
             // Set the manual control
@@ -563,7 +569,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     // }
 
                     // Set the flywheel to the specific speed needed
-                    flywheelMotor1.setControl(new VelocityDutyCycle(subFlywheelTargetVelocity.get()));                    
+                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
 
                     // calculateHood();
                     hoodActuator1.set(targetHoodValue);
@@ -620,10 +626,10 @@ public class ShooterSubsystem extends SubsystemBase {
                         System.out.println("turretangle is: " + turretAngle);
                     }
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    if (subFlywheelTargetVelocityOverride.get()){
-                        targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
-                    }
-                    flywheelMotor1.setControl(new VelocityDutyCycle(subFlywheelTargetVelocity.get()));                    
+                    // if (subFlywheelTargetVelocityOverride.get()){
+                    //     targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
+                    // }
+                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
                     
                     // If we are not shooting, retract the hood to go under the tunnel
                     pubHoodAdj.set(0);
@@ -639,7 +645,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     indexerMotor.set(-0.5);
                     kickMotor1.set(-0.7);
                     kickMotor2.set(-0.7);
-                    flywheelMotor1.setControl(new VelocityDutyCycle(-1));
+                    // flywheelMotor1.setControl(new VelocityDutyCycle(-1));
                     break;
             }
 
@@ -907,8 +913,19 @@ public class ShooterSubsystem extends SubsystemBase {
             pubDistanceFromTarget.set(distanceFromTarget);
         }
 
+        if (!flyWheelTargetVelocityOverride){
+            if (distanceFromTarget > 3){
+            return 74 + operatorFlywheelVelocityModifier;
+        } else if (distanceFromTarget > 2){
+            return 65 + operatorFlywheelVelocityModifier;
+        } else {
+            return 57 + operatorFlywheelVelocityModifier;
+        }
+        } else {
+            return subFlywheelTargetVelocity.get();
+        }
+
         // return distanceFromTarget;
-        return 20;
         
     }
 
@@ -924,10 +941,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();
-        if (subManualHood.get()){
-            actualHoodValue = subHoodAdj.get();
+        if (hoodOverride){
+            targetHoodValue = subHoodAdj.get();
         } else {
-            actualHoodValue = trg;
+            targetHoodValue = trg + operatorHoodModifier;
         }
         
     }
@@ -960,6 +977,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // Find the relative angle
         temp = temp - currentPose.getRotation().getDegrees();
         //temp = temp - ((currentPose.getRotation().getDegrees() + 180.0) % 360.0);
+        temp += operatorTurretModifier;
         if (temp > 180){
             temp -= 360;
         } else if (temp < -180){

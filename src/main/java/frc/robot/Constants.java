@@ -343,8 +343,8 @@ public final class Constants {
 
 		public static final int indexerMotorId = 33;
 		public static final boolean invertIndexerMotor = true;
-		public static final double indexMotorSpeed = 0.7;
-		public static final int indexerMotorCurrentLimit = 30;
+		public static final double indexMotorSpeed = 0.6;
+		public static final int indexerMotorCurrentLimit = 40;
 
 		public static final int kickMotor1Id = 34;
 		public static final boolean invertKickMotor1 = false;
