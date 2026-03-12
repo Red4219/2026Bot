@@ -146,19 +146,25 @@ public class RobotContainer {
       driverController.button(5).onFalse(new SequentialCommandGroup(
       new IntakeCommand(IntakeState.Stop), 
       new SetShooterStateCommand(ShooterState.Stopped)));
+
+      shooterSubsystem.setDefaultCommand(
+        new RunCommand(() -> 
+        shooterSubsystem.modifyCalculations(operatorController.getLeftY(), operatorController.getRightY()), shooterSubsystem
+      ));
       // driverController.button(5).onFalse(new SequentialCommandGroup(
       //   new IntakeCommand(IntakeState.Stop),
       //   new SetShooterStateCommand(ShooterState.Stopped)
       // ));
-
       // Stop the intake
       // driverController.leftBumper().onTrue(new IntakeCommand(IntakeState.Stop));
 
       // Climb up
-      driverController.button(3).onTrue(new ClimbCommand(ClimbState.Up));
+      // driverController.button(3).onTrue(new ClimbCommand(ClimbState.Up));
       // Climb Down
       driverController.button(4).onTrue(new ClimbCommand(ClimbState.Down));
       operatorController.button(1).onTrue(new ToggleTurretManualCommand());
+
+      driverController.button(3).onTrue(new IntakeCommand(IntakeState.CollapseIntake));
 
 
     
@@ -178,8 +184,8 @@ public class RobotContainer {
       driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Shooting));
       driverController.button(2).onFalse(new SetShooterStateCommand(ShooterState.Tracking));
       //driverController.button(2).onTrue(new SetShooterStateCommand(ShooterState.Tracking));
-      driverController.button(3).onTrue(new IntakeCommand(IntakeState.Intake));
-      driverController.button(3).onFalse(new IntakeCommand(IntakeState.Stop));
+      // driverController.button(3).onTrue(new IntakeCommand(IntakeState.Intake));
+      // driverController.button(3).onFalse(new IntakeCommand(IntakeState.Stop));
       //driverController.button(4).onTrue(new ClimbCommand(ClimbState.Up));
       //driverController.button(4).onFalse(new ClimbCommand(ClimbState.Stored));
       driverController.button(4).onFalse(new SetShooterStateCommand(ShooterState.Stopped));

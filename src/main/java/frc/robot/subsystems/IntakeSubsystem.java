@@ -130,8 +130,8 @@ public class IntakeSubsystem extends SubsystemBase {
             sparkMaxConfig2
                 .follow(IntakeConstants.intakeEjectRetractMotor1Id)
                 .smartCurrentLimit(IntakeConstants.intakeEjectRetractMotorCurrentLimit)
-                .inverted(IntakeConstants.invertIntakeEjectRetractMotor2);
-
+                .inverted(IntakeConstants.invertIntakeEjectRetractMotor2)
+                .idleMode(IdleMode.kBrake);
             intakeEjectRetractMotor2.configure(sparkMaxConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         }
     }
@@ -157,7 +157,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 case Stop:
                     stringState = "Stop";
                     intakeMotor.set(0.0);
-                    deployed = false;
+                    deployed = true;
                     break;
                 case CollapseIntake:
                     stringState = "CollapseIntake";
@@ -171,9 +171,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
             // Check if we need to retrect or extend
             if(deployed) {
+                // System.out.println("deployed");
                 // We don't have to set motor 2 beceause it follows motor 1
                 intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
             } else {
+                // System.out.println("retracted");
                 // We don't have to set motor 2 beceause it follows motor 1
                 intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
             }
@@ -233,6 +235,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
         }
     }
+
+    // public void toggleCollapse() {
+    //     if (intakeState == intakeState.CollapseIntake){
+    //         intakeState = intakeState.Stop;
+    //     } else {
+    //         intakeState = intakeState.CollapseIntake;
+    //     }
+    // }
 
     public String getStateString() {
         return stringState;

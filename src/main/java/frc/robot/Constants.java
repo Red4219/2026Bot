@@ -40,8 +40,8 @@ public final class Constants {
 	public static final boolean kEnablePhotonVisionCamera2 = true;
 
 	// Limelight
-	public static final boolean kEnableLimelight = false;
-	public static final boolean kDebugLimelight = false;
+	public static final boolean kEnableLimelight = true;
+	public static final boolean kDebugLimelight = true;
 
 	public static final String kRioCANBusName = "rio";
 	public static final String kCanivoreCANBusName = "canivore";
@@ -289,10 +289,10 @@ public final class Constants {
 		public static final int intakeEjectRetractMotor1Id = 38;
 		public static final boolean invertIntakeEjectRetractMotor1 = false;
 		public static final int intakeEjectRetractMotorCurrentLimit = 10;
-		public static final double kIntakeRetractP = 0.2;
+		public static final double kIntakeRetractP = 0.6;
 		public static final double kIntakeRetractI = 0.0;
 		public static final double kIntakeRetractD = 0.0;
-		public static final double intakeExtendedPosition = 100;
+		public static final double intakeExtendedPosition = 12.6;
 		public static final double intakeRetractedPosition = 0;
 
 		public static final int intakeEjectRetractMotor2Id = 39;
