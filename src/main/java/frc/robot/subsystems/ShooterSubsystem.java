@@ -21,6 +21,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.fasterxml.jackson.databind.node.POJONode;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.sim.ServoHubSimFaultManager;
 import com.revrobotics.sim.SparkFlexSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
@@ -455,6 +456,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (ShooterConstants.enabled) {
 
             if(ShooterConstants.debug) {
+                modifyCalculations(RobotContainer.driverController.getLeftY(), RobotContainer.operatorController.getRightY());
 
                 // if (hoodActuator1.get() != subHoodAdj.get()){
                 //     targetHoodValue = subHoodAdj.get();
@@ -463,6 +465,13 @@ public class ShooterSubsystem extends SubsystemBase {
                 // targetHoodValue = subHoodAdj.get();
                 // calculateHood();
                 // hoodActuator1.set(targetHoodValue);
+
+                if (subFlyMod.get() != operatorFlywheelVelocityModifier){
+                    operatorFlywheelVelocityModifier = subFlyMod.get();
+                }
+                if (subHoodMod.get() != operatorHoodModifier){
+                    operatorHoodModifier = subHoodMod.get();
+                }
                 pubHoodPosition.set(hoodActuator1.get());
                 // }
 
@@ -543,6 +552,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 slot0Configs.kD = flywheelPID[2]; // no output for error derivative
 		        flywheelMotor1.getConfigurator().apply(slot0Configs);
             }
+
+            
 
             // Get the position from the drive system
             currentPosition = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
@@ -629,7 +640,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
                             @Override
                             public void run() {
-                                if (RobotContainer.driverController.rightTrigger().getAsBoolean()){
+                                if (RobotContainer.driverController.rightTrigger().getAsBoolean() || DriverStation.isAutonomous()){
                                     kickMotor1.set(ShooterConstants.kickMotor1Speed);
                                     kickMotor2.set(ShooterConstants.kickMotor2Speed);
                                 } else {
@@ -1061,8 +1072,18 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void modifyCalculations(double flywheelVelo, double hood){
-        operatorFlywheelVelocityModifier += flywheelVelo;
-        operatorHoodModifier += hood;
+        // if (flywheelVelo <0.2 && flywheelVelo > -0.2){
+        //     flywheelVelo = 0;
+        // }
+        // if (hood < 0.2 && hood > -0.2){
+        //     hood = 0;
+        // }
+        // hood *= 0.1;
+        // flywheelVelo *= 0.1;
+        // operatorFlywheelVelocityModifier += flywheelVelo;
+        // operatorHoodModifier += hood;
+        // pubFlyMod.set(operatorFlywheelVelocityModifier);
+        // pubHoodMod.set(operatorHoodModifier);
     }
 
     public double getAngleToTarget() {

@@ -3,58 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.142847493489583,
-        "y": 2.6099841547947302
+        "x": 0.5341399762752084,
+        "y": 0.6619928825622776
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0147356887090775,
-        "y": 2.2804596237909234
+        "x": 0.2941681232736224,
+        "y": 0.5918964506489108
       },
       "isLocked": false,
-      "linkedName": "Auto 1 Path 1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.0936180308422307,
-        "y": 3.082811387900356
+        "x": 2.7612930011862398,
+        "y": 2.587888493475682
       },
       "prevControl": {
-        "x": 1.125173962296844,
-        "y": 2.690528847442766
+        "x": 2.879644128113879,
+        "y": 2.2973902728351128
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Auto 1 Path 2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ClimbUp",
-      "waypointRelativePos": 0.433906846374046,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ClimbUp"
-        }
-      }
-    },
-    {
-      "name": "ClimbDown",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ClimbDown"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 8.0,
@@ -65,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 142.04576912522379
   },
   "reversed": false,
   "folder": "Auto 1 Paths",

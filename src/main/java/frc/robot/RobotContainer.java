@@ -147,10 +147,10 @@ public class RobotContainer {
       new IntakeCommand(IntakeState.Stop), 
       new SetShooterStateCommand(ShooterState.Stopped)));
 
-      shooterSubsystem.setDefaultCommand(
-        new RunCommand(() -> 
-        shooterSubsystem.modifyCalculations(operatorController.getLeftY(), operatorController.getRightY()), shooterSubsystem
-      ));
+      // shooterSubsystem.setDefaultCommand(
+      //   new RunCommand(() -> 
+      //   shooterSubsystem.modifyCalculations(operatorController.getLeftY(), operatorController.getRightY()), shooterSubsystem
+      // ));
       // driverController.button(5).onFalse(new SequentialCommandGroup(
       //   new IntakeCommand(IntakeState.Stop),
       //   new SetShooterStateCommand(ShooterState.Stopped)
@@ -226,6 +226,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("ShootStart", new SetShooterStateCommand(ShooterState.Shooting));
     NamedCommands.registerCommand("ShootStop", new SetShooterStateCommand(ShooterState.Tracking));
+    NamedCommands.registerCommand("IntakeCollapse", new IntakeCommand(IntakeState.CollapseIntake));
   }
 
   public void simulationInit() {

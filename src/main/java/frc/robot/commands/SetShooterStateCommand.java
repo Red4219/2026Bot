@@ -34,7 +34,7 @@ public class SetShooterStateCommand extends Command {
         switch(this.shooterState) {
             case Shooting:
                 shooterSubsystem.shooterState = ShooterState.Shooting;
-                intakeSubsystem.intakeState = IntakeState.Intake;
+                // intakeSubsystem.intakeState = IntakeState.Intake;
                 break;
             case Stopped:
                 shooterSubsystem.shooterState = ShooterState.Stopped;

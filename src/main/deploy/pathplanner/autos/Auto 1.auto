@@ -5,27 +5,75 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Auto 1 Path 1"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ShootStart"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeCollapse"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Auto 1 Path 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 0.9
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCollapse"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.8
           }
         },
         {
           "type": "named",
           "data": {
             "name": "ShootStop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 1 Path 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootStart"
           }
         },
         {
@@ -37,7 +85,25 @@
         {
           "type": "named",
           "data": {
-            "name": "ClimbDown"
+            "name": "IntakeCollapse"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.7
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCollapse"
           }
         }
       ]

@@ -195,10 +195,10 @@ public final class Constants {
 		public static final double camHeightOffGround = Units.inchesToMeters(10.25);
 		public static final double cam2HeightOffGround = Units.inchesToMeters(10.25);
 		// the side to side position of the camera relative to the robot center
-		public static final double camX = 0;
-		public static final double cam2X = 0;
+		public static final double camX = -0.08;
+		public static final double cam2X = 0.08;
 		// the front to back position of the camera relative to the robot center
-		public static final double camY = -.5;
+		public static final double camY = -0.7;
 		public static final double cam2Y = 0.3;
 
 		public static final double camRotation = Math.toRadians(-90.0);
@@ -354,7 +354,7 @@ public final class Constants {
 		public static final boolean invertKickMotor2 = false;
 		public static final double kickMotor2Speed = 0.75;
 
-		public static final int kickMotorCurrentLimit = 20;
+		public static final int kickMotorCurrentLimit = 30;
 
 		public static final int hoodActuator1Port = 0;
 		// public static final int hoodActuator2Port = 0;
