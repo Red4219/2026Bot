@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6293658088235294,
-        "y": 0.6466672411151968
+        "x": 3.568232502965599,
+        "y": 0.6297153024911029
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.904187425860025,
-        "y": 0.00568208778173207
+        "x": 7.925705812574142,
+        "y": 0.5866785290628707
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.667,
-        "y": 4.051138790035587
+        "x": 7.635207591933572,
+        "y": 2.673962040332148
       },
       "prevControl": {
-        "x": 7.800518462082435,
-        "y": 1.2143692753232758
+        "x": 7.5060972716488745,
+        "y": 0.8664175563463812
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,6 +29,10 @@
     }
   ],
   "rotationTargets": [
+    {
+      "waypointRelativePos": 0.07104795737122375,
+      "rotationDegrees": 0.0
+    },
     {
       "waypointRelativePos": 0.4384979470802919,
       "rotationDegrees": 90.0
@@ -70,7 +74,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 8.0,
     "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -85,7 +89,7 @@
   "folder": "Auto 4 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -18.0
   },
   "useDefaultConstraints": false
 }

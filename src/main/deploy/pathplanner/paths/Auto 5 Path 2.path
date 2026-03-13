@@ -16,28 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.37141517376035,
-        "y": 7.390512106008904
+        "x": 2.427758007119456,
+        "y": 4.965670225378164
       },
       "prevControl": {
-        "x": 3.7427677212490296,
-        "y": 7.377848328805495
-      },
-      "nextControl": {
-        "x": 1.2427429199214493,
-        "y": 7.4009348481290544
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.0234453714300693,
-        "y": 4.608212638067093
-      },
-      "prevControl": {
-        "x": 1.2346108903551771,
-        "y": 6.0208568915019
+        "x": 1.5993001186259796,
+        "y": 8.365575326208536
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +30,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.2,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.5,
       "rotationDegrees": 0.0
     }
   ],
@@ -54,8 +42,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeNoWait",
-      "waypointRelativePos": 0.1,
+      "name": "ShootStart",
+      "waypointRelativePos": 0.5061867266591685,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -75,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 65.65891006330757
   },
   "reversed": false,
   "folder": "Auto 5 Paths",

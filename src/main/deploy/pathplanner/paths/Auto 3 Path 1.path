@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 1.0828588374851729,
-        "y": 4.4169513641755636
+        "x": 2.815088967971531,
+        "y": 4.621376037959667
       },
       "prevControl": {
-        "x": 1.0596844349116437,
-        "y": 4.931322343035857
+        "x": 2.3201660735468574,
+        "y": 4.976429418742586
       },
       "nextControl": null,
       "isLocked": false,
@@ -50,15 +50,15 @@
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 1.75,
-      "rotationDegrees": 90.0
+      "waypointRelativePos": 1.797513321492016,
+      "rotationDegrees": -119.99999999999999
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0.7389968988549618,
-      "maxWaypointRelativePos": 1.9959148377862592,
+      "maxWaypointRelativePos": 1.3228346456692572,
       "constraints": {
         "maxVelocity": 0.5,
         "maxAcceleration": 8.0,
@@ -83,7 +83,13 @@
       }
     },
     {
-      "name": "StopIntake",
+      "name": "ShootStart",
+      "waypointRelativePos": 1.3318335208099001,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "IntakeCollapse",
       "waypointRelativePos": 1.5432371183206104,
       "endWaypointRelativePos": null,
       "command": {
@@ -104,7 +110,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -114.01079906389964
   },
   "reversed": false,
   "folder": "Auto 3 Paths",

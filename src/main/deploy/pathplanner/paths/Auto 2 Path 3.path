@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.2044299897693453,
-        "y": 2.103664841424852
+        "x": 2.922680901542112,
+        "y": 2.738517200474496
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2040712774367561,
-        "y": 1.991307373046875
+        "x": 1.9223221892095226,
+        "y": 2.626159732096519
       },
       "isLocked": false,
       "linkedName": "Auto 2 Path 2"
@@ -48,7 +48,7 @@
   "folder": "Auto 2 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 135.8725919307556
   },
   "useDefaultConstraints": false
 }

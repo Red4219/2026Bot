@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.667,
-        "y": 4.051
+        "x": 7.635,
+        "y": 2.674
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.893428232508347,
-        "y": -0.3493712930065662
+        "x": 7.043451957295374,
+        "y": 0.32845788849347635
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.159383155397391,
-        "y": 0.6727520759193351
+        "x": 3.7726571767497044,
+        "y": 0.7157888493475684
       },
       "prevControl": {
-        "x": 3.6284886361442164,
-        "y": 0.7373093070840889
-      },
-      "nextControl": {
-        "x": 0.5433883772225223,
-        "y": 0.31274481411637917
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.0613404507740787,
-        "y": 2.9429418742522784
-      },
-      "prevControl": {
-        "x": 1.1194262274380395,
-        "y": 2.60231201171875
+        "x": 3.830742953413665,
+        "y": 0.3751589868140399
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,19 +30,23 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.28063943161634575,
+      "waypointRelativePos": 0.05,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 0.25,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 1.1332149200710444,
+      "waypointRelativePos": 0.45,
       "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 2.0,
-      "maxWaypointRelativePos": 2.75,
+      "minWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 1.75,
       "constraints": {
         "maxVelocity": 0.5,
         "maxAcceleration": 8.0,
@@ -72,30 +60,20 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ClimbUp",
-      "waypointRelativePos": 2.5,
+      "name": "IntakeCollapse",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ClimbUp"
-        }
-      }
+      "command": null
     },
     {
-      "name": "ClimbDown",
-      "waypointRelativePos": 2.75,
+      "name": "ShootStart",
+      "waypointRelativePos": 0.6951631046119258,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ClimbDown"
-        }
-      }
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 8.0,
     "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -104,7 +82,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -90.0
+    "rotation": -10.0
   },
   "reversed": false,
   "folder": "Auto 4 Paths",

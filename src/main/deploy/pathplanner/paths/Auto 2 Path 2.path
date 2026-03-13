@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.2044299897693453,
-        "y": 2.103664841424852
+        "x": 2.922680901542112,
+        "y": 2.738517200474496
       },
       "prevControl": {
-        "x": 1.4279195731026786,
-        "y": 1.5368305896577383
+        "x": 2.1461704848754453,
+        "y": 2.171682948707382
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ShootStart",
+      "waypointRelativePos": 0.11248593925759036,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 8.0,
@@ -42,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 135.8725919307556
   },
   "reversed": false,
   "folder": "Auto 2 Paths",
