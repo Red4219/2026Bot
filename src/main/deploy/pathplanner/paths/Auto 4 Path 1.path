@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 7.635207591933572,
-        "y": 2.673962040332148
+        "x": 7.64596678529063,
+        "y": 3.879
       },
       "prevControl": {
-        "x": 7.5060972716488745,
-        "y": 0.8664175563463812
+        "x": 7.484578884934757,
+        "y": 1.0062953736654796
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,7 +35,7 @@
     },
     {
       "waypointRelativePos": 0.4384979470802919,
-      "rotationDegrees": 90.0
+      "rotationDegrees": 49.87581721246628
     }
   ],
   "constraintZones": [
@@ -56,21 +56,10 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 0,
+      "name": "Intake",
+      "waypointRelativePos": 0.308211473565804,
       "endWaypointRelativePos": null,
       "command": null
-    },
-    {
-      "name": "ClimbUp",
-      "waypointRelativePos": 1.5,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ClimbUp"
-        }
-      }
     }
   ],
   "globalConstraints": {
@@ -89,7 +78,7 @@
   "folder": "Auto 4 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -18.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }

@@ -29,6 +29,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Auto 4 Path 1"
@@ -47,12 +53,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.7
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Intake"
@@ -61,25 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeCollapse"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.7
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCollapse"
+            "name": "ShootStart"
           }
         }
       ]

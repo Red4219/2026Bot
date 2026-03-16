@@ -17,6 +17,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -56,13 +57,21 @@ public class IntakeSubsystem extends SubsystemBase {
     private SparkFlex intakeMotor = null;
     private SparkFlexSim intakeMotorSim = null;
 
-    private SparkMax intakeEjectRetractMotor1 = null;
-    private SparkMaxSim intakeEjectRetractMotor1Sim = null;
-    private SparkMax intakeEjectRetractMotor2 = null;
-    private SparkMaxSim intakeEjectRetractMotor2Sim = null;
+    // private SparkMax intakeEjectRetractMotor1 = null;
+    // private SparkMaxSim intakeEjectRetractMotor1Sim = null;
+    // private SparkMax intakeEjectRetractMotor2 = null;
+    // private SparkMaxSim intakeEjectRetractMotor2Sim = null;
+
+    private DoubleTopic topicEjectRetractMotorPosition1 = null;
+    private DoublePublisher pubEjectRetractMotorPosition1 = null;
+    // pubEjectRetractMotorPosition1 = null;
 
     private DoubleTopic topicEjectRetractMotorPosition = null;
     private DoublePublisher pubEjectRetractMotorPosition = null;
+
+    private DoubleTopic topicEjectRetractMotortargetPosition1 = null;
+    private DoublePublisher pubEjectRetractMotortargetPosition1 = null;
+    private DoubleSubscriber subEjectRetractMotortargetPosition1 = null;
 
     private boolean deployed = false;
 
@@ -82,6 +91,14 @@ public class IntakeSubsystem extends SubsystemBase {
             pubEjectRetractMotorPosition = topicEjectRetractMotorPosition.publish();
             pubEjectRetractMotorPosition.set(0.0);
 
+            topicEjectRetractMotorPosition1 = table.getDoubleTopic("EjectRetractMotorPositiom2");
+            pubEjectRetractMotorPosition1 = topicEjectRetractMotorPosition1.publish();
+            pubEjectRetractMotorPosition1.set(0.0);
+
+            topicEjectRetractMotortargetPosition1 = table.getDoubleTopic("EjectRetractMotortargetPositiom2");
+            pubEjectRetractMotortargetPosition1 = topicEjectRetractMotortargetPosition1.publish();
+            subEjectRetractMotortargetPosition1 = topicEjectRetractMotortargetPosition1.subscribe(0);
+            pubEjectRetractMotortargetPosition1.set(0.0);
             // Motor
             intakeMotor = new SparkFlex(IntakeConstants.intakeMotorId, MotorType.kBrushless);
 
@@ -106,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
             // solenoid2 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
 
             // Intake Retract Motor 1
-            intakeEjectRetractMotor1 = new SparkMax(IntakeConstants.intakeEjectRetractMotor1Id, MotorType.kBrushless);
+            //intakeEjectRetractMotor1 = new SparkMax(IntakeConstants.intakeEjectRetractMotor1Id, MotorType.kBrushless);
 
             SparkMaxConfig sparkMaxConfig1 = new SparkMaxConfig();
             sparkMaxConfig1
@@ -120,24 +137,26 @@ public class IntakeSubsystem extends SubsystemBase {
                         IntakeConstants.kIntakeRetractD
                     );
 
-            intakeEjectRetractMotor1.configure(sparkMaxConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            //intakeEjectRetractMotor1.configure(sparkMaxConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             // Intake Retract Motor 2
-            intakeEjectRetractMotor2 = new SparkMax(IntakeConstants.intakeEjectRetractMotor2Id, MotorType.kBrushless);
+            //intakeEjectRetractMotor2 = new SparkMax(IntakeConstants.intakeEjectRetractMotor2Id, MotorType.kBrushless);
 
             SparkMaxConfig sparkMaxConfig2 = new SparkMaxConfig();
             
             sparkMaxConfig2
-                .follow(IntakeConstants.intakeEjectRetractMotor1Id)
+                // .follow(IntakeConstants.intakeEjectRetractMotor1Id)
                 .smartCurrentLimit(IntakeConstants.intakeEjectRetractMotorCurrentLimit)
                 .inverted(IntakeConstants.invertIntakeEjectRetractMotor2)
                 .idleMode(IdleMode.kBrake);
-            intakeEjectRetractMotor2.configure(sparkMaxConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            //intakeEjectRetractMotor2.configure(sparkMaxConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         }
     }
 
     @Override
 	public void periodic() {
+        // System.out.println("Motor 1:" + intakeEjectRetractMotor1.getEncoder().getPosition());
+        // System.out.println("Motor 2: " +intakeEjectRetractMotor2.getEncoder().getPosition());
 
         if (IntakeConstants.enabled) {
 
@@ -170,19 +189,23 @@ public class IntakeSubsystem extends SubsystemBase {
             }
 
             // Check if we need to retrect or extend
-            if(deployed) {
-                // System.out.println("deployed");
-                // We don't have to set motor 2 beceause it follows motor 1
-                intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
-            } else {
-                // System.out.println("retracted");
-                // We don't have to set motor 2 beceause it follows motor 1
-                intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
-            }
+            // if(deployed) {
+            //     // System.out.println("deployed");
+            //     // We don't have to set motor 2 beceause it follows motor 1
+            //     // intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
+            //     intakeEjectRetractMotor2.getClosedLoopController().setSetpoint(subEjectRetractMotortargetPosition1.get(), ControlType.kPosition);
+            // } else {
+            //     // System.out.println("retracted");
+            //     // We don't have to set motor 2 beceause it follows motor 1
+            //     // intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
+            //     intakeEjectRetractMotor2.getClosedLoopController().setSetpoint(subEjectRetractMotortargetPosition1.get(), ControlType.kPosition);
+            // }
 
             // Publish the state string of the intake
             pubStateString.set(stringState);
-            pubEjectRetractMotorPosition.set(intakeEjectRetractMotor1.getEncoder().getPosition());
+            //pubEjectRetractMotorPosition.set(intakeEjectRetractMotor1.getEncoder().getPosition());
+
+            //pubEjectRetractMotorPosition1.set(intakeEjectRetractMotor2.getEncoder().getPosition());
         }
     }
 
@@ -194,11 +217,11 @@ public class IntakeSubsystem extends SubsystemBase {
             //solenoid1Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator1Id);
             //solenoid2Sim = new SolenoidSim(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
 
-            intakeEjectRetractMotor1Sim = new SparkMaxSim(intakeEjectRetractMotor1, DCMotor.getNEO(1));
-            intakeEjectRetractMotor1Sim.setBusVoltage(12.0);
+            //intakeEjectRetractMotor1Sim = new SparkMaxSim(intakeEjectRetractMotor1, DCMotor.getNEO(1));
+            //intakeEjectRetractMotor1Sim.setBusVoltage(12.0);
 
-            intakeEjectRetractMotor2Sim = new SparkMaxSim(intakeEjectRetractMotor2, DCMotor.getNEO(1));
-            intakeEjectRetractMotor2Sim.setBusVoltage(12.0);
+            //intakeEjectRetractMotor2Sim = new SparkMaxSim(intakeEjectRetractMotor2, DCMotor.getNEO(1));
+            //intakeEjectRetractMotor2Sim.setBusVoltage(12.0);
         }
     }
 
@@ -221,17 +244,17 @@ public class IntakeSubsystem extends SubsystemBase {
             ///////////////////
 
             // 1. Get the motor speed (voltage) from the simulation
-            double intakeEjectRetractmotorSpeed = intakeEjectRetractMotor1Sim.getAppliedOutput();
+            //double intakeEjectRetractmotorSpeed = intakeEjectRetractMotor1Sim.getAppliedOutput();
 
             // 2. Simulate the movement (e.g., update position based on speed)
             // In a real simulation, you would use physics models here (WPILib) 
-            intakeEjectRetractMotor1Sim.setVelocity(intakeEjectRetractmotorSpeed * 5676);
-            intakeEjectRetractMotor1Sim.setPosition(intakeEjectRetractMotor1Sim.getPosition() + (intakeEjectRetractmotorSpeed * 0.1));
-            intakeEjectRetractMotor2Sim.setPosition(intakeEjectRetractMotor2Sim.getPosition() + (intakeEjectRetractmotorSpeed * 0.1));
+            //intakeEjectRetractMotor1Sim.setVelocity(intakeEjectRetractmotorSpeed * 5676);
+            //intakeEjectRetractMotor1Sim.setPosition(intakeEjectRetractMotor1Sim.getPosition() + (intakeEjectRetractmotorSpeed * 0.1));
+            //intakeEjectRetractMotor2Sim.setPosition(intakeEjectRetractMotor2Sim.getPosition() + (intakeEjectRetractmotorSpeed * 0.1));
 
             // 3. Update simulation sensors
-            intakeEjectRetractMotor1Sim.iterate(intakeEjectRetractmotorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
-            intakeEjectRetractMotor2Sim.iterate(intakeEjectRetractmotorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
+            //intakeEjectRetractMotor1Sim.iterate(intakeEjectRetractmotorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
+            //intakeEjectRetractMotor2Sim.iterate(intakeEjectRetractmotorSpeed * 5676, RoboRioSim.getVInVoltage(), 0.02); // 20ms update rate
 
         }
     }

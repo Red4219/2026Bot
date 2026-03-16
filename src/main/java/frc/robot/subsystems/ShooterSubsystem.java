@@ -83,7 +83,8 @@ public class ShooterSubsystem extends SubsystemBase {
         Stopped,
         Shooting,
         Tracking,
-        Eject
+        Eject,
+        ReverseIndexer
     }
 
     public enum ShooterTarget {
@@ -165,7 +166,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double distanceFromTarget = 0.0;
 
     private String stateText = "Stopped";
-    public ShooterState shooterState = ShooterState.Stopped;
+    public ShooterState shooterState = ShooterState.Tracking;
 
     private NetworkTableInstance inst = null;
 	private NetworkTable table = null;
@@ -607,53 +608,59 @@ public class ShooterSubsystem extends SubsystemBase {
 
                     // Set the flywheel to the specific speed needed
                     flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
-
-                    // calculateHood();
-                    if (subManualHood.get()){
-                        hoodActuator1.set(subHoodAdj.get());
-                        java.util.Timer timer = new java.util.Timer();
-                        TimerTask t = new TimerTask() {
-
-                            @Override
-                            public void run() {
-                                if (RobotContainer.driverController.rightTrigger().getAsBoolean()){
-                                    kickMotor1.set(ShooterConstants.kickMotor1Speed);
-                                    kickMotor2.set(ShooterConstants.kickMotor2Speed);
-                                } else {
-                                    kickMotor1.set(0);
-                                    kickMotor2.set(0);
-                                }
-                                
-                            }
-                            
-                        };
-
-                        timer.schedule(t, 2200);
-
+                    if (RobotContainer.driverController.rightBumper().getAsBoolean()){
+                        hoodActuator1.set(0.3);
                     } else {
                         hoodActuator1.set(targetHoodValue);
-                        pubHoodAdj.set(targetHoodValue);
-
-
-                        java.util.Timer timer = new java.util.Timer();
-                        TimerTask t = new TimerTask() {
-
-                            @Override
-                            public void run() {
-                                if (RobotContainer.driverController.rightTrigger().getAsBoolean() || DriverStation.isAutonomous()){
-                                    kickMotor1.set(ShooterConstants.kickMotor1Speed);
-                                    kickMotor2.set(ShooterConstants.kickMotor2Speed);
-                                } else {
-                                    kickMotor1.set(0);
-                                    kickMotor2.set(0);
-                                }
-                                
-                            }
-                            
-                        };
-
-                        timer.schedule(t, 2200);
+                        kickMotor1.set(ShooterConstants.kickMotor1Speed);
+                        kickMotor2.set(ShooterConstants.kickMotor2Speed);
                     }
+                    // calculateHood();
+                    // if (subManualHood.get()){
+                    //     hoodActuator1.set(subHoodAdj.get());
+                    //     java.util.Timer timer = new java.util.Timer();
+                    //     TimerTask t = new TimerTask() {
+
+                    //         @Override
+                    //         public void run() {
+                    //             if (RobotContainer.driverController.rightTrigger().getAsBoolean()){
+                    //                 kickMotor1.set(ShooterConstants.kickMotor1Speed);
+                    //                 kickMotor2.set(ShooterConstants.kickMotor2Speed);
+                    //             } else {
+                    //                 kickMotor1.set(0);
+                    //                 kickMotor2.set(0);
+                    //             }
+                                
+                    //         }
+                            
+                    //     };
+
+                    //     timer.schedule(t, 2200);
+
+                    // } else {
+                    //     hoodActuator1.set(targetHoodValue);
+                    //     pubHoodAdj.set(targetHoodValue);
+
+
+                        // java.util.Timer timer = new java.util.Timer();
+                        // TimerTask t = new TimerTask() {
+
+                        //     @Override
+                        //     public void run() {
+                        //         if (RobotContainer.driverController.rightTrigger().getAsBoolean() || DriverStation.isAutonomous()){
+                        //             kickMotor1.set(ShooterConstants.kickMotor1Speed);
+                        //             kickMotor2.set(ShooterConstants.kickMotor2Speed);
+                        //         } else {
+                        //             kickMotor1.set(0);
+                        //             kickMotor2.set(0);
+                        //         }
+                                
+                        //     }
+                            
+                        // };
+
+                    //     timer.schedule(t, 2200);
+                    // }
 
                     // kickMotor1.set(ShooterConstants.kickMotor1Speed);
                     //kickMotor2.set(.7);
@@ -671,7 +678,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     flywheelMotor1.setControl(new VelocityDutyCycle(0.0));
                     pubHoodAdj.set(0);
                     // if (subManualHood.get()){
-                        hoodActuator1.set(0);
+                    hoodActuator1.set(0.3);
                     // } else {
                         // hoodActuator1.set(0.0);
                     // }
@@ -684,6 +691,12 @@ public class ShooterSubsystem extends SubsystemBase {
                     indexerMotor.set(0.0);
                     kickMotor1.set(0.0);
                     kickMotor2.set(0.0);
+
+                    if (RobotContainer.driverController.rightBumper().getAsBoolean()){
+                        hoodActuator1.set(0.3);
+                    } else {
+                        hoodActuator1.set(targetHoodValue);
+                    }
 
                     // These are for the turret
 
@@ -721,7 +734,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     
                     // If we are not shooting, retract the hood to go under the tunnel
                     
-                    hoodActuator1.set(0.3);
+                    // hoodActuator1.set(0.3);
                     
                     // if (subManualHood.get()){
                     //     hoodActuator1.set(subHoodAdj.get());
@@ -731,6 +744,10 @@ public class ShooterSubsystem extends SubsystemBase {
                     //     pubHoodAdj.set(0);
                     // }
 
+                    break;
+                case ReverseIndexer:
+                    stateText = "indexer reversed";
+                    indexerMotor.set(-ShooterConstants.indexMotorSpeed);
                     break;
                 case Eject:
                     stateText = "Ejecting";
@@ -1007,7 +1024,22 @@ public class ShooterSubsystem extends SubsystemBase {
             pubDistanceFromTarget.set(distanceFromTarget);
         }
 
-        return ( 5.98211*distanceFromTarget+48.8441 + operatorFlywheelVelocityModifier)/7;
+        switch (shootTarget){
+            case RedWall:
+                return (( 6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+                
+            case BlueWall: 
+                return ((6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+            case BlueHumanElement: 
+                return ((6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+            case RedHumanElement: 
+                return ((6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+            default:
+                return ( 6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)/7;
+
+        }
+
+        // return ( 6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)/7;
 
         // return distanceFromTarget;
         
@@ -1021,7 +1053,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // hoodActuator1.setPosition(targetHoodValue);
         // hoodActuator2.setPosition(targetHoodValue);
-        double trg = (0.628286)/(1+Math.pow(Math.E, -(1.52737*distanceFromTarget-1.53619)));
+        double trg = (0.622613)/(1+Math.pow(Math.E, -(1.56898*distanceFromTarget-1.56271)));
 
         // targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();

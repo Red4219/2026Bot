@@ -292,8 +292,10 @@ public final class Constants {
 		public static final double kIntakeRetractP = 0.6;
 		public static final double kIntakeRetractI = 0.0;
 		public static final double kIntakeRetractD = 0.0;
-		public static final double intakeExtendedPosition = 12.6;
+		public static final double intakeExtendedPosition1 = 17;
+		public static final double intakeExtendedPosition = 17;
 		public static final double intakeRetractedPosition = 0;
+		public static final double intakeRetractedPosition1 = 0;
 
 		public static final int intakeEjectRetractMotor2Id = 39;
 		public static final boolean invertIntakeEjectRetractMotor2 = false;

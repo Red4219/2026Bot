@@ -141,6 +141,8 @@ public class RobotContainer {
       // Driver has released the left trigger stop intaking
       driverController.leftTrigger().onFalse(new IntakeCommand(IntakeState.Stop));
 
+      driverController.povUp().onTrue(new SetShooterStateCommand(ShooterState.ReverseIndexer));
+
       // Eject the ball
       driverController.button(5).onTrue(new IntakeCommand(IntakeState.Eject));
       driverController.button(5).onFalse(new SequentialCommandGroup(
