@@ -13,6 +13,7 @@ import frc.robot.commands.SetShooterStateCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.MatchTimeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
@@ -55,6 +56,8 @@ public class RobotContainer {
   public static final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+
+  public static final MatchTimeSubsystem matchTimeSubsystem = new MatchTimeSubsystem();
 
   public static final CommandXboxController driverController = new CommandXboxController(0);
   public static final CommandXboxController operatorController = new CommandXboxController(1);

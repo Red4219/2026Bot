@@ -183,6 +183,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private BooleanPublisher pubFlywheelTargetVelocityOverride = null;
     private BooleanSubscriber subFlywheelTargetVelocityOverride = null;
 
+    private BooleanTopic topicHubIsActive = null;
+    private BooleanPublisher pubHubIsActive = null;
+    private BooleanSubscriber subHubIsActive = null;
+
     private DoubleArrayTopic topicFlywheelPID = null;
     private DoubleArrayPublisher pubFlywheelPID = null;
     private DoubleArraySubscriber subFlywheelPID = null;
@@ -398,6 +402,11 @@ public class ShooterSubsystem extends SubsystemBase {
             pubFlyMod = topicFlyMod.publish();
             pubFlyMod.set(operatorFlywheelVelocityModifier);
             subFlyMod = topicFlyMod.subscribe(0.0);
+            
+            topicHubIsActive = table.getBooleanTopic("Hub Status");
+            pubHubIsActive = topicHubIsActive.publish();
+            pubHubIsActive.set(RobotContainer.matchTimeSubsystem.isHubActive());
+            
 
             limelight = new Limelight("limelight");
 
@@ -468,6 +477,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 // calculateHood();
                 // hoodActuator1.set(targetHoodValue);
 
+                pubHubIsActive.set(RobotContainer.matchTimeSubsystem.isHubActive());
+                
                 if (subFlyMod.get() != operatorFlywheelVelocityModifier){
                     operatorFlywheelVelocityModifier = subFlyMod.get();
                 }
