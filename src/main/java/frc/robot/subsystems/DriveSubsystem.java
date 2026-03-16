@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -517,6 +518,12 @@ public class DriveSubsystem extends SubsystemBase {
 			swervePosition,
 			pose
 		);
+	}
+
+	public Pose2d estimateFuturePose2d(double seconds) {
+		Pose2d futurePose = poseEstimator.getEstimatedPosition();
+		futurePose.plus(new Transform2d(currentChassisSpeeds.vxMetersPerSecond * seconds, currentChassisSpeeds.vyMetersPerSecond * seconds, new Rotation2d()));
+		return futurePose;
 	}
 
 	public double getHeading() {

@@ -48,6 +48,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.BooleanTopic;
@@ -520,7 +521,8 @@ public class ShooterSubsystem extends SubsystemBase {
             if(flyWheelTargetVelocityOverride && targetFlyWheelSpeed != subFlywheelTargetVelocity.get()) {
                 targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
             } else {
-                calculateFlywheelSpeed(limelightTarget, target, currentPosition);
+                // calculateFlywheelSpeed(limelightTarget, target, currentPosition);
+                calculateShootOnTheMoveModifiers(limelightTarget);
             }
 
             if (subFlyMod.get() != operatorFlywheelVelocityModifier){
@@ -561,8 +563,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
-            calculateHood();
-
+            // calculateHood();
+            calculateShootOnTheMoveModifiers(limelightTarget);
             
             //  change behaviour based off the the state of the shooter subsystem
             switch (shooterState) {
@@ -588,7 +590,7 @@ public class ShooterSubsystem extends SubsystemBase {
                             turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle + 0.1, ControlType.kPosition);
                         }
                     } else {
-                        turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47)/360; // this is in ticks
+                        // turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47)/360; // this is in ticks
             
                     }
                     // Set the turret motor to the position
@@ -774,7 +776,8 @@ public class ShooterSubsystem extends SubsystemBase {
                         target = targets[1];
 
                         //actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                        targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        // targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        calculateShootOnTheMoveModifiers(10);
                         limelightTarget = 10;
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
@@ -1003,6 +1006,36 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
+    private double getLaunchAngle(){
+        return hoodActuator1.get() * 1;
+    }
+
+    private double calculateTimeOfFlight(){
+        double time = 0;
+        time = (distanceFromTarget)/(Math.PI*Units.inchesToMeters(4.00)*targetFlyWheelSpeed*Math.cos(Units.degreesToRadians(getLaunchAngle())));
+        return time;
+    }
+    
+    private void calculateShootOnTheMoveModifiers(int targetid){
+        Pose2d futurePose = RobotContainer.driveSubsystem.estimateFuturePose2d(calculateTimeOfFlight());
+        
+        turretTargetAngle = (findAngleToTarget(target, futurePose)*47)/360;
+        // TODO: test
+        // TODO: make a regression for time of flight in relation to distance
+        if (!flyWheelTargetVelocityOverride){
+            targetFlyWheelSpeed = calculateFlywheelSpeed(targetid, target, futurePose);
+        }
+        if (!hoodOverride){
+            calculateHood(futurePose);
+        }
+        
+    }
+
+    private double calculateDistance(Pose2d a, Pose2d b){
+        double c = Math.sqrt(Math.pow(a.getX() - b.getX(), 2.0) + Math.pow(a.getY() - b.getY(), 2.0));
+        return c;
+    }
+
     private double calculateFlywheelSpeed(int targetId, Translation2d target, Pose2d currentPose) {
 
         if(targetId > 0 && Constants.kEnableLimelight) {
@@ -1045,7 +1078,7 @@ public class ShooterSubsystem extends SubsystemBase {
         
     }
 
-    private void calculateHood() {
+        private void calculateHood(Pose2d pose) {
         // This needs to be filled in with a function to calculate the flywheel speed
 
         // This needs to be replaced with a function or a lookup table
@@ -1053,7 +1086,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // hoodActuator1.setPosition(targetHoodValue);
         // hoodActuator2.setPosition(targetHoodValue);
-        double trg = (0.622613)/(1+Math.pow(Math.E, -(1.56898*distanceFromTarget-1.56271)));
+        double trg = (0.622613)/(1+Math.pow(Math.E, -(1.56898*calculateDistance(pose, new Pose2d(target.getX(), target.getY(), target.getAngle()))-1.56271)));
 
         // targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();
@@ -1062,6 +1095,27 @@ public class ShooterSubsystem extends SubsystemBase {
         } else {
             targetHoodValue = trg + operatorHoodModifier;
         }
+        
+    }
+
+    private void calculateHood() {
+        // This needs to be filled in with a function to calculate the flywheel speed
+
+        // This needs to be replaced with a function or a lookup table
+        // targetHoodValue = distanceFromTarget;
+
+        // hoodActuator1.setPosition(targetHoodValue);
+        // hoodActuator2.setPosition(targetHoodValue);
+        // double trg = (0.622613)/(1+Math.pow(Math.E, -(1.56898*distanceFromTarget-1.56271)));
+
+        // // targetHoodValue = trg;
+        // actualHoodValue = hoodActuator1.getPosition();
+        // if (subManualHood.get()){
+        //     targetHoodValue = subHoodAdj.get();
+        // } else {
+        //     targetHoodValue = trg + operatorHoodModifier;
+        // }
+        calculateHood(RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
         
     }
 
@@ -1093,6 +1147,10 @@ public class ShooterSubsystem extends SubsystemBase {
         // Find the relative angle
         temp = temp - currentPose.getRotation().getDegrees();
         //temp = temp - ((currentPose.getRotation().getDegrees() + 180.0) % 360.0);
+
+        // Logic for shooting on the move turret
+
+
         temp += operatorTurretModifier;
         if (temp > 180){
             temp -= 360;
