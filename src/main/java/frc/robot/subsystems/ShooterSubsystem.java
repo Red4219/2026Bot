@@ -62,6 +62,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -234,6 +235,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private DoublePublisher pubFlyMod = null;
     private DoubleSubscriber subFlyMod = null;
 
+    private AnalogEncoder hoodEncoder = new AnalogEncoder(ShooterConstants.hoodEncoder1Port);
+    private AnalogEncoder hoodEncoder2 = new AnalogEncoder(ShooterConstants.hoodEncoder2Port);
+
     private Limelight limelight = null;
     private int limelightTarget = -1;
 
@@ -262,7 +266,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // Hood Motor
             hoodActuator1 = new Servo(Constants.ShooterConstants.hoodActuator1Port);
-            // hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
+            hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
 
             // Indexer Motor
             indexerMotor = new SparkFlex(ShooterConstants.indexerMotorId, MotorType.kBrushless);
@@ -485,7 +489,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (subHoodMod.get() != operatorHoodModifier){
                     operatorHoodModifier = subHoodMod.get();
                 }
-                pubHoodPosition.set(hoodActuator1.get());
+                pubHoodPosition.set(hoodEncoder.get());
                 // }
 
                 // Are we trying to change the turret PID dynamically?
@@ -622,9 +626,10 @@ public class ShooterSubsystem extends SubsystemBase {
                     // Set the flywheel to the specific speed needed
                     flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
                     if (RobotContainer.driverController.rightBumper().getAsBoolean()){
-                        hoodActuator1.set(0.3);
+                        // hoodActuator1.set(0.3);
                     } else {
                         hoodActuator1.set(targetHoodValue);
+                        hoodActuator2.set(targetHoodValue);
                         kickMotor1.set(ShooterConstants.kickMotor1Speed);
                         kickMotor2.set(ShooterConstants.kickMotor2Speed);
                     }
@@ -859,7 +864,9 @@ public class ShooterSubsystem extends SubsystemBase {
             pubStateString.set(stateText);
             pubTargetString.set(shootTargetText);
             pubManualControl.set(manualControl);
+            if (!subhood)){
             pubHoodAdj.set(targetHoodValue);
+            }
             pubHoodMod.set(operatorHoodModifier);
             pubFlyMod.set(operatorFlywheelVelocityModifier);
 

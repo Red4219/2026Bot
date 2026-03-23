@@ -521,9 +521,13 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public Pose2d estimateFuturePose2d(double seconds) {
+		try {
 		Pose2d futurePose = poseEstimator.getEstimatedPosition();
 		futurePose.plus(new Transform2d(currentChassisSpeeds.vxMetersPerSecond * seconds, currentChassisSpeeds.vyMetersPerSecond * seconds, new Rotation2d()));
 		return futurePose;
+		} catch (NullPointerException e){
+			return odometry.getPoseMeters();
+		}
 	}
 
 	public double getHeading() {
