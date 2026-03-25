@@ -235,8 +235,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private DoublePublisher pubFlyMod = null;
     private DoubleSubscriber subFlyMod = null;
 
-    private AnalogEncoder hoodEncoder = new AnalogEncoder(ShooterConstants.hoodEncoder1Port);
-    private AnalogEncoder hoodEncoder2 = new AnalogEncoder(ShooterConstants.hoodEncoder2Port);
+    // private AnalogEncoder hoodEncoder = new AnalogEncoder(ShooterConstants.hoodEncoder1Port);
+    // private AnalogEncoder hoodEncoder2 = new AnalogEncoder(ShooterConstants.hoodEncoder2Port);
 
     private Limelight limelight = null;
     private int limelightTarget = -1;
@@ -266,7 +266,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // Hood Motor
             hoodActuator1 = new Servo(Constants.ShooterConstants.hoodActuator1Port);
-            hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
+            // hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
 
             // Indexer Motor
             indexerMotor = new SparkFlex(ShooterConstants.indexerMotorId, MotorType.kBrushless);
@@ -489,7 +489,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (subHoodMod.get() != operatorHoodModifier){
                     operatorHoodModifier = subHoodMod.get();
                 }
-                pubHoodPosition.set(hoodEncoder.get());
+                pubHoodPosition.set(hoodActuator1.get());
                 // }
 
                 // Are we trying to change the turret PID dynamically?
@@ -864,7 +864,7 @@ public class ShooterSubsystem extends SubsystemBase {
             pubStateString.set(stateText);
             pubTargetString.set(shootTargetText);
             pubManualControl.set(manualControl);
-            if (!subhood)){
+            if ((!subManualHood.get())){
             pubHoodAdj.set(targetHoodValue);
             }
             pubHoodMod.set(operatorHoodModifier);
@@ -1077,16 +1077,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
         switch (shootTarget){
             case RedWall:
-                return (( 6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+                return (( 7.51165*distanceFromTarget+41.12815 + operatorFlywheelVelocityModifier)-8)/7;
                 
             case BlueWall: 
-                return ((6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+                return (( 7.51165*distanceFromTarget+41.12815 + operatorFlywheelVelocityModifier)-8)/7;
             case BlueHumanElement: 
-                return ((6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+                return (( 7.51165*distanceFromTarget+41.12815 + operatorFlywheelVelocityModifier)-8)/7;
             case RedHumanElement: 
-                return ((6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)-8)/7;
+                return (( 7.51165*distanceFromTarget+41.12815 + operatorFlywheelVelocityModifier)-8)/7;
             default:
-                return ( 6.14961*distanceFromTarget+48.41653 + operatorFlywheelVelocityModifier)/7;
+                return ( 7.51165*distanceFromTarget+41.12815 + operatorFlywheelVelocityModifier)/7;
 
         }
 
@@ -1104,7 +1104,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // hoodActuator1.setPosition(targetHoodValue);
         // hoodActuator2.setPosition(targetHoodValue);
-        double trg = (0.622613)/(1+Math.pow(Math.E, -(1.56898*calculateDistance(pose, new Pose2d(target.getX(), target.getY(), target.getAngle()))-1.56271)));
+        double trg = (0.627944)/(1+Math.pow(Math.E, -(1.78842*calculateDistance(pose, new Pose2d(target.getX(), target.getY(), target.getAngle()))-1.84376)));
 
         // targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();
