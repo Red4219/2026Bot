@@ -283,7 +283,7 @@ public final class Constants {
 		public static final double kI = 0.0;
 		public static final double kD = 0.0;
 
-		public static final double intakePower = 0.35;
+		public static final double intakePower = 0.35; //Was .35 , Wheel Exploded at full
 		public static final double ejectPower = -0.35;
 
 		public static final int intakeEjectRetractMotor1Id = 38;

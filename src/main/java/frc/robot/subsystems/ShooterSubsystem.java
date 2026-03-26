@@ -629,7 +629,7 @@ public class ShooterSubsystem extends SubsystemBase {
                         // hoodActuator1.set(0.3);
                     } else {
                         hoodActuator1.set(targetHoodValue);
-                        hoodActuator2.set(targetHoodValue);
+                        // hoodActuator2.set(targetHoodValue);
                         kickMotor1.set(ShooterConstants.kickMotor1Speed);
                         kickMotor2.set(ShooterConstants.kickMotor2Speed);
                     }
@@ -1028,7 +1028,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return hoodActuator1.get() * 1;
     }
 
-    private double calculateTimeOfFlight(){
+    public double calculateTimeOfFlight(){
         double time = 0;
         time = (distanceFromTarget)/(Math.PI*Units.inchesToMeters(4.00)*targetFlyWheelSpeed*Math.cos(Units.degreesToRadians(getLaunchAngle())));
         return time;

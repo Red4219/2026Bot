@@ -493,6 +493,7 @@ public class DriveSubsystem extends SubsystemBase {
 		Logger.recordOutput("Estimator/Robot", poseEstimator.getEstimatedPosition());
 		Logger.recordOutput("Odometry/Robot", odometry.getPoseMeters());
 		Logger.recordOutput("Odometry/isMoving", this.isMoving());
+		Logger.recordOutput("Odometry/FuturePose", this.estimateFuturePose2d(RobotContainer.shooterSubsystem.calculateTimeOfFlight()));
 
 		//System.out.println("estimator: x:" + poseEstimator.getEstimatedPosition().getX() + ", y: " + poseEstimator.getEstimatedPosition().getY() + ", rotation: " + poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
