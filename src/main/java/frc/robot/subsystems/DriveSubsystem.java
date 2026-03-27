@@ -56,6 +56,15 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 
 public class DriveSubsystem extends SubsystemBase {
 
+	public enum DriveState {
+		Normal,
+		Slow
+	}
+
+	public DriveState driveState = DriveState.Normal;
+	private Pose2d previousEstimatedPose = Pose2d.kZero;
+	public Pose2d driveDirection = Pose2d.kZero;
+
 	private Vision vision1 = null;
 	private Vision vision2 = null;
 
@@ -383,11 +392,19 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public void drive(double xSpeed, double ySpeed, double rot) {
 
-		// Apply deadbands to inputs
-		xSpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
-		ySpeed *=  ModuleConstants.kMaxModuleSpeedMetersPerSecond;
+		if(driveState == DriveState.Normal) {
 
-		rot *= DriveConstants.kMaxRPM;
+			xSpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
+			ySpeed *=  ModuleConstants.kMaxModuleSpeedMetersPerSecond;
+
+			rot *= DriveConstants.kMaxRPM;
+		} else if(driveState == DriveState.Slow) {
+
+			xSpeed *= ModuleConstants.kSlowModuleSpeedMetersPerSecond;
+			ySpeed *=  ModuleConstants.kSlowModuleSpeedMetersPerSecond;
+
+			rot *= DriveConstants.kMaxRPMSlow;
+		}
 
 		this.xSpeed = xSpeed;
 		this.ySpeed = ySpeed;
@@ -464,6 +481,12 @@ public class DriveSubsystem extends SubsystemBase {
 			gyro.getRotation2d(),
 			swervePosition
 		);
+
+		// Get the direction tha the robot is driving relative to the field
+		driveDirection = previousEstimatedPose.relativeTo(poseEstimator.getEstimatedPosition());
+
+		// Set the previous pose to the current pose
+		previousEstimatedPose = poseEstimator.getEstimatedPosition();
 
 		if (Constants.kEnablePhotonVision) {
 

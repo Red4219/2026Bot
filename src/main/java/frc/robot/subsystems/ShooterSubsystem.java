@@ -107,6 +107,8 @@ public class ShooterSubsystem extends SubsystemBase {
         new Translation2d(16.5, 1.0) // Red Wall 
     };
 
+    public boolean isMoving = false;
+
     private boolean manualControl = false;
 
     private double[] flywheelPID = ShooterConstants.flywheelPID;
@@ -456,6 +458,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (ShooterConstants.enabled) {
 
+            // Capture if the robot is driving
+            isMoving = RobotContainer.driveSubsystem.isMoving();
+
             if(ShooterConstants.debug) {
                 modifyCalculations(RobotContainer.driverController.getLeftY(), RobotContainer.operatorController.getRightY());
 
@@ -570,16 +575,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     // The turret is tracking the target, spinning the fly wheel, and we are kicking the fuel
                     // up to the turret to be shot
                     stateText = "Shooting";
-                    //indexerMotor.getClosedLoopController().setSetpoint(ShooterConstants.indexMotorSpeed, ControlType.kVelocity);
                     indexerMotor.set(ShooterConstants.indexMotorSpeed);
-                    //kickMotor1.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor1Speed, ControlType.kVelocity);
-                    //kickMotor1.set(.7);
                     
-                    //kickMotor2.getClosedLoopController().setSetpoint(ShooterConstants.kickMotor2Speed, ControlType.kVelocity);
-
-                    // This is for the turret
-                    
-                    // This is for testing
                     if(Constants.kEnableLimelight && limelight.lookForTarget(limelightTarget)) {
                         // The Limelight is enabled and it sees the target
                         if(limelight.getHorizontalOffsetFromTarget(limelightTarget) > 0) {
@@ -591,81 +588,62 @@ public class ShooterSubsystem extends SubsystemBase {
                         turretTargetAngle = (findAngleToTarget(target, currentPosition) * 47)/360; // this is in ticks
             
                     }
-                    // Set the turret motor to the position
-                    if(turretTargetAngle > -27 || turretTargetAngle < 27) {
-                        turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+
+                    // Are we moving?
+                    if(!isMoving) {
+                        // We are not moving
+                        
+                    
+                        // Set the turret motor to the position
+                        if(turretTargetAngle > -27 || turretTargetAngle < 27) {
+                            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+                        } else {
+                            System.out.println("turretangle is: " + turretAngle);
+                        }
+
+                        // Set the flywheel to the specific speed needed
+                        flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
+                        if (RobotContainer.driverController.rightBumper().getAsBoolean()){
+                            hoodActuator1.set(0.3);
+                        } else {
+                            hoodActuator1.set(targetHoodValue);
+                            kickMotor1.set(ShooterConstants.kickMotor1Speed);
+                            kickMotor2.set(ShooterConstants.kickMotor2Speed);
+                        }
                     } else {
-                        System.out.println("turretangle is: " + turretAngle);
+                        // We are moving
+
+                        //RobotContainer.driveSubsystem.getPoseEstimatorPose2d()
+                        Pose2d diff = new Pose2d(target, new Rotation2d()).relativeTo(RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+
+                        // Are we moving the in the X direction? 
+                        //if(RobotContainer.driveSubsystem.driveDirection.getX() != 0.0) {
+                        if(diff.getX() != 0.0) {
+                            turretAngle += (RobotContainer.driveSubsystem.driveDirection.getY() * Constants.ShooterConstants.shootMoveMultiplierY);
+                        } 
+
+                        // Are we moving the in the Y direction? 
+                        //if(RobotContainer.driveSubsystem.driveDirection.getY() != 0.0) {
+                        if(diff.getY() != 0.0) {
+                            turretAngle += (RobotContainer.driveSubsystem.driveDirection.getY() * Constants.ShooterConstants.shootMoveMultiplierY);
+                        } 
+
+                        // Set the turret motor to the position
+                        if(turretTargetAngle > -27 || turretTargetAngle < 27) {
+                            turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
+                        } 
+
+                        // Set the flywheel to the specific speed needed
+                        flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
+                        if (RobotContainer.driverController.rightBumper().getAsBoolean()){
+                            hoodActuator1.set(0.3);
+                        } else {
+                            hoodActuator1.set(targetHoodValue);
+                            kickMotor1.set(ShooterConstants.kickMotor1Speed);
+                            kickMotor2.set(ShooterConstants.kickMotor2Speed);
+                        }
                     }
                     
-                    
-
-                    // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    //flywheelMotor1.getClosedLoopController().setSetpoint(actualFlyWheelSpeed, ControlType.kVelocity);
-                    // if (subFlywheelTargetVelocityOverride.get()){
-                    //     targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
-                    // }
-
-                    // Set the flywheel to the specific speed needed
-                    flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
-                    if (RobotContainer.driverController.rightBumper().getAsBoolean()){
-                        hoodActuator1.set(0.3);
-                    } else {
-                        hoodActuator1.set(targetHoodValue);
-                        kickMotor1.set(ShooterConstants.kickMotor1Speed);
-                        kickMotor2.set(ShooterConstants.kickMotor2Speed);
-                    }
-                    // calculateHood();
-                    // if (subManualHood.get()){
-                    //     hoodActuator1.set(subHoodAdj.get());
-                    //     java.util.Timer timer = new java.util.Timer();
-                    //     TimerTask t = new TimerTask() {
-
-                    //         @Override
-                    //         public void run() {
-                    //             if (RobotContainer.driverController.rightTrigger().getAsBoolean()){
-                    //                 kickMotor1.set(ShooterConstants.kickMotor1Speed);
-                    //                 kickMotor2.set(ShooterConstants.kickMotor2Speed);
-                    //             } else {
-                    //                 kickMotor1.set(0);
-                    //                 kickMotor2.set(0);
-                    //             }
-                                
-                    //         }
-                            
-                    //     };
-
-                    //     timer.schedule(t, 2200);
-
-                    // } else {
-                    //     hoodActuator1.set(targetHoodValue);
-                    //     pubHoodAdj.set(targetHoodValue);
-
-
-                        // java.util.Timer timer = new java.util.Timer();
-                        // TimerTask t = new TimerTask() {
-
-                        //     @Override
-                        //     public void run() {
-                        //         if (RobotContainer.driverController.rightTrigger().getAsBoolean() || DriverStation.isAutonomous()){
-                        //             kickMotor1.set(ShooterConstants.kickMotor1Speed);
-                        //             kickMotor2.set(ShooterConstants.kickMotor2Speed);
-                        //         } else {
-                        //             kickMotor1.set(0);
-                        //             kickMotor2.set(0);
-                        //         }
-                                
-                        //     }
-                            
-                        // };
-
-                    //     timer.schedule(t, 2200);
-                    // }
-
-                    // kickMotor1.set(ShooterConstants.kickMotor1Speed);
-                    //kickMotor2.set(.7);
-                    // kickMotor2.set(ShooterConstants.kickMotor2Speed);
-                    // hoodActuator1.set(targetHoodValue);
                     break;
                 case Stopped:
                     // Stop everything
@@ -721,28 +699,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
                     // Set the position of the turret motor
                     // turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-                     if(turretTargetAngle > -27 || turretTargetAngle < 27) {
+                    if(turretTargetAngle > -27 || turretTargetAngle < 27) {
                         turretMotor.getClosedLoopController().setSetpoint(turretTargetAngle, ControlType.kPosition);
-                    } else {
-                        System.out.println("turretangle is: " + turretAngle);
-                    }
+                    } 
+
                     // Only need to set flyWheelMotor1 since flyWheelMotor2 follows it
-                    // if (subFlywheelTargetVelocityOverride.get()){
-                    //     targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
-                    // }
                     flywheelMotor1.setControl(new VelocityDutyCycle(targetFlyWheelSpeed));                    
                     
-                    // If we are not shooting, retract the hood to go under the tunnel
                     
-                    // hoodActuator1.set(0.3);
-                    
-                    // if (subManualHood.get()){
-                    //     hoodActuator1.set(subHoodAdj.get());
-
-                    // } else {
-                    //     hoodActuator1.set(0.0);
-                    //     pubHoodAdj.set(0);
-                    // }
 
                     break;
                 case ReverseIndexer:
@@ -773,7 +737,6 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Red Tower";
                         target = targets[1];
 
-                        //actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         limelightTarget = 10;
 
@@ -782,7 +745,6 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Red Wall";
                         target = targets[5];
 
-                        //actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         limelightTarget = -1;
 
@@ -791,7 +753,6 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Red Human Element";
                         target = targets[3];
 
-                        //actualFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(13, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         limelightTarget = 13;
 
@@ -805,7 +766,6 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Blue Tower";
                         target = targets[0];
 
-                        //actualFlyWheelSpeed = calculateFlywheelSpeed(25, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(25, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
@@ -813,7 +773,6 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Blue Human Element";
                         target = targets[2];
 
-                        //actualFlyWheelSpeed = calculateFlywheelSpeed(30, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(30, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() > 4.0) {
@@ -821,7 +780,6 @@ public class ShooterSubsystem extends SubsystemBase {
                         shootTargetText = "Blue Wall";
                         target = targets[4];
 
-                        //actualFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
                         targetFlyWheelSpeed = calculateFlywheelSpeed(-1, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
 
                     }
@@ -832,7 +790,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // Get where the motors actually are
             actualTurretPosition = relativeEncoderTurret.getPosition();
-            //actualTurretPosition = turretMotor.getEncoder().getPosition();
 
             // Publish to network tables the values
             pubFlywheelVelocity.set(flywheelMotor1.getVelocity().getValueAsDouble());

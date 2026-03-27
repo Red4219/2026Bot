@@ -72,6 +72,9 @@ public final class Constants {
 		// The max speed the modules are capable of
 		public static final double kMaxModuleSpeedMetersPerSecond = 20.0;
 
+		// The max speed the modules at the slow speed
+		public static final double kSlowModuleSpeedMetersPerSecond = 1.0;
+
 		//public static final double ksVolts = .1;
 		//public static final double kDriveFeedForward = .2;
 
@@ -110,6 +113,9 @@ public final class Constants {
 	public static class DriveConstants {
 		// this sets turning speed (keep this low)
 		public static final double kMaxRPM = 10;
+
+		public static final double kMaxRPMSlow = 3;
+
 		public static final double kBumperToBumperWidth = Units.inchesToMeters(27);
 
 		public static final double kTrackWidth = Units.inchesToMeters(27); // in meters!
@@ -360,6 +366,10 @@ public final class Constants {
 
 		public static final int hoodActuator1Port = 0;
 		// public static final int hoodActuator2Port = 0;
+
+		public static final double shootMoveMultiplierX = 2.0;
+		public static final double shootMoveMultiplierY = 2.0;
+		public static final double shootMoveMultiplierDistance = 2.0;
 	}
 
 }
