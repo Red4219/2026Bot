@@ -289,16 +289,16 @@ public final class Constants {
 		public static final int intakeEjectRetractMotor1Id = 38;
 		public static final boolean invertIntakeEjectRetractMotor1 = false;
 		public static final int intakeEjectRetractMotorCurrentLimit = 10;
-		public static final double kIntakeRetractP = 0.6;
+		public static final double kIntakeRetractP = 1;
 		public static final double kIntakeRetractI = 0.0;
 		public static final double kIntakeRetractD = 0.0;
-		public static final double intakeExtendedPosition1 = 17;
-		public static final double intakeExtendedPosition = 17;
+		// public static final double intakeExtendedPosition1 = -13.6;
+		public static final double intakeExtendedPosition = -13.6;
 		public static final double intakeRetractedPosition = 0;
 		public static final double intakeRetractedPosition1 = 0;
 
 		public static final int intakeEjectRetractMotor2Id = 39;
-		public static final boolean invertIntakeEjectRetractMotor2 = false;
+		public static final boolean invertIntakeEjectRetractMotor2 = true;
 	}
 
 	// public static class PoseDefinitions {

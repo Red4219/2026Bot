@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -169,8 +170,15 @@ public class RobotContainer {
       // Climb Down
       driverController.button(4).onTrue(new ClimbCommand(ClimbState.Down));
       operatorController.button(1).onTrue(new ToggleTurretManualCommand());
+      driverController.button(3).onTrue(new SequentialCommandGroup(
+        new IntakeCommand(IntakeState.CollapseIntake),
+        new SetShooterStateCommand(ShooterState.ReverseIndexer),
+        new WaitCommand(0.3),
+        new IntakeCommand(IntakeState.Intake),
+        new SetShooterStateCommand(ShooterState.Tracking)
+      ));
 
-      driverController.button(3).onTrue(new IntakeCommand(IntakeState.CollapseIntake));
+      // driverController.button(3).onTrue(new IntakeCommand(IntakeState.CollapseIntake));
 
 
     
@@ -231,8 +239,16 @@ public class RobotContainer {
     //NamedCommands.registerCommand("StopIntake", new StopIntakeCommand());
     NamedCommands.registerCommand("Eject", new EjectCommand());
     NamedCommands.registerCommand("ShootStart", new SetShooterStateCommand(ShooterState.Shooting));
-    NamedCommands.registerCommand("ShootStop", new SetShooterStateCommand(ShooterState.Tracking));
+    NamedCommands.registerCommand("ShootStop", new SetShooterStateCommand(ShooterState.Stopped));
     NamedCommands.registerCommand("IntakeCollapse", new IntakeCommand(IntakeState.CollapseIntake));
+    NamedCommands.registerCommand("ShootTrack", new SetShooterStateCommand(ShooterState.Tracking));
+    NamedCommands.registerCommand("UnjamShoot", new SequentialCommandGroup(
+        new IntakeCommand(IntakeState.CollapseIntake),
+        new SetShooterStateCommand(ShooterState.ReverseIndexer),
+        new WaitCommand(0.3),
+        new IntakeCommand(IntakeState.Intake),
+        new SetShooterStateCommand(ShooterState.Shooting)
+      ));
   }
 
   public void simulationInit() {

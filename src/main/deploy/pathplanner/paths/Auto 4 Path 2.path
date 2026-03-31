@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.2556109134045084,
-        "y": 2.7707947805456707
+        "x": 2.8258481613285884,
+        "y": 3.7176037959667845
       },
       "prevControl": {
-        "x": 2.2125741399762755,
-        "y": -0.45696322657176625
+        "x": 1.5100850952029288,
+        "y": -1.0024351396585995
       },
       "nextControl": null,
       "isLocked": false,
@@ -66,7 +66,7 @@
       "command": null
     },
     {
-      "name": "ShootStart",
+      "name": "ShootTrack",
       "waypointRelativePos": 0.6546681664791862,
       "endWaypointRelativePos": null,
       "command": null
@@ -82,7 +82,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -56.0035408517495
+    "rotation": -88.69804732804994
   },
   "reversed": false,
   "folder": "Auto 4 Paths",

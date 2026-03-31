@@ -57,10 +57,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private SparkFlex intakeMotor = null;
     private SparkFlexSim intakeMotorSim = null;
 
-    // private SparkMax intakeEjectRetractMotor1 = null;
-    // private SparkMaxSim intakeEjectRetractMotor1Sim = null;
-    // private SparkMax intakeEjectRetractMotor2 = null;
-    // private SparkMaxSim intakeEjectRetractMotor2Sim = null;
+    private SparkMax intakeEjectRetractMotor1 = null;
+    private SparkMaxSim intakeEjectRetractMotor1Sim = null;
+    private SparkMax intakeEjectRetractMotor2 = null;
+    private SparkMaxSim intakeEjectRetractMotor2Sim = null;
 
     private DoubleTopic topicEjectRetractMotorPosition1 = null;
     private DoublePublisher pubEjectRetractMotorPosition1 = null;
@@ -123,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
             // solenoid2 = new Solenoid(IntakeConstants.controllerId, PneumaticsModuleType.CTREPCM, IntakeConstants.linearActuator2Id);
 
             // Intake Retract Motor 1
-            //intakeEjectRetractMotor1 = new SparkMax(IntakeConstants.intakeEjectRetractMotor1Id, MotorType.kBrushless);
+            intakeEjectRetractMotor1 = new SparkMax(IntakeConstants.intakeEjectRetractMotor1Id, MotorType.kBrushless);
 
             SparkMaxConfig sparkMaxConfig1 = new SparkMaxConfig();
             sparkMaxConfig1
@@ -137,10 +137,10 @@ public class IntakeSubsystem extends SubsystemBase {
                         IntakeConstants.kIntakeRetractD
                     );
 
-            //intakeEjectRetractMotor1.configure(sparkMaxConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            intakeEjectRetractMotor1.configure(sparkMaxConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
             // Intake Retract Motor 2
-            //intakeEjectRetractMotor2 = new SparkMax(IntakeConstants.intakeEjectRetractMotor2Id, MotorType.kBrushless);
+            intakeEjectRetractMotor2 = new SparkMax(IntakeConstants.intakeEjectRetractMotor2Id, MotorType.kBrushless);
 
             SparkMaxConfig sparkMaxConfig2 = new SparkMaxConfig();
             
@@ -148,8 +148,14 @@ public class IntakeSubsystem extends SubsystemBase {
                 // .follow(IntakeConstants.intakeEjectRetractMotor1Id)
                 .smartCurrentLimit(IntakeConstants.intakeEjectRetractMotorCurrentLimit)
                 .inverted(IntakeConstants.invertIntakeEjectRetractMotor2)
-                .idleMode(IdleMode.kBrake);
-            //intakeEjectRetractMotor2.configure(sparkMaxConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+                .idleMode(IdleMode.kBrake)
+                .closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    .pid(
+                        IntakeConstants.kIntakeRetractP,
+                        IntakeConstants.kIntakeRetractI,
+                        IntakeConstants.kIntakeRetractD
+                    );
+            intakeEjectRetractMotor2.configure(sparkMaxConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         }
     }
 
@@ -189,23 +195,23 @@ public class IntakeSubsystem extends SubsystemBase {
             }
 
             // Check if we need to retrect or extend
-            // if(deployed) {
-            //     // System.out.println("deployed");
-            //     // We don't have to set motor 2 beceause it follows motor 1
-            //     // intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
-            //     intakeEjectRetractMotor2.getClosedLoopController().setSetpoint(subEjectRetractMotortargetPosition1.get(), ControlType.kPosition);
-            // } else {
-            //     // System.out.println("retracted");
-            //     // We don't have to set motor 2 beceause it follows motor 1
-            //     // intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
-            //     intakeEjectRetractMotor2.getClosedLoopController().setSetpoint(subEjectRetractMotortargetPosition1.get(), ControlType.kPosition);
-            // }
+            if(deployed) {
+                // System.out.println("deployed");
+                // We don't have to set motor 2 beceause it follows motor 1
+                intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
+                intakeEjectRetractMotor2.getClosedLoopController().setSetpoint(IntakeConstants.intakeExtendedPosition, ControlType.kPosition);
+            } else {
+                // System.out.println("retracted");
+                // We don't have to set motor 2 beceause it follows motor 1
+                intakeEjectRetractMotor1.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
+                intakeEjectRetractMotor2.getClosedLoopController().setSetpoint(IntakeConstants.intakeRetractedPosition, ControlType.kPosition);
+            }
 
             // Publish the state string of the intake
             pubStateString.set(stringState);
-            //pubEjectRetractMotorPosition.set(intakeEjectRetractMotor1.getEncoder().getPosition());
+            pubEjectRetractMotorPosition.set(intakeEjectRetractMotor1.getEncoder().getPosition());
 
-            //pubEjectRetractMotorPosition1.set(intakeEjectRetractMotor2.getEncoder().getPosition());
+            pubEjectRetractMotorPosition1.set(intakeEjectRetractMotor2.getEncoder().getPosition());
         }
     }
 

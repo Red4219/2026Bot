@@ -536,8 +536,8 @@ public class ShooterSubsystem extends SubsystemBase {
             if(flyWheelTargetVelocityOverride && targetFlyWheelSpeed != subFlywheelTargetVelocity.get()) {
                 targetFlyWheelSpeed = subFlywheelTargetVelocity.get();
             } else {
-                // calculateFlywheelSpeed(limelightTarget, target, currentPosition);
-                calculateShootOnTheMoveModifiers(limelightTarget);
+                calculateFlywheelSpeed(limelightTarget, target, currentPosition);
+                // calculateShootOnTheMoveModifiers(limelightTarget);
             }
 
             if (subFlyMod.get() != operatorFlywheelVelocityModifier){
@@ -574,12 +574,13 @@ public class ShooterSubsystem extends SubsystemBase {
             
 
             // Get the position from the drive system
-            currentPosition = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
+            // currentPosition = RobotContainer.driveSubsystem.getPoseEstimatorPose2d();
+            currentPosition = RobotContainer.field.getRobotPose();
 
             // we need a function for this to calculate the angle
             turretAngle = RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getRotation().getDegrees();
-            // calculateHood();
-            calculateShootOnTheMoveModifiers(limelightTarget);
+            calculateHood();
+            // calculateShootOnTheMoveModifiers(limelightTarget);
             
             //  change behaviour based off the the state of the shooter subsystem
             switch (shooterState) {
@@ -633,7 +634,7 @@ public class ShooterSubsystem extends SubsystemBase {
                         kickMotor1.set(ShooterConstants.kickMotor1Speed);
                         kickMotor2.set(ShooterConstants.kickMotor2Speed);
                     }
-                    // calculateHood();
+                    calculateHood();
                     // if (subManualHood.get()){
                     //     hoodActuator1.set(subHoodAdj.get());
                     //     java.util.Timer timer = new java.util.Timer();
@@ -792,8 +793,8 @@ public class ShooterSubsystem extends SubsystemBase {
                         target = targets[1];
 
                         //actualFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                        // targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
-                        calculateShootOnTheMoveModifiers(10);
+                        targetFlyWheelSpeed = calculateFlywheelSpeed(10, target, RobotContainer.driveSubsystem.getPoseEstimatorPose2d());
+                        // calculateShootOnTheMoveModifiers(10);
                         limelightTarget = 10;
 
                     } else if (RobotContainer.driveSubsystem.getPoseEstimatorPose2d().getTranslation().getY() < 4.0) {
@@ -1030,8 +1031,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double calculateTimeOfFlight(){
         double time = 0;
-        time = (distanceFromTarget)/(Math.PI*Units.inchesToMeters(4.00)*targetFlyWheelSpeed*Math.cos(Units.degreesToRadians(getLaunchAngle())));
-        return time;
+        // time = (distanceFromTarget)/(Math.PI*Units.inchesToMeters(4.00)*targetFlyWheelSpeed*Math.cos(Units.degreesToRadians(getLaunchAngle())));
+        // return time;
+        return (1.13212) / (1+Math.pow(Math.E, -(2.08655*distanceFromTarget - 1.20295)));
     }
     
     private void calculateShootOnTheMoveModifiers(int targetid){
@@ -1044,7 +1046,7 @@ public class ShooterSubsystem extends SubsystemBase {
             targetFlyWheelSpeed = calculateFlywheelSpeed(targetid, target, futurePose);
         }
         if (!hoodOverride){
-            calculateHood(futurePose);
+            calculateHood();
         }
         
     }
