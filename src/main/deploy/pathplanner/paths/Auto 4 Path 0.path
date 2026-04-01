@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.265,
-        "y": 5.316
+        "x": 3.568,
+        "y": 0.63
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.230689766462691,
-        "y": 4.04925548654374
+        "x": 3.2667425860023727,
+        "y": 0.7483511269276379
       },
       "isLocked": false,
-      "linkedName": "Auto 6 Path 1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 2.815088967971531,
+        "y": 1.2214709371292998
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 3.0253835868156695,
+        "y": 1.0862815393009253
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,19 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ShootTrack",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ShootTrack"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 15.0,
     "maxAcceleration": 8.0,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -38.65980825409017
   },
   "reversed": false,
-  "folder": "Auto 6 Paths",
+  "folder": "Auto 4 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -121.09731288577947
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

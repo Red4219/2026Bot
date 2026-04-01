@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "ShootStop"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Auto 4 Path 0"
+            "pathName": "Copy of Auto 4 Path 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Auto 4 Path 2"
           }
         },
         {
@@ -35,9 +47,15 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ShootStart"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 0.8
+            "waitTime": 0.5
           }
         },
         {
@@ -47,51 +65,39 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Auto 4 Path 0.5"
-          }
-        },
-        {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 1.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Auto 4 Path 1"
+            "pathName": "Copy of Copy of Auto 4 Path 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Auto 4 Path 2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.7
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "UnjamShoot"
+            "pathName": "Copy of Copy of Auto 4 Path 2"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "ShootStart"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "UnjamShoot"
           }
         }
       ]

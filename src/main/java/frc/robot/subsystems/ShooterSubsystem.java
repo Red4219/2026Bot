@@ -133,6 +133,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double motorPositionTurret = 0.0;
     private double[] turretPID = ShooterConstants.turretPID;
     public double operatorTurretModifier = 0.0;
+    public ShooterState oldState = ShooterState.Tracking;
 
     // This is the indexer motor, it spins the indexer around to feed the kicker/turret
     private SparkFlex indexerMotor = null;

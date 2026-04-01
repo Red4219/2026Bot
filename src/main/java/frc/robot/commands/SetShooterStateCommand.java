@@ -30,7 +30,8 @@ public class SetShooterStateCommand extends Command {
 
     @Override
     public void execute() {
-        System.out.println("set shooter command ran " + this.shooterState);
+        // System.out.println("set shooter command ran " + this.shooterState);
+        shooterSubsystem.oldState = shooterSubsystem.shooterState;
         switch(this.shooterState) {
             case Shooting:
                 shooterSubsystem.shooterState = ShooterState.Shooting;

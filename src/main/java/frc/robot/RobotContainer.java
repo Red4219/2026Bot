@@ -175,7 +175,7 @@ public class RobotContainer {
         new SetShooterStateCommand(ShooterState.ReverseIndexer),
         new WaitCommand(0.3),
         new IntakeCommand(IntakeState.Intake),
-        new SetShooterStateCommand(ShooterState.Tracking)
+        new SetShooterStateCommand(shooterSubsystem.oldState)
       ));
 
       // driverController.button(3).onTrue(new IntakeCommand(IntakeState.CollapseIntake));
@@ -247,8 +247,9 @@ public class RobotContainer {
         new SetShooterStateCommand(ShooterState.ReverseIndexer),
         new WaitCommand(0.3),
         new IntakeCommand(IntakeState.Intake),
-        new SetShooterStateCommand(ShooterState.Shooting)
+        new SetShooterStateCommand(shooterSubsystem.oldState)
       ));
+    // NamedCommands.registerCommand("UnjamShoot", new RunCommand(() -> if (shooterSubsystem.shooterState) == ShooterState), null));
   }
 
   public void simulationInit() {
