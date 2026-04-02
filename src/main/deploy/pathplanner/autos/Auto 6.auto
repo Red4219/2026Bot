@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootStop"
+            "name": "waitForHood"
           }
         },
         {
@@ -65,9 +65,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.5
+            "name": "waitForHood"
           }
         },
         {

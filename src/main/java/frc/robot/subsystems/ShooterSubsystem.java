@@ -63,7 +63,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Servo;
@@ -100,18 +102,30 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //public Map<Integer, Translation2d> targets = new HashMap<Integer, Translation2d>();
 
+    // public final Translation2d[] targets = {
+    //     new Translation2d(4.5,4.0), // Blue tower
+    //     new Translation2d(12.0, 4.0), // Red tower
+    //     new Translation2d(0.0, 1.0), // Blue Human Element
+    //     new Translation2d(16.6, 7.0), // Red Human Element
+    //     new Translation2d(0.0, 7.0), // Blue Wall
+    //     new Translation2d(16.5, 1.0) // Red Wall 
+    // };
     public final Translation2d[] targets = {
         new Translation2d(4.5,4.0), // Blue tower
         new Translation2d(12.0, 4.0), // Red tower
-        new Translation2d(0.0, 1.0), // Blue Human Element
-        new Translation2d(16.6, 7.0), // Red Human Element
-        new Translation2d(0.0, 7.0), // Blue Wall
-        new Translation2d(16.5, 1.0) // Red Wall 
-    };
+        new Translation2d(2.0, 3.0), // Blue Human Element
+        new Translation2d(13.5, 5.3), // Red Human Element
+        new Translation2d(2.0, 5.0), // Blue Wall
+        new Translation2d(13.5, 3.0) // Red Wall
+};
 
     private boolean manualControl = false;
+    public boolean isTrenchSafe = false;
 
     private double[] flywheelPID = ShooterConstants.flywheelPID;
+
+    public DigitalInput limSwitch = null;
+    
 
     // Fly wheel motors
     private TalonFX flywheelMotor1 = null;
@@ -236,6 +250,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private DoublePublisher pubFlyMod = null;
     private DoubleSubscriber subFlyMod = null;
 
+    private BooleanTopic topicHoodRetracted = null;
+    private BooleanPublisher pubHoodRetracted = null;
+    private BooleanSubscriber subHoodRetracted = null;
+
     // private AnalogEncoder hoodEncoder = new AnalogEncoder(ShooterConstants.hoodEncoder1Port);
     // private AnalogEncoder hoodEncoder2 = new AnalogEncoder(ShooterConstants.hoodEncoder2Port);
 
@@ -264,7 +282,7 @@ public class ShooterSubsystem extends SubsystemBase {
             } catch (Exception e) {
                 System.out.println("ShooterSubsystem::constructor - " + e.getMessage());
             }*/
-
+            limSwitch = new DigitalInput(9);
             // Hood Motor
             hoodActuator1 = new Servo(Constants.ShooterConstants.hoodActuator1Port);
             // hoodActuator2 = new Servo(Constants.ShooterConstants.hoodActuator2Port);
@@ -411,6 +429,10 @@ public class ShooterSubsystem extends SubsystemBase {
             topicHubIsActive = table.getBooleanTopic("Hub Status");
             pubHubIsActive = topicHubIsActive.publish();
             pubHubIsActive.set(RobotContainer.matchTimeSubsystem.isHubActive());
+
+            topicHoodRetracted = table.getBooleanTopic("Hood Retracted safely");
+            pubHoodRetracted = topicHoodRetracted.publish();
+            pubHoodRetracted.set(isTrenchSafe);
             
 
             limelight = new Limelight("limelight");
@@ -470,6 +492,8 @@ public class ShooterSubsystem extends SubsystemBase {
 	public void periodic() {
 
         if (ShooterConstants.enabled) {
+            isTrenchSafe = !limSwitch.get();
+            pubHoodRetracted.set(isTrenchSafe);
 
             if(ShooterConstants.debug) {
                 modifyCalculations(RobotContainer.driverController.getLeftY(), RobotContainer.operatorController.getRightY());

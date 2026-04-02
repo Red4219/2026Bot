@@ -19,6 +19,7 @@ import frc.robot.subsystems.ClimberSubsystem.ClimbState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.commands.EjectCommand;
+import frc.robot.commands.HoodRetractCommand;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -249,6 +250,7 @@ public class RobotContainer {
         new IntakeCommand(IntakeState.Intake),
         new SetShooterStateCommand(shooterSubsystem.oldState)
       ));
+    NamedCommands.registerCommand("waitForHood", new HoodRetractCommand());
     // NamedCommands.registerCommand("UnjamShoot", new RunCommand(() -> if (shooterSubsystem.shooterState) == ShooterState), null));
   }
 
