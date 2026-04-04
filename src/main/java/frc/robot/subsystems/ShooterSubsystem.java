@@ -1131,8 +1131,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // hoodActuator1.setPosition(targetHoodValue);
         // hoodActuator2.setPosition(targetHoodValue);
-        double trg = (0.627944)/(1+Math.pow(Math.E, -(1.78842*calculateDistance(pose, new Pose2d(target.getX(), target.getY(), target.getAngle()))-1.84376)));
-
+        // double trg = (0.627944)/(1+Math.pow(Math.E, -(1.78842*calculateDistance(pose, new Pose2d(target.getX(), target.getY(), target.getAngle()))-1.84376)));
+            double trg = (0.627944)/(1+Math.pow(Math.E, -(1.78842*calculateDistance(pose, new Pose2d(target.getX(), target.getY(), target.getAngle()))-1.84376)));
         // targetHoodValue = trg;
         actualHoodValue = hoodActuator1.getPosition();
         if (subManualHood.get()){

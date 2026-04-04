@@ -130,7 +130,7 @@ public class RobotContainer {
 			driverController.button(8).whileTrue(new ResetPositionCommand());
 
       // When the drive pulls the right trigger, start shooting
-      driverController.rightTrigger().onTrue(new SetShooterStateCommand(ShooterState.Shooting));
+      driverController.rightTrigger().whileTrue(new SetShooterStateCommand(ShooterState.Shooting));
 
       // Driver has released the trigger stop shooting and go to tracking
       driverController.rightTrigger().onFalse(new SetShooterStateCommand(ShooterState.Tracking));
@@ -142,12 +142,13 @@ public class RobotContainer {
       driverController.button(2).whileTrue(new SetShooterStateCommand(ShooterState.Stopped));
 
       // When the drive pulls the left trigger, start to intake
-      driverController.leftTrigger().onTrue(new IntakeCommand(IntakeState.Intake));
+      driverController.leftTrigger().whileTrue(new IntakeCommand(IntakeState.Intake));
 
       // Driver has released the left trigger stop intaking
       driverController.leftTrigger().onFalse(new IntakeCommand(IntakeState.Stop));
 
       driverController.povUp().onTrue(new SetShooterStateCommand(ShooterState.ReverseIndexer));
+      driverController.povUp().onFalse(new SetShooterStateCommand(ShooterState.Tracking));
 
       // Eject the ball
       driverController.button(5).onTrue(new IntakeCommand(IntakeState.Eject));
@@ -179,6 +180,7 @@ public class RobotContainer {
         new SetShooterStateCommand(shooterSubsystem.oldState)
       ));
 
+      driverController.povDown().onTrue(new IntakeCommand(IntakeState.CollapseIntake));
       // driverController.button(3).onTrue(new IntakeCommand(IntakeState.CollapseIntake));
 
 

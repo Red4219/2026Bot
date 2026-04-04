@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.269395017793595,
-        "y": 2.2435943060498222
+        "x": 8.409869513641757,
+        "y": 1.6841162514827999
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.997995255041519,
-        "y": 2.6201660735468555
+        "x": 1.448671411625149,
+        "y": 2.37270462633452
       },
       "prevControl": {
-        "x": 4.4720047449584825,
-        "y": 2.555610913404506
+        "x": 3.0410320284697523,
+        "y": 2.760035587188612
       },
       "nextControl": null,
       "isLocked": false,
@@ -78,7 +78,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -49.70785224437214
+    "rotation": -58.840695491655595
   },
   "reversed": false,
   "folder": "Auto 6 Paths",

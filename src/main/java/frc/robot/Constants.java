@@ -195,10 +195,10 @@ public final class Constants {
 		public static final double camHeightOffGround = Units.inchesToMeters(10.25);
 		public static final double cam2HeightOffGround = Units.inchesToMeters(10.25);
 		// the side to side position of the camera relative to the robot center
-		public static final double camX = -0.08;
+		public static final double camX = -0.04;
 		public static final double cam2X = 0.08;
 		// the front to back position of the camera relative to the robot center
-		public static final double camY = -0.7;
+		public static final double camY = -0.4;
 		public static final double cam2Y = 0.3;
 
 		public static final double camRotation = Math.toRadians(-90.0);
@@ -283,7 +283,7 @@ public final class Constants {
 		public static final double kI = 0.0;
 		public static final double kD = 0.0;
 
-		public static final double intakePower = 0.35; //Was .35 , Wheel Exploded at full
+		public static final double intakePower = 0.45; //Was .35 , Wheel Exploded at full
 		public static final double ejectPower = -0.35;
 
 		public static final int intakeEjectRetractMotor1Id = 38;
@@ -354,7 +354,7 @@ public final class Constants {
 
 		public static final int kickMotor2Id = 35;
 		public static final boolean invertKickMotor2 = false;
-		public static final double kickMotor2Speed = 0.75;
+		public static final double kickMotor2Speed = 0.50;
 
 		public static final int kickMotorCurrentLimit = 30;
 

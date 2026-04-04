@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2667425860023727,
-        "y": 0.7483511269276379
+        "x": 2.7290154211150655,
+        "y": 0.4683274021352316
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.815088967971531,
-        "y": 1.2214709371292998
+        "x": 2.051186239620404,
+        "y": 3.470142348754448
       },
       "prevControl": {
-        "x": 3.0253835868156695,
-        "y": 1.0862815393009253
+        "x": 1.9435943060498229,
+        "y": 2.566370106761566
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -38.65980825409017
+    "rotation": -86.05481377096245
   },
   "reversed": false,
   "folder": "Auto 4 Paths",
