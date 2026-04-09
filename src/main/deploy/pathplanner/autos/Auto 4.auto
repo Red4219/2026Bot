@@ -25,19 +25,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.9
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "UnjamShoot"
+            "name": "ShootStart"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.8
+            "waitTime": 0.5
           }
         },
         {
@@ -80,12 +80,6 @@
           "type": "wait",
           "data": {
             "waitTime": 0.7
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "UnjamShoot"
           }
         },
         {
